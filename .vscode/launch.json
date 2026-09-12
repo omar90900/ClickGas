@@ -16,6 +16,15 @@
       "cwd": "apps/distributor",
       "program": "lib/main.dart",
       "args": ["--dart-define-from-file=../../env/dev.json"]
+    },
+    {
+      "name": "Admin (dev)",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "apps/admin",
+      "program": "lib/main.dart",
+      "deviceId": "chrome",
+      "args": ["--dart-define-from-file=../../env/dev.json"]
     }
   ]
 }

@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../features/settings/documents_screen.dart';
 import '../l10n/gen/app_localizations.dart';
 
 extension L10nX on BuildContext {
@@ -52,6 +53,7 @@ String failureText(BuildContext context, Object error, {int maxOrders = 3}) {
     FailureCode.driverOffline => l.driverOffline,
     FailureCode.notVerifiedDriver => l.notVerifiedError,
     FailureCode.invalidTransition => l.orderChanged,
+    FailureCode.documentExpired => l.documentExpired,
     FailureCode.permissionDenied => l.permissionDenied,
     FailureCode.network => l.networkError,
     _ => l.errorWithCode(f.code.value),
@@ -285,6 +287,72 @@ class Tag extends StatelessWidget {
           color: color,
           fontWeight: FontWeight.w700,
         ),
+      ),
+    );
+  }
+}
+
+/// Approval state chip (drivers.status).
+class DriverStatusTag extends StatelessWidget {
+  const DriverStatusTag({super.key, required this.driver});
+  final DriverProfile driver;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    return switch (driver.status) {
+      DriverStatus.approved => Tag(l.verified, context.accent),
+      DriverStatus.pending => Tag(l.underReview, AppColors.warning),
+      DriverStatus.rejected => Tag(l.statusRejected, AppColors.danger),
+      DriverStatus.suspended => Tag(l.statusSuspended, Colors.grey),
+    };
+  }
+}
+
+/// Why the distributor can't go online yet, with the way forward.
+class DriverStatusBanner extends StatelessWidget {
+  const DriverStatusBanner({super.key, required this.driver, required this.onRefresh});
+  final DriverProfile driver;
+  final VoidCallback onRefresh;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    final reason = driver.statusReason ?? '-';
+    final (icon, color, text) = switch (driver.status) {
+      DriverStatus.rejected => (Icons.block_rounded, AppColors.danger, l.rejectedBody(reason)),
+      DriverStatus.suspended => (Icons.pause_circle_rounded, Colors.grey, l.suspendedBody(reason)),
+      _ => (Icons.hourglass_top_rounded, AppColors.warning, l.pendingApprovalBody),
+    };
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: color),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(text, style: context.text.bodySmall),
+                if (driver.status != DriverStatus.suspended)
+                  TextButton.icon(
+                    style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const DocumentsScreen()),
+                    ),
+                    icon: const Icon(Icons.upload_file_rounded, size: 18),
+                    label: Text(l.uploadDocuments),
+                  ),
+              ],
+            ),
+          ),
+          IconButton(onPressed: onRefresh, icon: const Icon(Icons.refresh_rounded)),
+        ],
       ),
     );
   }

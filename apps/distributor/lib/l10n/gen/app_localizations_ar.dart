@@ -561,4 +561,75 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get underReview => 'قيد المراجعة';
+
+  @override
+  String get statusRejected => 'غير مقبول';
+
+  @override
+  String get statusSuspended => 'موقوف';
+
+  @override
+  String rejectedBody(String reason) {
+    return 'لم يُقبل طلبك: $reason. ارفع وثائق مصححة لتتم مراجعتها مجدداً.';
+  }
+
+  @override
+  String suspendedBody(String reason) {
+    return 'حسابك موقوف: $reason. تواصل مع دعم كليك غاز.';
+  }
+
+  @override
+  String get uploadDocuments => 'رفع الوثائق';
+
+  @override
+  String get documentsTitle => 'الوثائق';
+
+  @override
+  String get documentsSubtitle =>
+      'الهوية، رخصة القيادة، رخصة المركبة، كتاب الوكالة';
+
+  @override
+  String get documentsNote =>
+      'ارفع صورة واضحة لكل وثيقة. يراجعها فريق كليك غاز قبل اعتماد حسابك.';
+
+  @override
+  String get docNationalId => 'الهوية الشخصية';
+
+  @override
+  String get docDrivingLicence => 'رخصة القيادة';
+
+  @override
+  String get docVehicleRegistration => 'رخصة المركبة';
+
+  @override
+  String get docAgencyLetter => 'كتاب الوكالة';
+
+  @override
+  String get docPending => 'قيد المراجعة';
+
+  @override
+  String get docApproved => 'مقبولة';
+
+  @override
+  String get docRejected => 'مرفوضة - ارفعها مجدداً';
+
+  @override
+  String get docMissing => 'لم تُرفع';
+
+  @override
+  String reviewNote(String note) {
+    return 'ملاحظة: $note';
+  }
+
+  @override
+  String get upload => 'رفع';
+
+  @override
+  String get replace => 'استبدال';
+
+  @override
+  String get documentUploaded => 'تم الرفع. سيراجعها الفريق قريباً.';
+
+  @override
+  String get documentExpired => 'انتهت صلاحية هذه الوثيقة. ارفع وثيقة سارية.';
 }

@@ -27,7 +27,7 @@ flowchart TB
   subgraph Apps["Apps (Flutter)"]
     C[Customer app]
     D[Distributor app]
-    A[Admin web - Phase 1]
+    A[Admin web]
   end
   subgraph Core["packages/clickgas_core"]
     M[Models]
@@ -72,6 +72,7 @@ A screen may call a repository directly for a one-off action (for example
 | `clickgas_core` | models, repositories, `AppFailure`, `Log`, theme, `UserAvatar`, `NotificationService` | Flutter, supabase_flutter, geolocator, image_picker… |
 | `apps/customer` | customer screens, customer-only repositories, translations | `clickgas_core` |
 | `apps/distributor` | distributor screens, `DriverRepository`, tracking, translations | `clickgas_core` |
+| `apps/admin` | staff dashboard (web): admin models, `AdminRepository`, `StaffSession`, pages, translations | `clickgas_core`, `flutter_map` |
 
 In the customer app, a few files under `lib/core/` and `lib/data/` are one-line
 re-exports of `clickgas_core`, kept so existing imports stay short. New code
@@ -114,6 +115,9 @@ sequenceDiagram
   `set search_path = ''` and fully qualified names.
 - **Order status** changes are checked by `check_order_transition()` against
   the `order_transitions` table.
+- **Staff** read through RLS (`is_staff()`) and write only through `admin_*`
+  functions that check the role (owner / operations / support) and write
+  `admin_actions` ([ADR 0010](decisions/0010-staff-roles-and-audit.md)).
 - **Keys:** apps carry only the publishable key. The secret key never leaves
   `.secrets/` ([runbooks/secrets.md](runbooks/secrets.md)).
 

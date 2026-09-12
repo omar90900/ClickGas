@@ -67,6 +67,41 @@ enum PaymentMethod {
 /// Vehicle types a distributor can register with (stored as the code).
 const vehicleTypes = ['pickup', 'van', 'small_truck', 'truck', 'tricycle'];
 
+/// Distributor approval state (`drivers.status`). Only [approved]
+/// distributors can go online and take orders.
+enum DriverStatus {
+  pending,
+  approved,
+  rejected,
+  suspended;
+
+  static DriverStatus parse(Object? v) =>
+      values.firstWhere((s) => s.name == v, orElse: () => pending);
+}
+
+/// Papers a distributor uploads for approval (`driver_documents.kind`).
+enum DocumentKind {
+  nationalId('national_id'),
+  drivingLicence('driving_licence'),
+  vehicleRegistration('vehicle_registration'),
+  agencyLetter('agency_letter');
+
+  const DocumentKind(this.value);
+  final String value;
+
+  static DocumentKind parse(Object? v) =>
+      values.firstWhere((k) => k.value == v, orElse: () => nationalId);
+}
+
+enum DocumentStatus {
+  pending,
+  approved,
+  rejected;
+
+  static DocumentStatus parse(Object? v) =>
+      values.firstWhere((s) => s.name == v, orElse: () => pending);
+}
+
 // ---------------------------------------------------------------- catalog
 
 class City {
@@ -292,6 +327,12 @@ class DriverProfile {
   final String agencyName;
   final int? cityId;
   final bool isVerified;
+
+  /// Approval state; [isVerified] is true exactly when this is approved.
+  final DriverStatus status;
+
+  /// Why staff rejected or suspended the account (shown to the distributor).
+  final String? statusReason;
   final bool isOnline;
   final double? lat;
   final double? lng;
@@ -306,6 +347,8 @@ class DriverProfile {
     this.agencyName = '',
     this.cityId,
     this.isVerified = false,
+    this.status = DriverStatus.pending,
+    this.statusReason,
     this.isOnline = false,
     this.lat,
     this.lng,
@@ -316,19 +359,78 @@ class DriverProfile {
 
   double get ratingAvg => ratingCount == 0 ? 0 : ratingSum / ratingCount;
 
-  factory DriverProfile.fromMap(Map<String, dynamic> m) => DriverProfile(
-        id: m['id'] as String,
-        vehiclePlate: m['vehicle_plate'] as String? ?? '',
-        vehicleType: m['vehicle_model'] as String? ?? '',
-        agencyName: m['agency_name'] as String? ?? '',
-        cityId: m['city_id'] == null ? null : _i(m['city_id']),
-        isVerified: m['is_verified'] as bool? ?? false,
-        isOnline: m['is_online'] as bool? ?? false,
-        lat: _dOrNull(m['lat']),
-        lng: _dOrNull(m['lng']),
-        cylindersOnBoard: _i(m['cylinders_on_board']),
-        ratingSum: _i(m['rating_sum']),
-        ratingCount: _i(m['rating_count']),
+  factory DriverProfile.fromMap(Map<String, dynamic> m) {
+    final verified = m['is_verified'] as bool? ?? false;
+    return DriverProfile(
+      id: m['id'] as String,
+      vehiclePlate: m['vehicle_plate'] as String? ?? '',
+      vehicleType: m['vehicle_model'] as String? ?? '',
+      agencyName: m['agency_name'] as String? ?? '',
+      cityId: m['city_id'] == null ? null : _i(m['city_id']),
+      isVerified: verified,
+      // Before the admin_core migration there is no status column.
+      status: m['status'] == null
+          ? (verified ? DriverStatus.approved : DriverStatus.pending)
+          : DriverStatus.parse(m['status']),
+      statusReason: m['status_reason'] as String?,
+      isOnline: m['is_online'] as bool? ?? false,
+      lat: _dOrNull(m['lat']),
+      lng: _dOrNull(m['lng']),
+      cylindersOnBoard: _i(m['cylinders_on_board']),
+      ratingSum: _i(m['rating_sum']),
+      ratingCount: _i(m['rating_count']),
+    );
+  }
+}
+
+/// One uploaded paper (`driver_documents`); the file is in the private
+/// `driver-docs` bucket at [filePath].
+class DriverDocument {
+  final int id;
+  final String driverId;
+  final DocumentKind kind;
+  final String filePath;
+  final DocumentStatus status;
+  final DateTime? expiresOn;
+  final String? reviewNote;
+  final DateTime? uploadedAt;
+  final DateTime? reviewedAt;
+
+  const DriverDocument({
+    required this.id,
+    required this.driverId,
+    required this.kind,
+    required this.filePath,
+    this.status = DocumentStatus.pending,
+    this.expiresOn,
+    this.reviewNote,
+    this.uploadedAt,
+    this.reviewedAt,
+  });
+
+  bool get isPdf => filePath.toLowerCase().endsWith('.pdf');
+
+  bool isExpired([DateTime? now]) {
+    final e = expiresOn;
+    if (e == null) return false;
+    final today = now ?? DateTime.now();
+    return DateTime(e.year, e.month, e.day)
+        .isBefore(DateTime(today.year, today.month, today.day));
+  }
+
+  factory DriverDocument.fromMap(Map<String, dynamic> m) => DriverDocument(
+        id: _i(m['id']),
+        driverId: m['driver_id'] as String,
+        kind: DocumentKind.parse(m['kind']),
+        filePath: m['file_path'] as String? ?? '',
+        status: DocumentStatus.parse(m['status']),
+        // A date without time: parse as a local calendar date.
+        expiresOn: m['expires_on'] is String
+            ? DateTime.tryParse(m['expires_on'] as String)
+            : null,
+        reviewNote: m['review_note'] as String?,
+        uploadedAt: _date(m['uploaded_at']),
+        reviewedAt: _date(m['reviewed_at']),
       );
 }
 

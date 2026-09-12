@@ -1081,6 +1081,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Under review'**
   String get underReview;
+
+  /// No description provided for @statusRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Not approved'**
+  String get statusRejected;
+
+  /// No description provided for @statusSuspended.
+  ///
+  /// In en, this message translates to:
+  /// **'Suspended'**
+  String get statusSuspended;
+
+  /// No description provided for @rejectedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your application was not approved: {reason}. Upload corrected documents to be reviewed again.'**
+  String rejectedBody(String reason);
+
+  /// No description provided for @suspendedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account is suspended: {reason}. Contact ClickGas support.'**
+  String suspendedBody(String reason);
+
+  /// No description provided for @uploadDocuments.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload documents'**
+  String get uploadDocuments;
+
+  /// No description provided for @documentsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents'**
+  String get documentsTitle;
+
+  /// No description provided for @documentsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'ID, licence, vehicle registration, agency letter'**
+  String get documentsSubtitle;
+
+  /// No description provided for @documentsNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload a clear photo of each document. The ClickGas team reviews them before approving your account.'**
+  String get documentsNote;
+
+  /// No description provided for @docNationalId.
+  ///
+  /// In en, this message translates to:
+  /// **'National ID'**
+  String get docNationalId;
+
+  /// No description provided for @docDrivingLicence.
+  ///
+  /// In en, this message translates to:
+  /// **'Driving licence'**
+  String get docDrivingLicence;
+
+  /// No description provided for @docVehicleRegistration.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle registration'**
+  String get docVehicleRegistration;
+
+  /// No description provided for @docAgencyLetter.
+  ///
+  /// In en, this message translates to:
+  /// **'Agency letter'**
+  String get docAgencyLetter;
+
+  /// No description provided for @docPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Under review'**
+  String get docPending;
+
+  /// No description provided for @docApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved'**
+  String get docApproved;
+
+  /// No description provided for @docRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected - upload again'**
+  String get docRejected;
+
+  /// No description provided for @docMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Not uploaded'**
+  String get docMissing;
+
+  /// No description provided for @reviewNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Note: {note}'**
+  String reviewNote(String note);
+
+  /// No description provided for @upload.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload'**
+  String get upload;
+
+  /// No description provided for @replace.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace'**
+  String get replace;
+
+  /// No description provided for @documentUploaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploaded. The team will review it soon.'**
+  String get documentUploaded;
+
+  /// No description provided for @documentExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'This document has expired. Upload a valid one.'**
+  String get documentExpired;
 }
 
 class _AppLocalizationsDelegate

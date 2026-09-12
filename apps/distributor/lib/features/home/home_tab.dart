@@ -304,9 +304,7 @@ class _DriverPanel extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    driver.isVerified
-                        ? Tag(l.verified, context.accent)
-                        : Tag(l.underReview, AppColors.warning),
+                    DriverStatusTag(driver: driver),
                     const SizedBox(height: 4),
                     RatingStars(value: driver.ratingAvg),
                   ],
@@ -315,28 +313,7 @@ class _DriverPanel extends StatelessWidget {
             ),
             if (!driver.isVerified) ...[
               const SizedBox(height: 12),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: AppColors.warning.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.hourglass_top_rounded,
-                        color: AppColors.warning),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(l.pendingApprovalBody,
-                          style: context.text.bodySmall),
-                    ),
-                    IconButton(
-                      onPressed: onRefresh,
-                      icon: const Icon(Icons.refresh_rounded),
-                    ),
-                  ],
-                ),
-              ),
+              DriverStatusBanner(driver: driver, onRefresh: onRefresh),
             ],
             const SizedBox(height: 12),
             Container(

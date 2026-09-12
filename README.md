@@ -14,6 +14,7 @@ it arrives. Built with Flutter on Supabase.
 ```
 apps/customer/          customer app (Flutter, Android first)
 apps/distributor/       distributor app (Flutter, Android first)
+apps/admin/             staff dashboard (Flutter web)
 packages/clickgas_core/ shared models, repositories, errors, logging, theme
 supabase/migrations/    database schema, in the order it was applied
 supabase/tests/         database tests (pgTAP)
@@ -41,7 +42,11 @@ env/                    per-environment app settings (no secrets)
    cd apps/customer
    flutter run --dart-define-from-file=../../env/dev.json
    ```
-   In VS Code, pick **Customer (dev)** or **Distributor (dev)** in Run and Debug.
+   In VS Code, pick **Customer (dev)**, **Distributor (dev)** or **Admin (dev)**
+   in Run and Debug. The admin dashboard runs in Chrome:
+   `cd apps/admin && flutter run -d chrome --dart-define-from-file=../../env/dev.json`.
+   Its first owner account is created with `node tools/admin/create-staff.mjs`
+   ([docs/runbooks/staff-accounts.md](docs/runbooks/staff-accounts.md)).
 
 The database already exists in Supabase. To set up a new project, run the files
 in `supabase/migrations/` in order; see [docs/runbooks/migrations.md](docs/runbooks/migrations.md).
@@ -54,6 +59,8 @@ in `supabase/migrations/` in order; see [docs/runbooks/migrations.md](docs/runbo
 | Unit tests | `cd packages/clickgas_core && flutter test` (same in each app) |
 | Regenerate translations | `cd apps/customer && flutter gen-l10n` |
 | Debug APK | `cd apps/distributor && flutter build apk --debug --dart-define-from-file=../../env/dev.json` |
+| Admin web build | `cd apps/admin && flutter build web --release --dart-define-from-file=../../env/dev.json` |
+| Create a staff account | `node tools/admin/create-staff.mjs --email ... --role owner` |
 | End-to-end order test | `node tools/e2e/order_cycle.mjs` (needs `.secrets/supabase.env`) |
 | SQL syntax check | `node tools/sql-check/check.mjs supabase/migrations/<file>.sql` |
 | Database tests | `supabase start && supabase test db` (needs Docker) |

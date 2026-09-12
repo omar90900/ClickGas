@@ -25,6 +25,7 @@ jobs:
         run: |
           (cd apps/customer && flutter gen-l10n)
           (cd apps/distributor && flutter gen-l10n)
+          (cd apps/admin && flutter gen-l10n)
       - name: Analyze
         run: flutter analyze apps packages
       - name: Test shared package
@@ -33,6 +34,12 @@ jobs:
       - name: Test customer app
         working-directory: apps/customer
         run: flutter test
+      - name: Test admin app
+        working-directory: apps/admin
+        run: flutter test
+      - name: Build admin (web)
+        working-directory: apps/admin
+        run: flutter build web --release --dart-define-from-file=../../env/dev.json
 
   database:
     name: Database tests (pgTAP)

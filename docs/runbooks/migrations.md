@@ -31,7 +31,8 @@ npx supabase db push
 ## Checking what's applied
 
 ```sql
-select 'fee_settings' as marker, to_regclass('public.fee_settings') is not null as applied   -- foundation
+select 'staff_members' as marker, to_regclass('public.staff_members') is not null as applied -- admin_core
+union all select 'fee_settings', to_regclass('public.fee_settings') is not null              -- foundation
 union all select 'avatars bucket', exists(select 1 from storage.buckets where id = 'avatars') -- slots_avatars
 union all select 'order_releases', to_regclass('public.order_releases') is not null;         -- driver_app
 ```
@@ -44,6 +45,7 @@ union all select 'order_releases', to_regclass('public.order_releases') is not n
 | `20260911120000_driver_app.sql` | 2026-09-11 |
 | `20260911180000_slots_avatars.sql` | 2026-09-11 |
 | `20260912090000_foundation.sql` | 2026-09-12 (verified by `tools/e2e/order_cycle.mjs`, 16/16) |
+| `20260912150000_admin_core.sql` | pending |
 
 If a run fails with "already exists", the file was applied before; check with
 the query above instead of running it again.

@@ -18,6 +18,10 @@ erDiagram
   drivers ||--o{ driver_ledger : "fees and payments"
   orders ||--o| driver_ledger : "order_fee"
   profiles ||--o{ diagnostics : "uploads"
+  profiles ||--o| staff_members : "staff only"
+  profiles ||--o{ admin_actions : "did"
+  drivers ||--o{ driver_documents : "papers"
+  services ||--o{ price_history : "prices"
 ```
 
 ## Tables
@@ -25,7 +29,7 @@ erDiagram
 | Table | One row per | Key columns |
 |---|---|---|
 | `profiles` | account | `role` (customer/driver/admin), `full_name`, `phone` (unique), `email`, `city_id`, `avatar_url`, `is_active` |
-| `drivers` | distributor | `is_verified`, `is_online`, `lat`, `lng`, `location_updated_at`, `cylinders_on_board`, `vehicle_plate`, `vehicle_model` (vehicle type code), `agency_name`, `rating_sum`, `rating_count` |
+| `drivers` | distributor | `status` (pending/approved/rejected/suspended), `status_reason`, `is_verified` (= approved), `is_online`, `lat`, `lng`, `location_updated_at`, `cylinders_on_board`, `vehicle_plate`, `vehicle_model` (vehicle type code), `agency_name`, `rating_sum`, `rating_count` |
 | `orders` | order | `order_number` (from 1001), `status`, `service_*` (snapshot), `quantity`, `unit_price`, `delivery_fee`, `service_fee`, `driver_fee`, `total_price`, `payment_method`, `delivery_lat/lng`, `delivery_address`, `notes`, `rating`, `customer_confirmed_at`, one timestamp per status |
 | `order_events` | status change | `order_id`, `status`, `actor_id`, `created_at` |
 | `order_transitions` | allowed change | `from_status`, `to_status`, `actor`, `via` |
@@ -39,6 +43,10 @@ erDiagram
 | `job_runs` | scheduled job run | `job`, `started_at`, `finished_at`, `ok`, `detail` |
 | `feature_flags` | switch | `key`, `enabled`, `description` |
 | `private.login_attempts` | failed phone login | `phone`, `attempted_at` (not reachable from the API) |
+| `staff_members` | staff account | `user_id`, `role` (owner/operations/support) |
+| `admin_actions` | staff action (audit trail) | `actor_id`, `actor_name`, `actor_role`, `action` (e.g. `order.cancel`), `target_type`, `target_id`, `reason`, `detail` (jsonb before/after) |
+| `driver_documents` | current paper per distributor and kind | `kind`, `file_path`, `status` (pending/approved/rejected), `expires_on`, `review_note` |
+| `price_history` | service price | `service_id`, `old_price`, `new_price`, `changed_by`, `changed_at` (written by trigger) |
 
 ## Views
 
@@ -51,6 +59,7 @@ erDiagram
 | Bucket | Path | Access |
 |---|---|---|
 | `avatars` (public) | `<user id>/avatar.jpg` | anyone reads; owner writes |
+| `driver-docs` (private, 5 MB, images/PDF) | `<driver id>/<kind>-<timestamp>.jpg` | the distributor uploads and reads own; staff read all |
 
 ## Enums
 
@@ -58,6 +67,10 @@ erDiagram
 - `order_status`: pending, accepted, on_the_way, delivered, cancelled, expired
 - `payment_method`: cash, card
 - `ledger_kind`: order_fee, payment, adjustment
+- `staff_role`: owner, operations, support
+- `driver_status`: pending, approved, rejected, suspended
+- `document_kind`: national_id, driving_licence, vehicle_registration, agency_letter
+- `document_status`: pending, approved, rejected
 
 ## Migrations
 
@@ -67,3 +80,4 @@ erDiagram
 | `20260911120000_driver_app.sql` | distributor sign-up, multi-order dispatch, releases, receipt confirmation |
 | `20260911180000_slots_avatars.sql` | slot frees on delivery, avatars bucket, photos in RPCs |
 | `20260912090000_foundation.sql` | fils, fees + ledger, state machine, safe phone login, diagnostics, job runs, flags, descriptions |
+| `20260912150000_admin_core.sql` | staff roles, audit trail, staff read access, distributor status and documents, staff actions, price history, dashboard functions |

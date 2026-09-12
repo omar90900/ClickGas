@@ -28,6 +28,7 @@ class DriverApp extends StatelessWidget {
         Provider(create: (_) => DriverRepository(client)),
         Provider(create: (_) => AvatarRepository(client)),
         Provider(create: (_) => DiagnosticsRepository(client)),
+        Provider(create: (_) => DriverDocumentsRepository(client)),
         Provider(create: (_) => LocationService()),
         FutureProvider<AppConfig>(
           create: (c) => c.read<CatalogRepository>().config(),

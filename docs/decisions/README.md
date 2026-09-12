@@ -14,6 +14,8 @@ one; if a decision changes, write a new record that supersedes the old.
 | [0006](0006-per-order-fee-cash-ledger.md) | 0.150 JOD fee per delivered order, cash with a ledger | Accepted |
 | [0007](0007-money-in-fils.md) | Money stored with 3 decimals (fils) | Accepted |
 | [0008](0008-notifications.md) | Local notifications now, push (FCM) in Phase 2 | Accepted |
+| [0009](0009-admin-web-app.md) | Admin dashboard as a Flutter web app with OpenStreetMap | Accepted |
+| [0010](0010-staff-roles-and-audit.md) | Staff roles checked in the database, every action audited | Accepted |
 
 Template:
 

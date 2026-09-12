@@ -562,4 +562,76 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get underReview => 'Under review';
+
+  @override
+  String get statusRejected => 'Not approved';
+
+  @override
+  String get statusSuspended => 'Suspended';
+
+  @override
+  String rejectedBody(String reason) {
+    return 'Your application was not approved: $reason. Upload corrected documents to be reviewed again.';
+  }
+
+  @override
+  String suspendedBody(String reason) {
+    return 'Your account is suspended: $reason. Contact ClickGas support.';
+  }
+
+  @override
+  String get uploadDocuments => 'Upload documents';
+
+  @override
+  String get documentsTitle => 'Documents';
+
+  @override
+  String get documentsSubtitle =>
+      'ID, licence, vehicle registration, agency letter';
+
+  @override
+  String get documentsNote =>
+      'Upload a clear photo of each document. The ClickGas team reviews them before approving your account.';
+
+  @override
+  String get docNationalId => 'National ID';
+
+  @override
+  String get docDrivingLicence => 'Driving licence';
+
+  @override
+  String get docVehicleRegistration => 'Vehicle registration';
+
+  @override
+  String get docAgencyLetter => 'Agency letter';
+
+  @override
+  String get docPending => 'Under review';
+
+  @override
+  String get docApproved => 'Approved';
+
+  @override
+  String get docRejected => 'Rejected - upload again';
+
+  @override
+  String get docMissing => 'Not uploaded';
+
+  @override
+  String reviewNote(String note) {
+    return 'Note: $note';
+  }
+
+  @override
+  String get upload => 'Upload';
+
+  @override
+  String get replace => 'Replace';
+
+  @override
+  String get documentUploaded => 'Uploaded. The team will review it soon.';
+
+  @override
+  String get documentExpired =>
+      'This document has expired. Upload a valid one.';
 }

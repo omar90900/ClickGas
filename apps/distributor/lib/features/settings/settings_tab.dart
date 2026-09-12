@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../data/tracking_service.dart';
 import '../../state/driver_session.dart';
 import '../../widgets/common.dart';
+import 'documents_screen.dart';
 import 'edit_profile_screen.dart';
 
 const kAppVersion = '1.0.0';
@@ -102,9 +103,7 @@ class _SettingsTabState extends State<SettingsTab> {
                       ],
                     ),
                   ),
-                  driver.isVerified
-                      ? Tag(l.verified, context.accent)
-                      : Tag(l.underReview, AppColors.warning),
+                  DriverStatusTag(driver: driver),
                 ],
               ),
             ),
@@ -143,6 +142,18 @@ class _SettingsTabState extends State<SettingsTab> {
                   builder: (_) =>
                       EditProfileScreen(profile: profile, driver: driver),
                 ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Card(
+            child: ListTile(
+              leading: Icon(Icons.badge_rounded, color: context.accent),
+              title: Text(l.documentsTitle),
+              subtitle: Text(l.documentsSubtitle),
+              trailing: const Icon(Icons.chevron_right_rounded),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const DocumentsScreen()),
               ),
             ),
           ),

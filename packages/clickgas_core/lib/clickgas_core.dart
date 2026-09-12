@@ -19,6 +19,7 @@ export 'src/repositories/auth_repository.dart';
 export 'src/repositories/avatar_repository.dart';
 export 'src/repositories/catalog_repository.dart';
 export 'src/repositories/diagnostics_repository.dart';
+export 'src/repositories/driver_documents_repository.dart';
 export 'src/repositories/profile_repository.dart';
 export 'src/supabase_config.dart';
 export 'src/user_avatar.dart';

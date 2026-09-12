@@ -3,7 +3,35 @@
 Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow the
 apps' `pubspec.yaml` version.
 
-## [Unreleased] - Phase 0: Foundation
+## [Unreleased] - Phase 1: Admin core
+
+### Added
+- Admin dashboard (`apps/admin`, Flutter web, Arabic/English): overview with
+  today's numbers and a 14-day chart, live map of open orders and
+  distributors (OpenStreetMap), order search and inspector, distributor
+  approvals with documents, customers with block/unblock, balances with cash
+  payments, prices, fees, dispatch settings, cities, feature flags, staff and
+  an audit log.
+- Staff roles (owner, operations, support) enforced in the database; every
+  staff action is written to `admin_actions` (ADR 0010).
+- Distributor approval status (pending, approved, rejected, suspended) with a
+  reason shown in the distributor app.
+- Distributor documents: Settings › Documents in the distributor app, private
+  `driver-docs` bucket, review in the dashboard.
+- Staff can cancel an order with a reason, reassign it, or put it back in the
+  queue.
+- `price_history`, `admin_adjust_balance`, `tools/admin/create-staff.mjs`,
+  database tests for staff (`03_admin.test.sql`), admin tests and web build
+  in CI.
+- Docs: ADR 0009 and 0010, staff API, staff rules, runbook for staff
+  accounts and approvals.
+
+### Changed
+- `record_driver_payment` is limited to owner and operations and audited.
+- Feature flags are changed through `admin_set_flag` instead of a direct
+  update.
+
+## Phase 0: Foundation
 
 ### Added
 - Monorepo with a Dart pub workspace: `apps/customer`, `apps/distributor`,

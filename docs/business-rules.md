@@ -11,9 +11,17 @@ in `app_config` or `fee_settings` can be changed without releasing an app.
   **distributors** (it sends `account_type = driver`), with vehicle plate,
   vehicle type and distribution agency. **Admin** accounts are never created
   from an app. *(trigger `handle_new_user`)*
-- New distributors are **unverified** and cannot go online or see orders until
-  staff sets `drivers.is_verified = true`, unless
-  `app_config.auto_verify_drivers` is on.
+- New distributors are **awaiting approval** (`drivers.status = pending`) and
+  cannot go online or see orders until operations approves them in the admin
+  dashboard, unless `app_config.auto_verify_drivers` is on. They upload their
+  papers (national ID, driving licence, vehicle registration, agency letter)
+  from Settings › Documents.
+- Staff can **reject** (with a reason the distributor sees; new documents put
+  them back in the queue) or **suspend** an approved distributor (they go
+  offline at once and keep the orders they hold). `is_verified` always equals
+  `status = approved`. *(trigger `sync_driver_status`)*
+- Staff can **block** a customer or distributor with a reason: they can't sign
+  in by phone, order, or take orders.
 - A phone number belongs to one account. Login by phone allows 5 wrong passwords
   per 15 minutes. *(ADR 0005)*
 
@@ -30,12 +38,15 @@ in `app_config` or `fee_settings` can be changed without releasing an app.
 | From | To | Who | How |
 |---|---|---|---|
 | pending | accepted | verified, online distributor | `accept_order` |
-| pending | cancelled | customer, staff | `cancel_order`, admin |
+| pending | cancelled | customer, staff | `cancel_order`, `admin_cancel_order` |
+| pending | accepted | staff | `admin_assign_order` |
 | pending | expired | system | expiry job (Phase 3) |
 | accepted | on the way | assigned distributor | `start_delivery` |
 | accepted / on the way | pending | assigned distributor | `release_order` (logged as cancelled in their sales) |
+| accepted / on the way | pending | staff | `admin_assign_order` (back to queue) |
+| on the way | accepted | staff | `admin_assign_order` (to another distributor) |
 | accepted / on the way | delivered | assigned distributor | `complete_order` |
-| accepted / on the way | cancelled | staff | admin |
+| accepted / on the way | cancelled | staff | `admin_cancel_order` |
 
 Anything else is rejected with `INVALID_TRANSITION`. *(table `order_transitions`)*
 
@@ -83,6 +94,33 @@ Anything else is rejected with `INVALID_TRANSITION`. *(table `order_transitions`
   after accepting.
 - Nobody sees another customer's phone or orders.
 - An online distributor's position is saved every 5 seconds while online.
+
+## Staff
+
+Staff use the admin dashboard (`apps/admin`) with email and password. An
+account is staff when `profiles.role = admin`, it is active, and it has a row
+in `staff_members`. Every staff change is a database function that checks the
+role and writes `admin_actions`. *(ADR 0010)*
+
+| Can… | Owner | Operations | Support |
+|---|:-:|:-:|:-:|
+| See the overview, live map, orders, distributors, customers, balances, audit log | ✓ | ✓ | ✓ |
+| Block / unblock customers | ✓ | ✓ | ✓ |
+| Approve, reject, suspend distributors; review documents; block distributors | ✓ | ✓ | |
+| Cancel or reassign orders | ✓ | ✓ | |
+| Record cash from distributors | ✓ | ✓ | |
+| Adjust (waive) balances | ✓ | | |
+| Prices, fees, settings, cities, feature flags | ✓ | | |
+| Add, change or remove staff | ✓ | | |
+
+- Blocking, rejecting, suspending, cancelling, reassigning, rejecting a
+  document and adjusting a balance **need a reason** (saved in the audit log).
+- There is always at least one owner.
+- Staff can reassign an order only to an approved, active distributor with a
+  free slot and enough cylinders; online status and distance are not checked
+  (staff may have phoned them).
+- Fee changes take effect now or at a chosen future time; they can't be
+  backdated. Price changes are kept in `price_history`.
 
 ## Notifications
 

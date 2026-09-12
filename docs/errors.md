@@ -40,6 +40,24 @@ When a user reports "code XYZ", find it here, then open
 | `NOT_ENOUGH_CYLINDERS` | `accept_order` | Stock on board doesn't cover open orders + this one | `drivers.cylinders_on_board` |
 | `ORDER_TOO_FAR` | `accept_order` | More than 1.25 × `driver_radius_km` from the distributor's last position | `drivers.lat/lng`, location freshness |
 
+## Distributor documents
+
+| Code | Raised by | Meaning | What to check |
+|---|---|---|---|
+| `DOCUMENT_EXPIRED` | `submit_driver_document` | The expiry date given is in the past | Ask for a valid document |
+
+## Staff (admin dashboard)
+
+| Code | Raised by | Meaning | What to check |
+|---|---|---|---|
+| `REASON_REQUIRED` | reject, suspend, block, cancel, reassign, reject document, adjust balance | No reason, or under 3 characters | The reason goes to `admin_actions.reason` |
+| `INVALID_AMOUNT` | `record_driver_payment`, `admin_adjust_balance`, `admin_set_fees`, services | Amount missing, zero, negative or out of range (payment ≤ 10 000, fee 0-5, price 0-1000) | Detail shows the value |
+| `INVALID_SETTING` | `admin_update_config`, services, `admin_set_fees` | Unknown key, wrong type, out of range, duplicate service code, fee date in the past | Detail names the setting and its range |
+| `INVALID_TARGET` | `admin_set_account_active`, `admin_save_staff` | Blocking a staff account, or making a distributor staff | Use the Staff page for staff |
+| `LAST_OWNER` | `admin_save_staff`, `admin_remove_staff` | The change would leave no owner | Add another owner first |
+| `NOT_FOUND` | staff functions | The distributor, user, order, service, city or flag doesn't exist | Refresh; it may have been deleted |
+| `PERMISSION_DENIED` | every staff function | Not staff, or the role can't do this ([business-rules.md](business-rules.md#staff)) | `staff_members.role`, `profiles.is_active` |
+
 ## Any role
 
 | Code | Raised by | Meaning | What to check |

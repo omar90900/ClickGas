@@ -31,8 +31,17 @@ enum FailureCode {
   orderNotAvailable('ORDER_NOT_AVAILABLE'),
   notEnoughCylinders('NOT_ENOUGH_CYLINDERS'),
   orderTooFar('ORDER_TOO_FAR'),
-  // ---- generic
+  // ---- distributor documents
+  documentExpired('DOCUMENT_EXPIRED'),
+  // ---- staff (admin dashboard)
+  reasonRequired('REASON_REQUIRED'),
+  invalidAmount('INVALID_AMOUNT'),
+  invalidSetting('INVALID_SETTING'),
+  invalidTarget('INVALID_TARGET'),
+  lastOwner('LAST_OWNER'),
+  // ---- generic (NOT_FOUND last: it is the least specific match)
   permissionDenied('PERMISSION_DENIED'),
+  notFound('NOT_FOUND'),
   network('NETWORK'),
   unknown('UNKNOWN');
 

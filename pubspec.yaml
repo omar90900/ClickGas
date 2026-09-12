@@ -10,4 +10,5 @@ environment:
 workspace:
   - apps/customer
   - apps/distributor
+  - apps/admin
   - packages/clickgas_core
