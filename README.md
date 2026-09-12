@@ -62,6 +62,7 @@ in `supabase/migrations/` in order; see [docs/runbooks/migrations.md](docs/runbo
 | Admin web build | `cd apps/admin && flutter build web --release --dart-define-from-file=../../env/dev.json` |
 | Create a staff account | `node tools/admin/create-staff.mjs --email ... --role owner` |
 | End-to-end order test | `node tools/e2e/order_cycle.mjs` (needs `.secrets/supabase.env`) |
+| End-to-end staff test | `node tools/e2e/admin_cycle.mjs` (temporary accounts, cleaned up; never changes fees or prices) |
 | SQL syntax check | `node tools/sql-check/check.mjs supabase/migrations/<file>.sql` |
 | Database tests | `supabase start && supabase test db` (needs Docker) |
 

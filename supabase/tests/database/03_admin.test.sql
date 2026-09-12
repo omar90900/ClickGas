@@ -1,7 +1,7 @@
 -- Staff roles, audit trail and staff actions (Phase 1 admin core).
 -- Run with: supabase test db
 begin;
-select plan(40);
+select plan(41);
 
 -- ---------------------------------------------------------------- fixtures
 -- owner c001, support c002, customer c003, distributor c004
