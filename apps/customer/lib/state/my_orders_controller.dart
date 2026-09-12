@@ -38,6 +38,19 @@ class MyOrdersController extends ChangeNotifier {
 
   GasOrder? byId(String id) => _orders.where((o) => o.id == id).firstOrNull;
 
+  /// The latest order, if nobody accepted it in time within the last 2 hours
+  /// (Home offers "Order again").
+  GasOrder? get recentlyExpired {
+    final latest = _orders.fold<GasOrder?>(null, (a, o) {
+      if (a == null) return o;
+      return (o.createdAt ?? DateTime(0)).isAfter(a.createdAt ?? DateTime(0)) ? o : a;
+    });
+    if (latest == null || latest.status != OrderStatus.expired) return null;
+    final at = latest.createdAt;
+    if (at == null || DateTime.now().difference(at) > const Duration(hours: 2)) return null;
+    return latest;
+  }
+
   void bind(String? customerId) {
     if (customerId == _customerId) return;
     _customerId = customerId;

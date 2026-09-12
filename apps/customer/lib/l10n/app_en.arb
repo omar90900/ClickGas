@@ -183,5 +183,18 @@
   "accountDisabledBody": "Your account has been disabled. Please contact support.",
   "profileMissing": "We couldn't load your account data.",
 
-  "sessionExpired": "Your session ended. Sign in again."
+  "sessionExpired": "Your session ended. Sign in again.",
+
+  "coverageNone": "No distributor is online near this spot right now",
+  "coverageNoneBody": "You can still order: we'll look up to {km} km away for {minutes} minutes.",
+  "@coverageNoneBody": {"placeholders":{"minutes":{"type":"int"},"km":{"type":"String"}}},
+  "coverageSome": "{count} distributors online nearby",
+  "@coverageSome": {"placeholders":{"count":{"type":"int"}}},
+  "notifExpiredTitle": "No distributor available",
+  "notifExpiredBody": "Order #{number} wasn't accepted in time. You can order again.",
+  "@notifExpiredBody": {"placeholders":{"number":{"type":"int"}}},
+  "expiredTitle": "No distributor accepted this order in time",
+  "expiredBody": "Distributors near you were busy or offline. Order again now, or try a little later.",
+  "orderAgain": "Order again",
+  "orderAgainConfirm": "Place the same order again?"
 }

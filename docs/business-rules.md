@@ -40,7 +40,7 @@ in `app_config` or `fee_settings` can be changed without releasing an app.
 | pending | accepted | verified, online distributor | `accept_order` |
 | pending | cancelled | customer, staff | `cancel_order`, `admin_cancel_order` |
 | pending | accepted | staff | `admin_assign_order` |
-| pending | expired | system | expiry job (Phase 3) |
+| pending | expired | system | `expire_stale_orders` (every minute, after 20 min) |
 | accepted | on the way | assigned distributor | `start_delivery` |
 | accepted / on the way | pending | assigned distributor | `release_order` (logged as cancelled in their sales) |
 | accepted / on the way | pending | staff | `admin_assign_order` (back to queue) |
@@ -55,13 +55,36 @@ Anything else is rejected with `INVALID_TRANSITION`. *(table `order_transitions`
 
 ## Dispatch
 
-- A distributor sees pending orders within **`driver_radius_km` = 2 km** of
-  their position, nearest first, with the customer's name and notes.
+- A new order is offered to distributors within **`driver_radius_km` = 2 km**
+  of it. While nobody accepts, the search **widens** by `radius_step_km`
+  (2 km) every `radius_step_minutes` (5), up to **`max_radius_km` = 6 km**:
+  2 → 4 → 6 km. *(function `order_radius_km`, ADR 0012)*
+- An order nobody accepts within **`order_expiry_minutes` = 20** becomes
+  **expired** (checked every minute). The customer is notified and offered
+  "Order again".
+- A distributor sees pending orders offered to their position, nearest
+  first, with the customer's name and notes.
 - They can hold **`max_active_orders` = 3** accepted or on-the-way orders. A slot
   frees the moment they mark an order delivered.
 - They can accept only while **online**, only if **cylinders on board** cover
-  the open orders plus the new one, and only within 1.25 × the radius of their
-  last reported position.
+  the open orders plus the new one, and only within 1.25 × the order's
+  current search radius of their last reported position.
+
+## Coverage
+
+- Some distributors in an area use ClickGas and others don't, so before
+  ordering the customer app checks whether any approved distributor is
+  online (position under 10 minutes old) within the widest radius. If none
+  is, the customer is told so and can still order.
+- Each such "no distributor nearby" check is recorded as a coverage gap (at
+  most one per customer per 10 minutes). Gaps and expired orders form the
+  unserved-demand map on the dashboard's Coverage page.
+
+## Demo data
+
+- Accounts created by `tools/demo` are flagged `is_demo`, and so are their
+  orders. Staff can hide demo data in the dashboard (account menu). The demo
+  reset removes exactly the demo data. *(ADR 0012, runbooks/demo.md)*
 - Two distributors can't take the same order: the order row is locked while
   one accepts it.
 - Delivering lowers **cylinders on board** by the order quantity.

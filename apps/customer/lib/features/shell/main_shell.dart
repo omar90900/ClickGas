@@ -64,7 +64,8 @@ class _ShellViewState extends State<_ShellView> {
   }
 
   /// Sound + notification whenever one of the customer's orders changes
-  /// status (accepted, on the way, delivered, dropped by the driver).
+  /// status (accepted, on the way, delivered, dropped by the driver,
+  /// expired because nobody accepted it).
   void _onOrdersChanged() {
     if (!mounted || _orders.loading || _orders.error != null) return;
     final now = {for (final o in _orders.orders) o.id: o.status};
@@ -82,6 +83,7 @@ class _ShellViewState extends State<_ShellView> {
         OrderStatus.delivered => (l.notifDeliveredTitle, l.notifDeliveredBody(o.orderNumber)),
         OrderStatus.pending when was.hasDriver =>
           (l.notifReleasedTitle, l.notifReleasedBody(o.orderNumber)),
+        OrderStatus.expired => (l.notifExpiredTitle, l.notifExpiredBody(o.orderNumber)),
         _ => (null, null),
       };
       if (title != null && body != null) {

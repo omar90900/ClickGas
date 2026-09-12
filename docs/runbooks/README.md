@@ -12,6 +12,8 @@ diagnostics reference) and ends with a fix or a clear next step.
 | [notifications-missing.md](notifications-missing.md) | Someone didn't get a notification |
 | [session-expired.md](session-expired.md) | An app stops working after about an hour ("JWT expired") |
 | [staff-accounts.md](staff-accounts.md) | Creating staff, dashboard sign-in problems, approving distributors, the audit log |
+| [demo.md](demo.md) | Seeding, simulating and resetting demo data; presentation checklist |
+| [release-builds.md](release-builds.md) | Signing key, Maps key fingerprints, building release APKs |
 | [migrations.md](migrations.md) | Applying or checking database changes |
 | [secrets.md](secrets.md) | Keys: where they are, how to rotate them |
 

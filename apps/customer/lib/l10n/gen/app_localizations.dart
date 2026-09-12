@@ -1045,6 +1045,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your session ended. Sign in again.'**
   String get sessionExpired;
+
+  /// No description provided for @coverageNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No distributor is online near this spot right now'**
+  String get coverageNone;
+
+  /// No description provided for @coverageNoneBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You can still order: we\'ll look up to {km} km away for {minutes} minutes.'**
+  String coverageNoneBody(int minutes, String km);
+
+  /// No description provided for @coverageSome.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} distributors online nearby'**
+  String coverageSome(int count);
+
+  /// No description provided for @notifExpiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No distributor available'**
+  String get notifExpiredTitle;
+
+  /// No description provided for @notifExpiredBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Order #{number} wasn\'t accepted in time. You can order again.'**
+  String notifExpiredBody(int number);
+
+  /// No description provided for @expiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No distributor accepted this order in time'**
+  String get expiredTitle;
+
+  /// No description provided for @expiredBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Distributors near you were busy or offline. Order again now, or try a little later.'**
+  String get expiredBody;
+
+  /// No description provided for @orderAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Order again'**
+  String get orderAgain;
+
+  /// No description provided for @orderAgainConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Place the same order again?'**
+  String get orderAgainConfirm;
 }
 
 class _AppLocalizationsDelegate

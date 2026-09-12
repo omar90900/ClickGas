@@ -3,7 +3,26 @@
 Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow the
 apps' `pubspec.yaml` version.
 
-## [Unreleased] - Revenue model and session fix
+## [Unreleased] - Coverage and demo readiness
+
+### Added
+- Widening search: a waiting order is offered 2 → 4 → 6 km away (every 5
+  minutes); the dispatch radius is back to 2 km.
+- Order expiry after 20 minutes (pg_cron, every minute, logged in
+  `job_runs`); the customer is notified and can "Order again".
+- Coverage check before ordering ("no distributor online near this spot" or
+  "N distributors nearby") and recorded coverage gaps.
+- Dashboard **Coverage** page: acceptance rate, expired orders, median time to
+  accept per city, unserved-demand map, expiry job runs. Live map shows each
+  waiting order's search circle. New settings for the search and expiry.
+- Demo tooling: `tools/demo/seed.mjs` (1 owner, 5 distributors, 12
+  customers, 15 past orders), `simulate.mjs` (trucks driving real roads,
+  accepting and delivering), `reset.mjs`; "Hide demo data" in the dashboard;
+  demo tags in lists.
+- Release signing for both Android apps; runbooks for demo and release
+  builds; a 10-minute presentation script in English and Arabic.
+
+## Revenue model and session fix
 
 ### Fixed
 - Apps stopped working after about an hour (expired login token while the

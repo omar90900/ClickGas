@@ -106,6 +106,21 @@ class _LiveMapPageState extends State<LiveMapPage> {
               urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
               userAgentPackageName: 'com.clickgas.admin',
             ),
+            // How far each waiting order is currently offered (it widens).
+            CircleLayer(
+              circles: [
+                for (final o in data.orders)
+                  if (o.status == OrderStatus.pending && o.radiusKm > 0)
+                    CircleMarker(
+                      point: LatLng(o.lat, o.lng),
+                      radius: o.radiusKm * 1000,
+                      useRadiusInMeter: true,
+                      color: orderPinColor(o, now).withValues(alpha: 0.07),
+                      borderColor: orderPinColor(o, now).withValues(alpha: 0.5),
+                      borderStrokeWidth: 1.5,
+                    ),
+              ],
+            ),
             MarkerLayer(
               markers: [
                 for (final d in data.drivers)
@@ -296,7 +311,8 @@ class _LiveList extends StatelessWidget {
             title: Text('#${o.orderNumber} · ${o.customerName}', maxLines: 1, overflow: TextOverflow.ellipsis),
             subtitle: Text(
               o.status == OrderStatus.pending
-                  ? l.waitingFor(Fmt.duration(context, o.waited(now)))
+                  ? '${l.waitingFor(Fmt.duration(context, o.waited(now)))} · '
+                      '${l.searchRadiusNow(o.radiusKm.toStringAsFixed(0))}'
                   : '${orderStatusLabel(l, o.status)} · ${names[o.driverId] ?? ''}',
             ),
             onTap: () => onOrder(o),

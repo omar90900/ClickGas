@@ -2557,6 +2557,168 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Waived a charge'**
   String get actChargeWaived;
+
+  /// No description provided for @navCoverage.
+  ///
+  /// In en, this message translates to:
+  /// **'Coverage'**
+  String get navCoverage;
+
+  /// No description provided for @hideDemo.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide demo data'**
+  String get hideDemo;
+
+  /// No description provided for @demo.
+  ///
+  /// In en, this message translates to:
+  /// **'Demo'**
+  String get demo;
+
+  /// No description provided for @coverageNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Where customers are not being served: orders that expired because nobody accepted them, places where customers found no distributor online, and how fast orders are accepted. Use it to see where more distributors are needed.'**
+  String get coverageNote;
+
+  /// No description provided for @kpiPlaced.
+  ///
+  /// In en, this message translates to:
+  /// **'Orders placed'**
+  String get kpiPlaced;
+
+  /// No description provided for @kpiAcceptance.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted'**
+  String get kpiAcceptance;
+
+  /// No description provided for @acceptanceCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'{accepted} of {placed} orders'**
+  String acceptanceCaption(int accepted, int placed);
+
+  /// No description provided for @kpiExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired (nobody accepted)'**
+  String get kpiExpired;
+
+  /// No description provided for @kpiGaps.
+  ///
+  /// In en, this message translates to:
+  /// **'No-service checks'**
+  String get kpiGaps;
+
+  /// No description provided for @gapsCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Customers who found no distributor nearby'**
+  String get gapsCaption;
+
+  /// No description provided for @unservedMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Unserved demand'**
+  String get unservedMap;
+
+  /// No description provided for @legendExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired order'**
+  String get legendExpired;
+
+  /// No description provided for @legendGap.
+  ///
+  /// In en, this message translates to:
+  /// **'No distributor nearby'**
+  String get legendGap;
+
+  /// No description provided for @byCity.
+  ///
+  /// In en, this message translates to:
+  /// **'By city'**
+  String get byCity;
+
+  /// No description provided for @colCity.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get colCity;
+
+  /// No description provided for @colExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get colExpired;
+
+  /// No description provided for @colGaps.
+  ///
+  /// In en, this message translates to:
+  /// **'No-service'**
+  String get colGaps;
+
+  /// No description provided for @unknownCity.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get unknownCity;
+
+  /// No description provided for @jobRuns.
+  ///
+  /// In en, this message translates to:
+  /// **'Order expiry job'**
+  String get jobRuns;
+
+  /// No description provided for @jobRunOk.
+  ///
+  /// In en, this message translates to:
+  /// **'Ran: {count} expired'**
+  String jobRunOk(int count);
+
+  /// No description provided for @jobRunFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get jobRunFailed;
+
+  /// No description provided for @noJobRuns.
+  ///
+  /// In en, this message translates to:
+  /// **'The expiry job hasn\'t run yet. Check that pg_cron is enabled (docs/runbooks/demo.md).'**
+  String get noJobRuns;
+
+  /// No description provided for @radiusStepKm.
+  ///
+  /// In en, this message translates to:
+  /// **'Widen the search by'**
+  String get radiusStepKm;
+
+  /// No description provided for @radiusStepMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Widen every'**
+  String get radiusStepMinutes;
+
+  /// No description provided for @maxRadiusKm.
+  ///
+  /// In en, this message translates to:
+  /// **'Widest search'**
+  String get maxRadiusKm;
+
+  /// No description provided for @orderExpiry.
+  ///
+  /// In en, this message translates to:
+  /// **'Expire unaccepted orders after'**
+  String get orderExpiry;
+
+  /// No description provided for @searchRadiusNow.
+  ///
+  /// In en, this message translates to:
+  /// **'offered within {km} km'**
+  String searchRadiusNow(String km);
 }
 
 class _AppLocalizationsDelegate

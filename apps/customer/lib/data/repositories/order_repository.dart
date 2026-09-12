@@ -46,6 +46,17 @@ class OrderRepository {
         return order;
       });
 
+  /// Distributors online near a spot. The server also records a coverage
+  /// gap when there are none (docs/business-rules.md#coverage).
+  Future<Coverage> coverage(double lat, double lng) =>
+      guard('orders.coverage', () async {
+        final value = await _client.rpc(
+          'coverage_check',
+          params: {'p_lat': lat, 'p_lng': lng},
+        );
+        return Coverage.fromMap(Map<String, dynamic>.from(value as Map));
+      });
+
   /// Live list of the customer's orders, newest first (Supabase Realtime).
   Stream<List<GasOrder>> watchCustomerOrders(String customerId) => _client
       .from('orders')

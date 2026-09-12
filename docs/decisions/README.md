@@ -17,6 +17,7 @@ one; if a decision changes, write a new record that supersedes the old.
 | [0009](0009-admin-web-app.md) | Admin dashboard as a Flutter web app with OpenStreetMap | Accepted |
 | [0010](0010-staff-roles-and-audit.md) | Staff roles checked in the database, every action audited | Accepted |
 | [0011](0011-revenue-and-charges.md) | Fees are platform revenue; charges replace the distributor ledger | Accepted |
+| [0012](0012-coverage-expiry-and-demo-data.md) | Widening search, order expiry, and demo data in the same project | Accepted |
 
 Template:
 

@@ -112,6 +112,7 @@ class _DriversTable extends StatelessWidget {
                   const SizedBox(width: 10),
                   TwoLine(d.fullName, Fmt.phone(d.phone), ltrSubtitle: true),
                   if (!d.isActive) ...[const SizedBox(width: 8), Tag(l.blocked, AppColors.danger)],
+                  if (d.isDemo) ...[const SizedBox(width: 8), Tag(l.demo, Colors.purple)],
                 ],
               )),
               DataCell(TwoLine(d.vehiclePlate.isEmpty ? '-' : d.vehiclePlate, vehicleTypeLabel(l, d.vehicleType))),

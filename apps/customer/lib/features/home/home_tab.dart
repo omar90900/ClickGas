@@ -17,6 +17,7 @@ import '../../state/my_orders_controller.dart';
 import '../../state/session_controller.dart';
 import '../../widgets/common.dart';
 import '../../widgets/map_icons.dart';
+import '../orders/reorder.dart';
 import '../shell/main_shell.dart';
 
 /// Main tab: live map of online distributors + the order form.
@@ -47,6 +48,8 @@ class _HomeTabState extends State<HomeTab> {
   int? _serviceId;
   int _quantity = 1;
   bool _placing = false;
+  Coverage? _coverage;
+  int _coverageRequest = 0;
 
   @override
   void initState() {
@@ -120,7 +123,27 @@ class _HomeTabState extends State<HomeTab> {
 
   void _scheduleGeocode() {
     _geoDebounce?.cancel();
-    _geoDebounce = Timer(const Duration(milliseconds: 450), _reverseGeocode);
+    _geoDebounce = Timer(const Duration(milliseconds: 450), _onPinSettled);
+  }
+
+  void _onPinSettled() {
+    _reverseGeocode();
+    _checkCoverage();
+  }
+
+  /// Is any distributor online near the pin? Shown above "Order now".
+  Future<void> _checkCoverage() async {
+    if (!mounted || context.read<MyOrdersController>().openOrder != null) return;
+    final request = ++_coverageRequest;
+    final target = _target;
+    try {
+      final coverage = await context
+          .read<OrderRepository>()
+          .coverage(target.latitude, target.longitude);
+      if (mounted && request == _coverageRequest) setState(() => _coverage = coverage);
+    } catch (_) {
+      if (mounted && request == _coverageRequest) setState(() => _coverage = null);
+    }
   }
 
   /// Street name for the pin, like "ش. قاسم بن الربيع".
@@ -188,6 +211,7 @@ class _HomeTabState extends State<HomeTab> {
   @override
   Widget build(BuildContext context) {
     final openOrder = context.watch<MyOrdersController>().openOrder;
+    final expired = context.watch<MyOrdersController>().recentlyExpired;
     return Column(
       children: [
         Expanded(child: _buildMap()),
@@ -198,7 +222,17 @@ class _HomeTabState extends State<HomeTab> {
                   onTrack: () =>
                       context.read<ShellTabs>().go(ShellTabs.tracking),
                 )
-              : _buildOrderForm(),
+              : Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    if (expired != null) ...[
+                      _ExpiredCard(order: expired),
+                      const SizedBox(height: 12),
+                    ],
+                    _buildOrderForm(),
+                  ],
+                ),
         ),
       ],
     );
@@ -406,6 +440,10 @@ class _HomeTabState extends State<HomeTab> {
               ],
             ),
             const SizedBox(height: 12),
+            if (_coverage != null) ...[
+              _CoverageNote(coverage: _coverage!),
+              const SizedBox(height: 10),
+            ],
             FilledButton(
               onPressed: _placing || _moving
                   ? null
@@ -417,6 +455,110 @@ class _HomeTabState extends State<HomeTab> {
           ],
         );
       },
+    );
+  }
+}
+
+/// "No distributor online near this spot" (you can still order: the search
+/// widens, then the order expires) or "N distributors nearby".
+class _CoverageNote extends StatelessWidget {
+  const _CoverageNote({required this.coverage});
+  final Coverage coverage;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    if (!coverage.none) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.local_shipping_rounded, size: 18, color: context.accent),
+          const SizedBox(width: 6),
+          Text(
+            l.coverageSome(coverage.nearby),
+            style: context.text.bodySmall?.copyWith(color: context.accent, fontWeight: FontWeight.w700),
+          ),
+        ],
+      );
+    }
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors.warning.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(Icons.info_outline_rounded, color: AppColors.warning),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(l.coverageNone, style: context.text.titleSmall?.copyWith(fontWeight: FontWeight.w800)),
+                const SizedBox(height: 2),
+                Text(
+                  l.coverageNoneBody(
+                    coverage.expiryMinutes,
+                    coverage.maxRadiusKm.toStringAsFixed(0),
+                  ),
+                  style: context.text.bodySmall,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// The last order expired: explain and offer to place it again.
+class _ExpiredCard extends StatelessWidget {
+  const _ExpiredCard({required this.order});
+  final GasOrder order;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    return Container(
+      padding: const EdgeInsets.fromLTRB(12, 12, 12, 4),
+      decoration: BoxDecoration(
+        color: AppColors.warning.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.timer_off_rounded, color: AppColors.warning),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  l.expiredTitle,
+                  style: context.text.titleSmall?.copyWith(fontWeight: FontWeight.w800),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(l.expiredBody, style: context.text.bodySmall),
+          Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: TextButton.icon(
+              onPressed: () async {
+                if (await reorder(context, order) && context.mounted) {
+                  context.read<ShellTabs>().go(ShellTabs.tracking);
+                }
+              },
+              icon: const Icon(Icons.replay_rounded),
+              label: Text(l.orderAgain),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

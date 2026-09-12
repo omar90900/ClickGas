@@ -95,6 +95,7 @@ class _CustomersPageState extends State<CustomersPage> {
                             DataCell(Wrap(spacing: 6, children: [
                               c.isActive ? Tag(l.active, context.accent) : Tag(l.blocked, AppColors.danger),
                               if (c.oftenCancels) Tag(l.oftenCancels, AppColors.warning),
+                              if (c.isDemo) Tag(l.demo, Colors.purple),
                             ])),
                             DataCell(Text(Fmt.date(context, c.createdAt))),
                           ],
@@ -164,6 +165,7 @@ class _CustomerPanelState extends State<_CustomerPanel> {
           children: [
             _active ? Tag(l.active, context.accent) : Tag(l.blocked, AppColors.danger),
             if (c.oftenCancels) Tag(l.oftenCancels, AppColors.warning),
+                              if (c.isDemo) Tag(l.demo, Colors.purple),
             Text(l.joinedOn(Fmt.date(context, c.createdAt)), style: context.text.bodySmall),
           ],
         ),

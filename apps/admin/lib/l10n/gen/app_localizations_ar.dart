@@ -1349,4 +1349,93 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get actChargeWaived => 'أعفى من مطالبة';
+
+  @override
+  String get navCoverage => 'التغطية';
+
+  @override
+  String get hideDemo => 'إخفاء البيانات التجريبية';
+
+  @override
+  String get demo => 'تجريبي';
+
+  @override
+  String get coverageNote =>
+      'أين لا يُخدَم العملاء: طلبات انتهت لأن أحداً لم يقبلها، ومواقع لم يجد فيها العملاء موزّعاً متصلاً، وسرعة قبول الطلبات. استخدمها لمعرفة أين نحتاج موزّعين أكثر.';
+
+  @override
+  String get kpiPlaced => 'الطلبات المقدَّمة';
+
+  @override
+  String get kpiAcceptance => 'المقبولة';
+
+  @override
+  String acceptanceCaption(int accepted, int placed) {
+    return '$accepted من $placed طلب';
+  }
+
+  @override
+  String get kpiExpired => 'منتهية (لم يقبلها أحد)';
+
+  @override
+  String get kpiGaps => 'مرات عدم توفر الخدمة';
+
+  @override
+  String get gapsCaption => 'عملاء لم يجدوا موزّعاً قريباً';
+
+  @override
+  String get unservedMap => 'الطلب غير المخدوم';
+
+  @override
+  String get legendExpired => 'طلب منتهٍ';
+
+  @override
+  String get legendGap => 'لا يوجد موزّع قريب';
+
+  @override
+  String get byCity => 'حسب المدينة';
+
+  @override
+  String get colCity => 'المدينة';
+
+  @override
+  String get colExpired => 'منتهية';
+
+  @override
+  String get colGaps => 'دون خدمة';
+
+  @override
+  String get unknownCity => 'غير معروفة';
+
+  @override
+  String get jobRuns => 'مهمة إنهاء الطلبات';
+
+  @override
+  String jobRunOk(int count) {
+    return 'نُفّذت: انتهى $count';
+  }
+
+  @override
+  String get jobRunFailed => 'فشلت';
+
+  @override
+  String get noJobRuns =>
+      'لم تُنفَّذ مهمة الإنهاء بعد. تحقّق من تفعيل pg_cron (docs/runbooks/demo.md).';
+
+  @override
+  String get radiusStepKm => 'توسيع البحث بمقدار';
+
+  @override
+  String get radiusStepMinutes => 'التوسيع كل';
+
+  @override
+  String get maxRadiusKm => 'أقصى نطاق للبحث';
+
+  @override
+  String get orderExpiry => 'إنهاء الطلبات غير المقبولة بعد';
+
+  @override
+  String searchRadiusNow(String km) {
+    return 'معروض ضمن $km كم';
+  }
 }

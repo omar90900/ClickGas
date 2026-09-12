@@ -8,6 +8,7 @@ import '../../data/repositories/order_repository.dart';
 import '../../state/my_orders_controller.dart';
 import '../../widgets/common.dart';
 import 'order_widgets.dart';
+import 'reorder.dart';
 
 /// Reads the order from the live list, so it updates in real time too.
 class OrderDetailsScreen extends StatelessWidget {
@@ -87,6 +88,27 @@ class OrderDetailsScreen extends StatelessWidget {
                     icon: const Icon(Icons.star_rounded),
                     label: Text(l.rateOrder),
                   ),
+                if (order.status == OrderStatus.expired) ...[
+                  Card(
+                    color: AppColors.warning.withValues(alpha: 0.10),
+                    child: ListTile(
+                      leading: const Icon(Icons.timer_off_rounded, color: AppColors.warning),
+                      title: Text(l.expiredTitle),
+                      subtitle: Text(l.expiredBody),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  FilledButton.icon(
+                    onPressed: () async {
+                      if (await reorder(context, order) && context.mounted) {
+                        Navigator.of(context).pop();
+                        onTrack();
+                      }
+                    },
+                    icon: const Icon(Icons.replay_rounded),
+                    label: Text(l.orderAgain),
+                  ),
+                ],
                 if (order.status.isOpen) ...[
                   FilledButton.icon(
                     onPressed: () {

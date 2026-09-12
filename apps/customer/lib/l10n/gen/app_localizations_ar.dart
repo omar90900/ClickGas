@@ -539,4 +539,38 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get sessionExpired => 'انتهت جلستك. سجّل الدخول مجدداً.';
+
+  @override
+  String get coverageNone => 'لا يوجد موزّع متصل قرب هذا الموقع الآن';
+
+  @override
+  String coverageNoneBody(int minutes, String km) {
+    return 'يمكنك الطلب: سنبحث حتى $km كم لمدة $minutes دقيقة.';
+  }
+
+  @override
+  String coverageSome(int count) {
+    return '$count موزّعين متصلين بالقرب منك';
+  }
+
+  @override
+  String get notifExpiredTitle => 'لا يوجد موزّع متاح';
+
+  @override
+  String notifExpiredBody(int number) {
+    return 'لم يُقبل الطلب #$number في الوقت المحدد. يمكنك الطلب مجدداً.';
+  }
+
+  @override
+  String get expiredTitle => 'لم يقبل أي موزّع هذا الطلب في الوقت المحدد';
+
+  @override
+  String get expiredBody =>
+      'الموزّعون القريبون مشغولون أو غير متصلين. اطلب مجدداً الآن أو بعد قليل.';
+
+  @override
+  String get orderAgain => 'اطلب مجدداً';
+
+  @override
+  String get orderAgainConfirm => 'تقديم الطلب نفسه مرة أخرى؟';
 }

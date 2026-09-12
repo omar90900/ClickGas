@@ -37,6 +37,11 @@ After the distributor marks it delivered. Errors: `ORDER_NOT_CONFIRMABLE`.
 ### `rate_order(p_order_id uuid, p_rating smallint, p_comment text = null) → orders`
 Once per delivered order. Errors: `INVALID_RATING`, `ORDER_NOT_RATEABLE`.
 
+### `coverage_check(p_lat float8, p_lng float8) → jsonb`
+`{nearby, nearest_km, radius_km, max_radius_km, expiry_minutes}`: approved
+distributors online within the widest search radius of the spot. Records a
+coverage gap when `nearby = 0`. Errors: `PERMISSION_DENIED`, `INVALID_SETTING`.
+
 ### `get_order_driver(p_order_id uuid) → table`
 `id, full_name, phone, avatar_url, vehicle_plate, vehicle_model, rating_avg, lat, lng, heading`
 for the caller's own order.
@@ -44,7 +49,8 @@ for the caller's own order.
 ## Distributor
 
 ### `nearby_orders(p_lat float8, p_lng float8) → table`
-Pending orders within `driver_radius_km`, nearest first:
+Pending orders within their current search radius (`order_radius_km`: 2 km,
+widening to 6 km while they wait), nearest first:
 `id, order_number, customer_name, customer_avatar, service_name_ar, service_name_en, quantity, total_price, payment_method, delivery_lat, delivery_lng, delivery_address, notes, created_at, distance_m`.
 Errors: `NOT_A_VERIFIED_DRIVER`.
 
@@ -91,7 +97,9 @@ who isn't staff gets `PERMISSION_DENIED`. Reasons need 3+ characters
 
 | Function | Roles | Returns |
 |---|---|---|
-| `admin_whoami()` | anyone | own `user_id, full_name, email, role`, or no row when not staff |
+| `admin_whoami()` | anyone | own `user_id, full_name, email, role, hide_demo`, or no row when not staff |
+| `admin_set_hide_demo(p_hide)` | staff | the caller's dashboard functions leave out demo data |
+| `admin_coverage(p_from, p_to)` | staff | jsonb: `totals` (placed, accepted, delivered, expired, cancelled, median seconds to accept), `gaps`, `by_city[]`, `points[]` (expired orders and gaps with position), `job_runs[]` |
 | `admin_overview()` | staff | jsonb: today (Asia/Amman) orders placed/delivered/cancelled/expired, fees, cash, median seconds to accept, waiting, waiting > 10 min, distributors online/approved/pending, documents to review, customers, fees outstanding, `last_14_days[]` |
 | `admin_live_map()` | staff | jsonb `{orders: [...open orders with position], drivers: [...online or busy with position]}` |
 | `admin_list_drivers(p_status = null, p_search = null, p_driver_id = null)` | staff | distributors with status, live state, open/delivered counts, `open_charges`, document counts; pending first |
@@ -136,11 +144,19 @@ Staff also read these tables directly (RLS): `profiles`, `drivers`, `orders`,
 | `admin_update_service(p_service_id, p_price, p_is_active, p_name_ar, p_name_en, p_description_ar, p_description_en, p_badge, p_sort_order)` | null = unchanged, empty text clears; price changes go to `price_history` | `NOT_FOUND`, `INVALID_AMOUNT`, `INVALID_SETTING` |
 | `admin_create_service(p_code, p_name_ar, p_name_en, p_price, p_icon, p_description_ar, p_description_en)` | adds an active service | `INVALID_SETTING`, `INVALID_AMOUNT` |
 | `admin_set_fees(p_customer_fee, p_driver_fee, p_effective_from = now, p_note)` | new fee pair from now or a later date | `INVALID_AMOUNT`, `INVALID_SETTING` |
-| `admin_update_config(p_changes jsonb)` | e.g. `{"driver_radius_km": 3}`; keys: `delivery_fee, max_quantity, search_radius_km, support_phone, driver_radius_km, max_active_orders, auto_verify_drivers, confirm_timeout_minutes, min_customer_version, min_distributor_version` | `INVALID_SETTING` |
+| `admin_update_config(p_changes jsonb)` | e.g. `{"driver_radius_km": 3}`; keys: `delivery_fee, max_quantity, search_radius_km, support_phone, driver_radius_km, max_active_orders, auto_verify_drivers, confirm_timeout_minutes, min_customer_version, min_distributor_version, radius_step_km, radius_step_minutes, max_radius_km, order_expiry_minutes` | `INVALID_SETTING` |
 | `admin_set_city_active(p_city_id, p_is_active)` | show or hide a city at sign-up | `NOT_FOUND` |
 | `admin_set_flag(p_key, p_enabled)` | feature flag on/off | `NOT_FOUND` |
 | `admin_save_staff(p_login, p_role)` | makes an existing account (email or +962 phone) staff, or changes its role | `NOT_FOUND`, `INVALID_TARGET` (distributor), `LAST_OWNER` |
 | `admin_remove_staff(p_user_id)` | the account becomes a customer | `NOT_FOUND`, `LAST_OWNER` |
+
+## System and demo (service role only)
+
+| Function | Called by | Does |
+|---|---|---|
+| `expire_stale_orders() → int` | pg_cron job `clickgas-expire-orders`, every minute | expires pending orders older than `order_expiry_minutes`; logs `job_runs` |
+| `demo_seed_order(p jsonb) → uuid` | `tools/demo/seed.mjs` | one past order for a demo customer with its status events (seed mode) |
+| `demo_reset_data() → jsonb` | `tools/demo/reset.mjs` | deletes demo orders, gaps and demo staff actions |
 
 ## Tables the apps read directly
 
@@ -162,7 +178,8 @@ Staff also read these tables directly (RLS): `profiles`, `drivers`, `orders`,
 
 `is_staff`, `my_staff_role`, `private.require_staff`, `private.require_owner`,
 `private.require_reason`, `private.audit`, `sync_driver_status` (trigger),
-`log_price_change` (trigger), `is_active_customer`, `is_verified_driver`, `is_my_assigned_driver`,
+`log_price_change` (trigger), `order_radius_km` (widening search),
+`private.hide_demo`, `private.visible`, `private.seeding`, `is_active_customer`, `is_verified_driver`, `is_my_assigned_driver`,
 `can_view_order` (used by RLS), `driver_committed_orders` (used by
 `accept_order`), `distance_m` (haversine metres), `check_order_transition`
 (trigger), `prepare_new_order` (trigger), `handle_new_user` (sign-up trigger),

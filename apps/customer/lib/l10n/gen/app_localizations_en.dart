@@ -538,4 +538,39 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sessionExpired => 'Your session ended. Sign in again.';
+
+  @override
+  String get coverageNone =>
+      'No distributor is online near this spot right now';
+
+  @override
+  String coverageNoneBody(int minutes, String km) {
+    return 'You can still order: we\'ll look up to $km km away for $minutes minutes.';
+  }
+
+  @override
+  String coverageSome(int count) {
+    return '$count distributors online nearby';
+  }
+
+  @override
+  String get notifExpiredTitle => 'No distributor available';
+
+  @override
+  String notifExpiredBody(int number) {
+    return 'Order #$number wasn\'t accepted in time. You can order again.';
+  }
+
+  @override
+  String get expiredTitle => 'No distributor accepted this order in time';
+
+  @override
+  String get expiredBody =>
+      'Distributors near you were busy or offline. Order again now, or try a little later.';
+
+  @override
+  String get orderAgain => 'Order again';
+
+  @override
+  String get orderAgainConfirm => 'Place the same order again?';
 }

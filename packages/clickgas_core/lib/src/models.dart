@@ -701,6 +701,40 @@ class DriverOrder {
       );
 }
 
+// ---------------------------------------------------------------- coverage
+
+/// `coverage_check(lat, lng)`: is any distributor online near this spot?
+class Coverage {
+  /// Online distributors within [maxRadiusKm].
+  final int nearby;
+
+  /// Nearest online distributor, anywhere (null when none is online).
+  final double? nearestKm;
+  final double radiusKm;
+  final double maxRadiusKm;
+
+  /// An order nobody accepts expires after this many minutes.
+  final int expiryMinutes;
+
+  const Coverage({
+    required this.nearby,
+    this.nearestKm,
+    this.radiusKm = 2,
+    this.maxRadiusKm = 6,
+    this.expiryMinutes = 20,
+  });
+
+  bool get none => nearby == 0;
+
+  factory Coverage.fromMap(Map<String, dynamic> m) => Coverage(
+        nearby: _i(m['nearby']),
+        nearestKm: _dOrNull(m['nearest_km']),
+        radiusKm: m['radius_km'] == null ? 2 : _d(m['radius_km']),
+        maxRadiusKm: m['max_radius_km'] == null ? 6 : _d(m['max_radius_km']),
+        expiryMinutes: m['expiry_minutes'] == null ? 20 : _i(m['expiry_minutes']),
+      );
+}
+
 // ---------------------------------------------------------------- charges
 
 enum ChargeKind {

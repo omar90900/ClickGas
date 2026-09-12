@@ -1355,4 +1355,93 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get actChargeWaived => 'Waived a charge';
+
+  @override
+  String get navCoverage => 'Coverage';
+
+  @override
+  String get hideDemo => 'Hide demo data';
+
+  @override
+  String get demo => 'Demo';
+
+  @override
+  String get coverageNote =>
+      'Where customers are not being served: orders that expired because nobody accepted them, places where customers found no distributor online, and how fast orders are accepted. Use it to see where more distributors are needed.';
+
+  @override
+  String get kpiPlaced => 'Orders placed';
+
+  @override
+  String get kpiAcceptance => 'Accepted';
+
+  @override
+  String acceptanceCaption(int accepted, int placed) {
+    return '$accepted of $placed orders';
+  }
+
+  @override
+  String get kpiExpired => 'Expired (nobody accepted)';
+
+  @override
+  String get kpiGaps => 'No-service checks';
+
+  @override
+  String get gapsCaption => 'Customers who found no distributor nearby';
+
+  @override
+  String get unservedMap => 'Unserved demand';
+
+  @override
+  String get legendExpired => 'Expired order';
+
+  @override
+  String get legendGap => 'No distributor nearby';
+
+  @override
+  String get byCity => 'By city';
+
+  @override
+  String get colCity => 'City';
+
+  @override
+  String get colExpired => 'Expired';
+
+  @override
+  String get colGaps => 'No-service';
+
+  @override
+  String get unknownCity => 'Unknown';
+
+  @override
+  String get jobRuns => 'Order expiry job';
+
+  @override
+  String jobRunOk(int count) {
+    return 'Ran: $count expired';
+  }
+
+  @override
+  String get jobRunFailed => 'Failed';
+
+  @override
+  String get noJobRuns =>
+      'The expiry job hasn\'t run yet. Check that pg_cron is enabled (docs/runbooks/demo.md).';
+
+  @override
+  String get radiusStepKm => 'Widen the search by';
+
+  @override
+  String get radiusStepMinutes => 'Widen every';
+
+  @override
+  String get maxRadiusKm => 'Widest search';
+
+  @override
+  String get orderExpiry => 'Expire unaccepted orders after';
+
+  @override
+  String searchRadiusNow(String km) {
+    return 'offered within $km km';
+  }
 }

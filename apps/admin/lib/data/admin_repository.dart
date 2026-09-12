@@ -37,6 +37,21 @@ class AdminRepository {
         return LiveMap.fromMap(_row(await _client.rpc('admin_live_map')));
       });
 
+  /// Orders served vs expired, coverage gaps and job runs for [from]..[to].
+  Future<CoverageReport> coverage(DateTime from, DateTime to) => guard('admin.coverage', () async {
+        final value = await _client.rpc('admin_coverage', params: {
+          'p_from': from.toUtc().toIso8601String(),
+          'p_to': to.toUtc().toIso8601String(),
+        });
+        return CoverageReport.fromMap(_row(value));
+      });
+
+  /// The caller's dashboard shows or hides demo data (tools/demo).
+  Future<bool> setHideDemo(bool hide) => guard('admin.hide_demo', () async {
+        final value = await _client.rpc('admin_set_hide_demo', params: {'p_hide': hide});
+        return value == true;
+      });
+
   // ---------------------------------------------------------- distributors
 
   Future<List<AdminDriver>> drivers({DriverStatus? status, String? search}) =>

@@ -33,6 +33,17 @@ class StaffSession extends ChangeNotifier {
   /// The least powerful role until [me] is known.
   StaffRole get role => _me?.role ?? StaffRole.support;
 
+  /// Whether the dashboard hides data created by tools/demo.
+  bool get hideDemo => _me?.hideDemo ?? false;
+
+  Future<void> setHideDemo(bool hide) async {
+    final me = _me;
+    if (me == null) return;
+    final saved = await _admin.setHideDemo(hide);
+    _me = me.copyWith(hideDemo: saved);
+    notifyListeners();
+  }
+
   Future<void> _handleUser(User? user) async {
     if (user?.id == _userId && _status != StaffStatus.initializing) return;
     _userId = user?.id;

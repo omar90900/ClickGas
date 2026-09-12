@@ -6,6 +6,7 @@ import '../../l10n/gen/app_localizations.dart';
 import '../../state/staff_session.dart';
 import '../../widgets/common.dart';
 import '../audit/audit_page.dart';
+import '../coverage/coverage_page.dart';
 import '../customers/customers_page.dart';
 import '../drivers/drivers_page.dart';
 import '../finance/finance_page.dart';
@@ -20,6 +21,7 @@ import '../staff/staff_page.dart';
 enum AdminPage {
   overview(Icons.space_dashboard_rounded),
   live(Icons.map_rounded),
+  coverage(Icons.radar_rounded),
   orders(Icons.receipt_long_rounded),
   drivers(Icons.local_shipping_rounded),
   customers(Icons.people_alt_rounded),
@@ -35,6 +37,7 @@ enum AdminPage {
   String label(AppLocalizations l) => switch (this) {
         overview => l.navOverview,
         live => l.navLive,
+        coverage => l.navCoverage,
         orders => l.navOrders,
         drivers => l.navDrivers,
         customers => l.navCustomers,
@@ -81,6 +84,7 @@ class _AdminShellState extends State<AdminShell> {
   Widget _content() => switch (_page) {
         AdminPage.overview => const OverviewPage(),
         AdminPage.live => const LiveMapPage(),
+        AdminPage.coverage => const CoveragePage(),
         AdminPage.orders => const OrdersPage(),
         AdminPage.drivers => DriversPage(key: ValueKey(_driverFilter), initialStatus: _driverFilter),
         AdminPage.customers => const CustomersPage(),
@@ -158,7 +162,13 @@ class _AdminShellState extends State<AdminShell> {
         body: Row(
           children: [
             if (useRail) ...[rail, const VerticalDivider(width: 1)],
-            Expanded(child: KeyedSubtree(key: ValueKey(_page), child: _content())),
+            // A new key when "hide demo data" changes reloads the page.
+            Expanded(
+              child: KeyedSubtree(
+                key: ValueKey('${_page.name}|${session.hideDemo}'),
+                child: _content(),
+              ),
+            ),
           ],
         ),
       ),
@@ -188,6 +198,10 @@ class _AccountMenu extends StatelessWidget {
             settings.setThemeMode(ThemeMode.dark);
           case 'system':
             settings.setThemeMode(ThemeMode.system);
+          case 'demo':
+            session.setHideDemo(!session.hideDemo).catchError((Object e) {
+              if (context.mounted) showSnack(context, failureText(context, e), error: true);
+            });
           case 'diagnostics':
             sendDiagnostics(context);
           case 'signout':
@@ -213,6 +227,8 @@ class _AccountMenu extends StatelessWidget {
             value: 'light', checked: settings.themeMode == ThemeMode.light, child: Text(l.themeLight)),
         CheckedPopupMenuItem(
             value: 'dark', checked: settings.themeMode == ThemeMode.dark, child: Text(l.themeDark)),
+        const PopupMenuDivider(),
+        CheckedPopupMenuItem(value: 'demo', checked: session.hideDemo, child: Text(l.hideDemo)),
         const PopupMenuDivider(),
         PopupMenuItem(
           value: 'diagnostics',

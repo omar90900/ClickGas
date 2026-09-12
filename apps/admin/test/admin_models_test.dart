@@ -58,6 +58,42 @@ void main() {
     });
   });
 
+  group('coverage', () {
+    test('the report computes acceptance and keeps map points', () {
+      final r = CoverageReport.fromMap({
+        'totals': {'placed': 10, 'accepted': 7, 'expired': 2, 'median_accept_seconds': 95},
+        'gaps': 3,
+        'by_city': [
+          {'city_id': 1, 'name_ar': 'عمّان', 'name_en': 'Amman', 'placed': 10, 'accepted': 7, 'expired': 2, 'gaps': 3},
+        ],
+        'points': [
+          {'kind': 'expired', 'lat': 31.9, 'lng': 35.9, 'order_number': 1042, 'order_id': 'o1'},
+          {'kind': 'gap', 'lat': 32.0, 'lng': 36.0},
+        ],
+        'job_runs': [
+          {'job': 'expire_orders', 'ok': true, 'detail': {'expired': 2}},
+          {'job': 'expire_orders', 'ok': false, 'detail': {'error': 'boom'}},
+        ],
+      });
+      expect(r.acceptanceRate, closeTo(0.7, 1e-9));
+      expect(r.cities.single.name('en'), 'Amman');
+      expect(r.points.first.isExpiredOrder, isTrue);
+      expect(r.points.last.orderId, isNull);
+      expect(r.jobRuns.first.expired, 2);
+      expect(r.jobRuns.last.error, 'boom');
+      expect(const CoverageReport().acceptanceRate, 0);
+    });
+
+    test('live orders carry their current search radius', () {
+      final o = LiveOrder.fromMap({
+        'id': 'o1', 'order_number': 1, 'status': 'pending', 'quantity': 1, 'total_price': 7,
+        'lat': 31.9, 'lng': 35.9, 'customer_name': 'C', 'radius_km': 4, 'is_demo': true,
+      });
+      expect(o.radiusKm, 4);
+      expect(o.isDemo, isTrue);
+    });
+  });
+
   group('finance', () {
     test('the report adds up income and keeps charges apart', () {
       final r = FinanceReport.fromMap({

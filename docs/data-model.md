@@ -47,6 +47,11 @@ erDiagram
 | `admin_actions` | staff action (audit trail) | `actor_id`, `actor_name`, `actor_role`, `action` (e.g. `order.cancel`), `target_type`, `target_id`, `reason`, `detail` (jsonb before/after) |
 | `driver_documents` | current paper per distributor and kind | `kind`, `file_path`, `status` (pending/approved/rejected), `expires_on`, `review_note` |
 | `price_history` | service price | `service_id`, `old_price`, `new_price`, `changed_by`, `changed_at` (written by trigger) |
+| `coverage_gaps` | "no distributor nearby" check | `customer_id`, `lat`, `lng`, `city_id`, `is_demo`, `created_at` |
+
+Also added in migration 7: `profiles.is_demo`, `orders.is_demo`,
+`staff_members.hide_demo`, and `app_config.radius_step_km`,
+`radius_step_minutes`, `max_radius_km`, `order_expiry_minutes`.
 
 ## Views
 
@@ -83,3 +88,4 @@ erDiagram
 | `20260912090000_foundation.sql` | fils, fees + ledger, state machine, safe phone login, diagnostics, job runs, flags, descriptions |
 | `20260912150000_admin_core.sql` | staff roles, audit trail, staff read access, distributor status and documents, staff actions, price history, dashboard functions |
 | `20260912200000_revenue_and_charges.sql` | fees are revenue only; ledger removed; `driver_charges`; `admin_finance` |
+| `20260913090000_coverage_and_demo.sql` | widening search, order expiry (pg_cron), coverage checks and gaps, demo flags and seed mode, `admin_coverage` |

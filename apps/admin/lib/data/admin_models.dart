@@ -61,6 +61,9 @@ class StaffMember {
   final StaffRole role;
   final DateTime? createdAt;
 
+  /// This staff member's dashboard hides demo data (tools/demo).
+  final bool hideDemo;
+
   const StaffMember({
     required this.userId,
     required this.fullName,
@@ -68,7 +71,18 @@ class StaffMember {
     this.email,
     this.phone,
     this.createdAt,
+    this.hideDemo = false,
   });
+
+  StaffMember copyWith({bool? hideDemo}) => StaffMember(
+        userId: userId,
+        fullName: fullName,
+        role: role,
+        email: email,
+        phone: phone,
+        createdAt: createdAt,
+        hideDemo: hideDemo ?? this.hideDemo,
+      );
 
   /// A row of `admin_whoami()`.
   factory StaffMember.fromWhoami(Map<String, dynamic> m) => StaffMember(
@@ -76,6 +90,7 @@ class StaffMember {
         fullName: m['full_name'] as String? ?? '',
         email: m['email'] as String?,
         role: StaffRole.parse(m['role']),
+        hideDemo: m['hide_demo'] as bool? ?? false,
       );
 
   /// A row of `staff_members` with the embedded `profiles` row.
@@ -217,6 +232,10 @@ class LiveOrder {
   final String serviceNameAr;
   final String serviceNameEn;
 
+  /// How far the order is being offered right now (widens while it waits).
+  final double radiusKm;
+  final bool isDemo;
+
   const LiveOrder({
     required this.id,
     required this.orderNumber,
@@ -232,6 +251,8 @@ class LiveOrder {
     this.createdAt,
     this.acceptedAt,
     this.driverId,
+    this.radiusKm = 0,
+    this.isDemo = false,
   });
 
   String serviceName(String locale) =>
@@ -255,6 +276,8 @@ class LiveOrder {
         customerName: m['customer_name'] as String? ?? '',
         serviceNameAr: m['service_name_ar'] as String? ?? '',
         serviceNameEn: m['service_name_en'] as String? ?? '',
+        radiusKm: _d(m['radius_km']),
+        isDemo: m['is_demo'] as bool? ?? false,
       );
 }
 
@@ -354,6 +377,9 @@ class AdminDriver {
   final int documentsPending;
   final int documentsTotal;
 
+  /// Created by tools/demo.
+  final bool isDemo;
+
   const AdminDriver({
     required this.id,
     required this.fullName,
@@ -381,6 +407,7 @@ class AdminDriver {
     this.openCharges = 0,
     this.documentsPending = 0,
     this.documentsTotal = 0,
+    this.isDemo = false,
   });
 
   factory AdminDriver.fromMap(Map<String, dynamic> m) => AdminDriver(
@@ -410,6 +437,7 @@ class AdminDriver {
         openCharges: _d(m['open_charges']),
         documentsPending: _i(m['documents_pending']),
         documentsTotal: _i(m['documents_total']),
+        isDemo: m['is_demo'] as bool? ?? false,
       );
 }
 
@@ -428,6 +456,7 @@ class AdminCustomer {
   final int cancelled;
   final int openOrders;
   final DateTime? lastOrderAt;
+  final bool isDemo;
 
   const AdminCustomer({
     required this.id,
@@ -443,6 +472,7 @@ class AdminCustomer {
     this.cancelled = 0,
     this.openOrders = 0,
     this.lastOrderAt,
+    this.isDemo = false,
   });
 
   /// Reliability flag: at least 4 orders and half or more cancelled.
@@ -462,6 +492,7 @@ class AdminCustomer {
         cancelled: _i(m['cancelled']),
         openOrders: _i(m['open_orders']),
         lastOrderAt: _date(m['last_order_at']),
+        isDemo: m['is_demo'] as bool? ?? false,
       );
 }
 
@@ -931,6 +962,13 @@ class ConfigSettings {
   final int confirmTimeoutMinutes;
   final String minCustomerVersion;
   final String minDistributorVersion;
+
+  /// A waiting order is offered this much further every [radiusStepMinutes],
+  /// up to [maxRadiusKm]; it expires after [orderExpiryMinutes].
+  final double radiusStepKm;
+  final int radiusStepMinutes;
+  final double maxRadiusKm;
+  final int orderExpiryMinutes;
   final DateTime? updatedAt;
 
   const ConfigSettings({
@@ -944,6 +982,10 @@ class ConfigSettings {
     this.confirmTimeoutMinutes = 120,
     this.minCustomerVersion = '1.0.0',
     this.minDistributorVersion = '1.0.0',
+    this.radiusStepKm = 2,
+    this.radiusStepMinutes = 5,
+    this.maxRadiusKm = 6,
+    this.orderExpiryMinutes = 20,
     this.updatedAt,
   });
 
@@ -958,6 +1000,10 @@ class ConfigSettings {
         confirmTimeoutMinutes: _i(m['confirm_timeout_minutes']),
         minCustomerVersion: m['min_customer_version'] as String? ?? '1.0.0',
         minDistributorVersion: m['min_distributor_version'] as String? ?? '1.0.0',
+        radiusStepKm: m['radius_step_km'] == null ? 2 : _d(m['radius_step_km']),
+        radiusStepMinutes: m['radius_step_minutes'] == null ? 5 : _i(m['radius_step_minutes']),
+        maxRadiusKm: m['max_radius_km'] == null ? 6 : _d(m['max_radius_km']),
+        orderExpiryMinutes: m['order_expiry_minutes'] == null ? 20 : _i(m['order_expiry_minutes']),
         updatedAt: _date(m['updated_at']),
       );
 
@@ -973,6 +1019,10 @@ class ConfigSettings {
         'confirm_timeout_minutes': confirmTimeoutMinutes,
         'min_customer_version': minCustomerVersion,
         'min_distributor_version': minDistributorVersion,
+        'radius_step_km': radiusStepKm,
+        'radius_step_minutes': radiusStepMinutes,
+        'max_radius_km': maxRadiusKm,
+        'order_expiry_minutes': orderExpiryMinutes,
       };
 }
 
@@ -1137,6 +1187,146 @@ class FeatureFlag {
         enabled: m['enabled'] as bool? ?? false,
         description: m['description'] as String? ?? '',
         updatedAt: _date(m['updated_at']),
+      );
+}
+
+// ---------------------------------------------------------------- coverage
+
+/// `admin_coverage(from, to)`: how well orders get served, and where not.
+class CoverageReport {
+  final int placed;
+
+  /// Orders a distributor accepted at some point.
+  final int accepted;
+  final int delivered;
+  final int expired;
+  final int cancelled;
+
+  /// "No distributor near me" checks by customers.
+  final int gaps;
+  final double? medianAcceptSeconds;
+  final List<CityCoverage> cities;
+  final List<CoveragePoint> points;
+  final List<JobRun> jobRuns;
+
+  const CoverageReport({
+    this.placed = 0,
+    this.accepted = 0,
+    this.delivered = 0,
+    this.expired = 0,
+    this.cancelled = 0,
+    this.gaps = 0,
+    this.medianAcceptSeconds,
+    this.cities = const [],
+    this.points = const [],
+    this.jobRuns = const [],
+  });
+
+  /// Share of placed orders a distributor accepted (0-1).
+  double get acceptanceRate => placed == 0 ? 0 : accepted / placed;
+
+  factory CoverageReport.fromMap(Map<String, dynamic> m) {
+    final t = _map(m['totals']);
+    return CoverageReport(
+      placed: _i(t['placed']),
+      accepted: _i(t['accepted']),
+      delivered: _i(t['delivered']),
+      expired: _i(t['expired']),
+      cancelled: _i(t['cancelled']),
+      gaps: _i(m['gaps']),
+      medianAcceptSeconds: _dn(t['median_accept_seconds']),
+      cities: _list(m['by_city']).map(CityCoverage.fromMap).toList(),
+      points: _list(m['points']).map(CoveragePoint.fromMap).toList(),
+      jobRuns: _list(m['job_runs']).map(JobRun.fromMap).toList(),
+    );
+  }
+}
+
+class CityCoverage {
+  final int? cityId;
+  final String nameAr;
+  final String nameEn;
+  final int placed;
+  final int accepted;
+  final int expired;
+  final int gaps;
+  final double? medianAcceptSeconds;
+
+  const CityCoverage({
+    this.cityId,
+    this.nameAr = '',
+    this.nameEn = '',
+    this.placed = 0,
+    this.accepted = 0,
+    this.expired = 0,
+    this.gaps = 0,
+    this.medianAcceptSeconds,
+  });
+
+  String name(String locale) => _localized(locale, nameAr, nameEn);
+  double get acceptanceRate => placed == 0 ? 0 : accepted / placed;
+
+  factory CityCoverage.fromMap(Map<String, dynamic> m) => CityCoverage(
+        cityId: m['city_id'] == null ? null : _i(m['city_id']),
+        nameAr: m['name_ar'] as String? ?? '',
+        nameEn: m['name_en'] as String? ?? '',
+        placed: _i(m['placed']),
+        accepted: _i(m['accepted']),
+        expired: _i(m['expired']),
+        gaps: _i(m['gaps']),
+        medianAcceptSeconds: _dn(m['median_accept_seconds']),
+      );
+}
+
+/// An expired order or a "no distributor nearby" check, for the map.
+class CoveragePoint {
+  final String kind;
+  final double lat;
+  final double lng;
+  final DateTime? at;
+  final int? orderNumber;
+  final String? orderId;
+
+  const CoveragePoint({
+    required this.kind,
+    required this.lat,
+    required this.lng,
+    this.at,
+    this.orderNumber,
+    this.orderId,
+  });
+
+  bool get isExpiredOrder => kind == 'expired';
+
+  factory CoveragePoint.fromMap(Map<String, dynamic> m) => CoveragePoint(
+        kind: m['kind'] as String? ?? 'gap',
+        lat: _d(m['lat']),
+        lng: _d(m['lng']),
+        at: _date(m['at']),
+        orderNumber: m['order_number'] == null ? null : _i(m['order_number']),
+        orderId: m['order_id'] as String?,
+      );
+}
+
+/// A `job_runs` row (scheduled jobs such as order expiry).
+class JobRun {
+  final String job;
+  final DateTime? startedAt;
+  final DateTime? finishedAt;
+  final bool? ok;
+  final Map<String, dynamic> detail;
+
+  const JobRun({required this.job, this.startedAt, this.finishedAt, this.ok, this.detail = const {}});
+
+  int get expired => _i(detail['expired']);
+  String? get error => detail['error'] as String?;
+
+  factory JobRun.fromMap(Map<String, dynamic> m) => JobRun(
+        job: m['job'] as String? ?? '',
+        startedAt: _date(m['started_at']),
+        finishedAt: _date(m['finished_at']),
+        ok: m['ok'] as bool?,
+        detail: _map(m['detail']),
       );
 }
 

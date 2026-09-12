@@ -438,6 +438,10 @@ class _ConfigFormState extends State<_ConfigForm> {
   );
   late final _minCustomer = TextEditingController(text: c.minCustomerVersion);
   late final _minDistributor = TextEditingController(text: c.minDistributorVersion);
+  late final _stepKm = TextEditingController(text: _num(c.radiusStepKm));
+  late final _stepMinutes = TextEditingController(text: '${c.radiusStepMinutes}');
+  late final _maxRadius = TextEditingController(text: _num(c.maxRadiusKm));
+  late final _expiry = TextEditingController(text: '${c.orderExpiryMinutes}');
   late bool _autoVerify = c.autoVerifyDrivers;
   bool _saving = false;
 
@@ -458,6 +462,10 @@ class _ConfigFormState extends State<_ConfigForm> {
       'support_phone': phone.isEmpty ? null : JordanPhone.normalize(phone),
       'min_customer_version': _minCustomer.text.trim(),
       'min_distributor_version': _minDistributor.text.trim(),
+      'radius_step_km': double.parse(_stepKm.text.trim()),
+      'radius_step_minutes': int.parse(_stepMinutes.text.trim()),
+      'max_radius_km': double.parse(_maxRadius.text.trim()),
+      'order_expiry_minutes': int.parse(_expiry.text.trim()),
     };
     final before = c.toMap();
     final changes = {
@@ -525,6 +533,10 @@ class _ConfigFormState extends State<_ConfigForm> {
             field(_maxQuantity, l.maxQuantity, (v) => intIn(v, 1, 10)),
             field(_searchRadius, l.searchRadius, (v) => numIn(v, 0.5, 100), suffix: l.km, decimal: true),
             field(_confirmTimeout, l.confirmTimeout, (v) => intIn(v, 5, 1440), suffix: l.minutesUnit),
+            field(_stepKm, l.radiusStepKm, (v) => numIn(v, 0, 10), suffix: l.km, decimal: true),
+            field(_stepMinutes, l.radiusStepMinutes, (v) => intIn(v, 1, 60), suffix: l.minutesUnit),
+            field(_maxRadius, l.maxRadiusKm, (v) => numIn(v, 0.5, 50), suffix: l.km, decimal: true),
+            field(_expiry, l.orderExpiry, (v) => intIn(v, 5, 240), suffix: l.minutesUnit),
             field(_deliveryFee, l.deliveryFee, (v) {
               final n = parseAmount(v ?? '');
               return n == null || n < 0 || n > 20 ? l.rangeError(0, 20) : null;
