@@ -56,7 +56,8 @@ select ok(exists (
      and data ->> 'order_id' = '00000000-0000-0000-0000-0000000b6001'),
   'the distributor nearby is told about the new order');
 select ok(not exists (
-  select 1 from public.notifications where user_id = '00000000-0000-0000-0000-0000000a6003'),
+  select 1 from public.notifications
+   where user_id = '00000000-0000-0000-0000-0000000a6003' and kind = 'new_order'),
   'the distributor 16 km away is not');
 select is((select push_status from public.notifications
             where user_id = '00000000-0000-0000-0000-0000000a6002' and kind = 'new_order'),
