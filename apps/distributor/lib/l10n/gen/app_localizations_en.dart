@@ -657,4 +657,100 @@ class AppLocalizationsEn extends AppLocalizations {
   String openChargesTotal(String amount) {
     return 'Open: $amount';
   }
+
+  @override
+  String get security => 'Security';
+
+  @override
+  String get changePassword => 'Change password';
+
+  @override
+  String get changePasswordBody =>
+      'Enter your current password, then the new one (6 characters or more).';
+
+  @override
+  String get currentPassword => 'Current password';
+
+  @override
+  String get newPassword => 'New password';
+
+  @override
+  String get passwordChanged => 'Password changed';
+
+  @override
+  String get samePassword =>
+      'The new password must be different from the current one';
+
+  @override
+  String get wrongCurrentPassword => 'The current password is not correct';
+
+  @override
+  String get notificationsTitle => 'Notifications';
+
+  @override
+  String get notificationsEmpty => 'No notifications yet';
+
+  @override
+  String get markAllRead => 'Mark all as read';
+
+  @override
+  String get notifOrderUpdates => 'Order updates';
+
+  @override
+  String get notifPushOn =>
+      'Notifications reach you even when the app is closed.';
+
+  @override
+  String get notifPushOff =>
+      'On this build, notifications arrive only while the app is open.';
+
+  @override
+  String get appearance => 'Appearance';
+
+  @override
+  String get helpSupport => 'Help & support';
+
+  @override
+  String get contactSupport => 'Call support';
+
+  @override
+  String unreadCount(int count) {
+    return '$count new';
+  }
+
+  @override
+  String get statMemberSince => 'Member since';
+
+  @override
+  String get justNow => 'Just now';
+
+  @override
+  String minutesAgo(int count) {
+    return '$count min ago';
+  }
+
+  @override
+  String hoursAgo(int count) {
+    return '$count h ago';
+  }
+
+  @override
+  String get notificationsEmptyBody =>
+      'New orders, confirmations and account messages will appear here.';
+
+  @override
+  String get notifOrderUpdatesBody =>
+      'Confirmations, cancellations and assignments';
+
+  @override
+  String get notifNewOrders => 'New orders nearby';
+
+  @override
+  String get notifNewOrdersBody => 'While you are online';
+
+  @override
+  String get statDeliveries => 'Deliveries';
+
+  @override
+  String get statOnBoard => 'Cylinders on board';
 }

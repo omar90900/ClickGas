@@ -34,7 +34,13 @@ class ClickGasApp extends StatelessWidget {
         Provider(create: (_) => DriverRepository(client)),
         Provider(create: (_) => AvatarRepository(client)),
         Provider(create: (_) => DiagnosticsRepository(client)),
+        Provider(create: (_) => NotificationsRepository(client)),
         Provider(create: (_) => LocationService()),
+        FutureProvider<AppConfig>(
+          create: (c) => c.read<CatalogRepository>().config(),
+          initialData: AppConfig.defaults,
+          catchError: (_, _) => AppConfig.defaults,
+        ),
         ChangeNotifierProvider(
           create: (c) => MyOrdersController(c.read<OrderRepository>()),
         ),
@@ -44,6 +50,8 @@ class ClickGasApp extends StatelessWidget {
             c.read<AuthRepository>(),
             c.read<ProfileRepository>(),
             c.read<MyOrdersController>(),
+            settings,
+            c.read<NotificationsRepository>(),
           ),
         ),
       ],

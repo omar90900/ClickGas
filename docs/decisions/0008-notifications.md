@@ -1,6 +1,6 @@
 # 0008. Local notifications now, push (FCM) in Phase 2
 
-- Status: Accepted
+- Status: Accepted; the push part is superseded by [0014](0014-push-notifications.md)
 - Date: 2026-09-11
 
 ## Context

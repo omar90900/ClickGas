@@ -22,13 +22,15 @@ erDiagram
   profiles ||--o{ admin_actions : "did"
   drivers ||--o{ driver_documents : "papers"
   services ||--o{ price_history : "prices"
+  profiles ||--o{ device_tokens : "phones"
+  profiles ||--o{ notifications : "messages"
 ```
 
 ## Tables
 
 | Table | One row per | Key columns |
 |---|---|---|
-| `profiles` | account | `role` (customer/driver/admin), `full_name`, `phone` (unique), `email`, `city_id`, `avatar_url`, `is_active` |
+| `profiles` | account | `role` (customer/driver/admin), `full_name`, `phone` (unique), `email`, `city_id`, `avatar_url`, `is_active`, `locale` (ar/en, language of pushes), `notify_order_updates`, `notify_new_orders` |
 | `drivers` | distributor | `status` (pending/approved/rejected/suspended), `status_reason`, `is_verified` (= approved), `is_online`, `lat`, `lng`, `location_updated_at`, `cylinders_on_board`, `vehicle_plate`, `vehicle_model` (vehicle type code), `agency_name`, `rating_sum`, `rating_count` |
 | `orders` | order | `order_number` (from 1001), `status`, `service_*` (snapshot), `quantity`, `unit_price`, `delivery_fee`, `service_fee`, `driver_fee`, `total_price`, `payment_method`, `delivery_lat/lng`, `delivery_address`, `notes`, `rating`, `customer_confirmed_at`, one timestamp per status |
 | `order_events` | status change | `order_id`, `status`, `actor_id`, `created_at` |
@@ -48,6 +50,8 @@ erDiagram
 | `driver_documents` | current paper per distributor and kind | `kind`, `file_path`, `status` (pending/approved/rejected), `expires_on`, `review_note` |
 | `price_history` | service price | `service_id`, `old_price`, `new_price`, `changed_by`, `changed_at` (written by trigger) |
 | `coverage_gaps` | "no distributor nearby" check | `customer_id`, `lat`, `lng`, `city_id`, `is_demo`, `created_at` |
+| `device_tokens` | phone signed in to an app | `token` (FCM), `user_id`, `app` (customer/distributor), `platform`, `last_seen_at` |
+| `notifications` | message to one user (history, 60 days) | `app`, `kind`, `title_ar/en`, `body_ar/en`, `data` (order_id...), `read_at`, `push_status` (queued/sending/sent/muted/no_device/failed/expired), `push_attempts`, `push_error`, `sent_at` |
 
 Also added in migration 7: `profiles.is_demo`, `orders.is_demo`,
 `staff_members.hide_demo`, and `app_config.radius_step_km`,
@@ -90,3 +94,4 @@ Also added in migration 7: `profiles.is_demo`, `orders.is_demo`,
 | `20260912200000_revenue_and_charges.sql` | fees are revenue only; ledger removed; `driver_charges`; `admin_finance` |
 | `20260913090000_coverage_and_demo.sql` | widening search, order expiry (pg_cron), coverage checks and gaps, demo flags and seed mode, `admin_coverage` |
 | `20260913120000_auto_offline.sql` | the every-minute job also switches off distributors silent for 15 minutes |
+| `20260913150000_push_notifications.sql` | notification preferences, `device_tokens`, `notifications`, message triggers, delivery through pg_net + Edge Function, pg_cron `clickgas-push-flush` |

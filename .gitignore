@@ -36,3 +36,7 @@ Thumbs.db
 *.iml
 .idea/
 *.swp
+
+# Firebase config per app (kept out of the public repo; docs/runbooks/push-notifications.md)
+**/android/app/google-services.json
+/google-services.json

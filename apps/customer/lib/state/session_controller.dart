@@ -1,20 +1,27 @@
 import 'dart:async';
 
+import 'package:clickgas_core/clickgas_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../data/models/models.dart';
-import '../data/repositories/auth_repository.dart';
-import '../data/repositories/profile_repository.dart';
 import 'my_orders_controller.dart';
 
 enum SessionStatus { initializing, signedOut, loadingProfile, ready, profileError }
 
 /// Single source of truth for "who is signed in": follows Supabase auth,
 /// loads the matching `profiles` row, and binds the order stream to it.
+/// Once signed in, this phone is registered for pushes, and the language of
+/// pushes follows the app language.
 class SessionController extends ChangeNotifier {
-  SessionController(this._auth, this._profiles, this._orders) {
+  SessionController(
+    this._auth,
+    this._profiles,
+    this._orders,
+    this._settings,
+    this._notifications,
+  ) {
     _sub = _auth.changes.listen((state) => _handleUser(state.session?.user));
+    _settings.addListener(_syncLocale);
     // Start outside the build phase that created this controller.
     scheduleMicrotask(() => _handleUser(_auth.currentUser));
   }
@@ -22,6 +29,8 @@ class SessionController extends ChangeNotifier {
   final AuthRepository _auth;
   final ProfileRepository _profiles;
   final MyOrdersController _orders;
+  final AppSettings _settings;
+  final NotificationsRepository _notifications;
   late final StreamSubscription<AuthState> _sub;
 
   SessionStatus _status = SessionStatus.initializing;
@@ -59,6 +68,10 @@ class SessionController extends ChangeNotifier {
     }
     _orders.bind(_status == SessionStatus.ready ? userId : null);
     notifyListeners();
+    if (_status == SessionStatus.ready) {
+      unawaited(PushService.instance.register());
+      unawaited(_syncLocale());
+    }
   }
 
   Future<void> retry() async {
@@ -71,10 +84,39 @@ class SessionController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> signOut() => _auth.signOut();
+  /// Which notifications this user receives on their phone.
+  Future<void> setNotifyOrderUpdates(bool value) async {
+    final p = _profile;
+    if (p == null) return;
+    _profile = await _notifications.updatePreferences(p.id, orderUpdates: value);
+    notifyListeners();
+  }
+
+  String get _appLanguage =>
+      (_settings.locale ??
+              AppSettings.resolve(PlatformDispatcher.instance.locale, AppSettings.supportedLocales))
+          .languageCode;
+
+  Future<void> _syncLocale() async {
+    final p = _profile;
+    final lang = _appLanguage;
+    if (p == null || p.locale == lang) return;
+    try {
+      _profile = await _notifications.updatePreferences(p.id, locale: lang);
+      notifyListeners();
+    } catch (e) {
+      Log.w('locale_sync_failed', {'error': e.toString()});
+    }
+  }
+
+  Future<void> signOut() async {
+    await PushService.instance.unregister();
+    await _auth.signOut();
+  }
 
   @override
   void dispose() {
+    _settings.removeListener(_syncLocale);
     _sub.cancel();
     super.dispose();
   }

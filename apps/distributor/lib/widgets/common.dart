@@ -46,6 +46,7 @@ String failureText(BuildContext context, Object error, {int maxOrders = 3}) {
     FailureCode.emailTaken => l.emailTaken,
     FailureCode.phoneTaken => l.phoneTaken,
     FailureCode.weakPassword => l.passwordTooShort,
+    FailureCode.samePassword => l.samePassword,
     FailureCode.maxActiveOrders => l.maxOrdersReached(maxOrders),
     FailureCode.notEnoughCylinders => l.notEnoughCylinders,
     FailureCode.orderNotAvailable => l.orderTaken,

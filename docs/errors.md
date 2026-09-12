@@ -17,6 +17,7 @@ When a user reports "code XYZ", find it here, then open
 | `EMAIL_TAKEN` | Supabase Auth | Email already has an account | Sign in instead |
 | `PHONE_TAKEN` | sign-up check, unique index `profiles_phone_key` | Phone already has an account | Sign in instead |
 | `WEAK_PASSWORD` | Supabase Auth | Password under the minimum length | 6+ characters |
+| `SAME_PASSWORD` | Supabase Auth (Change password) | The new password is the current one | Choose a different password |
 
 ## Orders (customer)
 

@@ -22,6 +22,7 @@ String failureText(BuildContext context, Object error) {
     FailureCode.emailTaken => l.emailTaken,
     FailureCode.phoneTaken => l.phoneTaken,
     FailureCode.weakPassword => l.passwordTooShort,
+    FailureCode.samePassword => l.samePassword,
     FailureCode.openOrderExists => l.activeOrderExists,
     FailureCode.serviceUnavailable => l.servicesUnavailable,
     FailureCode.invalidTransition ||

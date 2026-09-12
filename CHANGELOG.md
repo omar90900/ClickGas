@@ -3,6 +3,33 @@
 Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow the
 apps' `pubspec.yaml` version.
 
+## [Unreleased] - Profile, settings, new design and push notifications
+
+### Added
+- **Push notifications** that arrive when the app is closed
+  ([ADR 0014](docs/decisions/0014-push-notifications.md)): the database writes
+  a message for each event (order accepted / on the way / delivered /
+  released / expired / cancelled, new order nearby, assigned, confirmed,
+  account decisions, charges, document reviews) in Arabic and English; the
+  Edge Function `send-push` delivers them through Firebase
+  (`20260913150000_push_notifications.sql`,
+  [setup runbook](docs/runbooks/push-notifications.md), `tools/push/setup.mjs`).
+- Notification history in both apps (bell icon in Settings, unread badge).
+- Notification preferences: order updates; distributors also new orders
+  nearby. The language of pushes follows the app language.
+- Change password in both apps.
+- Profile header with photo, status, and stats (customer: orders, delivered,
+  member since; distributor: deliveries, rating, cylinders on board).
+- Call support from Settings (`app_config.support_phone`).
+
+### Changed
+- **New design system** ([ADR 0013](docs/decisions/0013-design-system.md),
+  [design-system.md](docs/design-system.md)): brand green #2CE881, a soft
+  black dark mode, flat cards, one set of Profile & Settings components shared
+  by both phone apps; theme picker with previews; language picker sheet.
+- The apps' own notifications show only while the app is on screen when the
+  phone receives pushes, so nothing arrives twice.
+
 ## [Unreleased] - Coverage and demo readiness
 
 ### Fixed

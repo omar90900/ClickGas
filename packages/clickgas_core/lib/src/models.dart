@@ -247,6 +247,15 @@ class Profile {
   final bool isActive;
   final DateTime? createdAt;
 
+  /// Language of pushes from the server (ar / en).
+  final String locale;
+
+  /// Pushes about the user's own orders.
+  final bool notifyOrderUpdates;
+
+  /// Distributors: pushes about new orders nearby.
+  final bool notifyNewOrders;
+
   const Profile({
     required this.id,
     required this.role,
@@ -257,6 +266,9 @@ class Profile {
     this.avatarUrl,
     this.isActive = true,
     this.createdAt,
+    this.locale = 'ar',
+    this.notifyOrderUpdates = true,
+    this.notifyNewOrders = true,
   });
 
   String get firstName => fullName.trim().split(RegExp(r'\s+')).first;
@@ -271,6 +283,9 @@ class Profile {
         avatarUrl: url,
         isActive: isActive,
         createdAt: createdAt,
+        locale: locale,
+        notifyOrderUpdates: notifyOrderUpdates,
+        notifyNewOrders: notifyNewOrders,
       );
 
   factory Profile.fromMap(Map<String, dynamic> m) => Profile(
@@ -283,6 +298,51 @@ class Profile {
         avatarUrl: m['avatar_url'] as String?,
         isActive: m['is_active'] as bool? ?? true,
         createdAt: _date(m['created_at']),
+        locale: m['locale'] as String? ?? 'ar',
+        notifyOrderUpdates: m['notify_order_updates'] as bool? ?? true,
+        notifyNewOrders: m['notify_new_orders'] as bool? ?? true,
+      );
+}
+
+/// A row of the user's notification history (`notifications`).
+class AppNotification {
+  final int id;
+  final String kind;
+  final String titleAr;
+  final String bodyAr;
+  final String titleEn;
+  final String bodyEn;
+  final Map<String, dynamic> data;
+  final DateTime? createdAt;
+  final DateTime? readAt;
+
+  const AppNotification({
+    required this.id,
+    required this.kind,
+    required this.titleAr,
+    required this.bodyAr,
+    required this.titleEn,
+    required this.bodyEn,
+    this.data = const {},
+    this.createdAt,
+    this.readAt,
+  });
+
+  String title(String locale) => _localized(locale, titleAr, titleEn);
+  String body(String locale) => _localized(locale, bodyAr, bodyEn);
+  bool get isRead => readAt != null;
+  String? get orderId => data['order_id'] as String?;
+
+  factory AppNotification.fromMap(Map<String, dynamic> m) => AppNotification(
+        id: _i(m['id']),
+        kind: m['kind'] as String? ?? '',
+        titleAr: m['title_ar'] as String? ?? '',
+        bodyAr: m['body_ar'] as String? ?? '',
+        titleEn: m['title_en'] as String? ?? '',
+        bodyEn: m['body_en'] as String? ?? '',
+        data: m['data'] is Map ? Map<String, dynamic>.from(m['data'] as Map) : const {},
+        createdAt: _date(m['created_at']),
+        readAt: _date(m['read_at']),
       );
 }
 

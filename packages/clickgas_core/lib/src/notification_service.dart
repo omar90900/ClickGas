@@ -1,11 +1,19 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
+import 'push_service.dart';
 
 /// Local notifications with sound (heads-up on Android), shown for order
 /// events the apps receive through Supabase Realtime while they are running.
+/// When the device also receives pushes ([PushService.registered]), these
+/// are shown only while the app is on screen, so nothing arrives twice.
 class NotificationService {
   NotificationService._();
   static final instance = NotificationService._();
+
+  /// Also used by pushes from the server (Edge Function send-push).
+  static const channelId = 'order_updates';
 
   final _plugin = FlutterLocalNotificationsPlugin();
   bool _ready = false;
@@ -13,7 +21,7 @@ class NotificationService {
 
   static const _details = NotificationDetails(
     android: AndroidNotificationDetails(
-      'order_updates',
+      channelId,
       'Order updates',
       channelDescription: 'Order status changes and new orders',
       importance: Importance.high,
@@ -41,6 +49,16 @@ class NotificationService {
           ),
         ),
       );
+      // Create the channel up front so pushes that arrive while the app is
+      // closed use it (sound, heads-up).
+      await _plugin
+          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+          ?.createNotificationChannel(const AndroidNotificationChannel(
+            channelId,
+            'Order updates',
+            description: 'Order status changes and new orders',
+            importance: Importance.high,
+          ));
       _ready = true;
     } catch (e) {
       debugPrint('Notifications init failed: $e');
@@ -60,8 +78,12 @@ class NotificationService {
         ?.requestPermissions(alert: true, badge: true, sound: true);
   }
 
-  Future<void> show(String title, String body) async {
+  /// [force] shows it even in the background (used for pushes that arrive
+  /// while the app is open).
+  Future<void> show(String title, String body, {bool force = false}) async {
     if (!_ready) return;
+    final onScreen = WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed;
+    if (!force && PushService.instance.registered && !onScreen) return;
     try {
       await _plugin.show(
         id: _nextId++,

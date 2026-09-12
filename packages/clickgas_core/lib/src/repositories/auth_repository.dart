@@ -78,6 +78,19 @@ class AuthRepository {
         Log.i('signed_in', {'method': 'phone'});
       });
 
+  /// Checks [currentPassword] by signing in again, then sets the new one.
+  /// Errors: invalidCredentials (wrong current), weakPassword, samePassword.
+  Future<void> changePassword({
+    required String email,
+    required String currentPassword,
+    required String newPassword,
+  }) =>
+      guard('auth.change_password', () async {
+        await _auth.signInWithPassword(email: email.trim().toLowerCase(), password: currentPassword);
+        await _auth.updateUser(UserAttributes(password: newPassword));
+        Log.i('password_changed');
+      });
+
   Future<void> signOut() async {
     Log.i('signed_out');
     await _auth.signOut();

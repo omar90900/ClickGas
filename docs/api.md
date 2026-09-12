@@ -84,6 +84,31 @@ file of that kind and puts it back to pending; a rejected distributor goes back
 to pending review. Errors: `PERMISSION_DENIED` (not a distributor, or file
 outside own folder), `DOCUMENT_EXPIRED`.
 
+## Everyone signed in: notifications ([ADR 0014](decisions/0014-push-notifications.md))
+
+### `register_device(p_token text, p_app text, p_platform text = 'android') → void`
+After sign-in: this phone's FCM token for `customer` or `distributor`. A token
+moves to the account that registers it last; 5 phones per user and app.
+Errors: `PERMISSION_DENIED` (not signed in), `INVALID_SETTING`.
+
+### `unregister_device(p_token text) → void`
+Before sign-out.
+
+### `mark_notifications_read() → int`
+Marks the caller's notifications read; returns how many were unread.
+
+### History: `select from notifications`
+Own rows only (`title_ar/en`, `body_ar/en`, `kind`, `data`, `read_at`,
+`created_at`), newest first; also on Realtime. Written only by triggers.
+
+### Preferences: `update profiles`
+`locale` (`ar`/`en`), `notify_order_updates`, `notify_new_orders`.
+
+### Change password
+Supabase Auth: sign in again with the current password, then
+`auth.updateUser(password: ...)`. Errors: `INVALID_CREDENTIALS` (wrong current
+password), `WEAK_PASSWORD`, `SAME_PASSWORD`.
+
 ## Staff
 
 Used by the admin dashboard (`apps/admin`). Every function checks the caller's
@@ -157,12 +182,17 @@ Staff also read these tables directly (RLS): `profiles`, `drivers`, `orders`,
 | `expire_stale_orders() → int` | pg_cron job `clickgas-expire-orders`, every minute | expires pending orders older than `order_expiry_minutes`; logs `job_runs` |
 | `demo_seed_order(p jsonb) → uuid` | `tools/demo/seed.mjs` | one past order for a demo customer with its status events (seed mode) |
 | `demo_reset_data() → jsonb` | `tools/demo/reset.mjs` | deletes demo orders, gaps and demo staff actions |
+| `push_claim(p_limit int = 100) → table` | Edge Function `send-push` | takes up to 500 queued notifications: `id, kind, title, body` (recipient's language), `data, tokens` |
+| `push_report(p_results jsonb) → int` | Edge Function `send-push` | `[{id, ok, sent_count, error, invalid_tokens}]`: sent / retry / failed; deletes dead tokens |
+| `push_flush() → int` | pg_cron job `clickgas-push-flush`, every minute | re-queues stuck sends, expires messages older than 30 min, deletes history older than 60 days, calls `send-push` if anything is queued |
 
 ## Tables the apps read directly
 
 | Table / view | Who | Notes |
 |---|---|---|
-| `profiles` | owner (select, update name/phone/city/avatar) | staff read all |
+| `profiles` | owner (select, update name/phone/city/avatar and notification preferences) | staff read all |
+| `notifications` | the recipient (select) | Realtime; written only by triggers |
+| `device_tokens` | the owner (select) | written only by `register_device` / `unregister_device` |
 | `drivers` | everyone signed in: online + verified rows; customer: assigned driver; owner: own row | |
 | `orders` | customer: own; distributor: assigned | Realtime |
 | `order_events` | parties of the order | audit trail |
@@ -183,4 +213,8 @@ Staff also read these tables directly (RLS): `profiles`, `drivers`, `orders`,
 `can_view_order` (used by RLS), `driver_committed_orders` (used by
 `accept_order`), `distance_m` (haversine metres), `check_order_transition`
 (trigger), `prepare_new_order` (trigger), `handle_new_user` (sign-up trigger),
-`log_order_event` (trigger).
+`log_order_event` (trigger), `private.notify` (writes one message),
+`private.notify_nearby_drivers`, `private.order_notifications`,
+`private.driver_status_notifications`, `private.charge_notifications`,
+`private.document_notifications` (triggers), `private.dispatch_push` and
+`private.notifications_inserted` (call `send-push` through pg_net).

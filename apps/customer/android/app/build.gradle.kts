@@ -6,6 +6,12 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// Firebase push notifications (docs/runbooks/push-notifications.md): only
+// when android/app/google-services.json is present, so builds work without it.
+if (file("google-services.json").exists()) {
+    apply(plugin = "com.google.gms.google-services")
+}
+
 // Google Maps key is kept out of source control in android/local.properties:
 //   MAPS_API_KEY=AIza...
 val localProperties = Properties().apply {

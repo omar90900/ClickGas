@@ -384,6 +384,11 @@ deno_version = 2
 # [edge_runtime.secrets]
 # secret_key = "env(SECRET_VALUE)"
 
+# Called by the database (pg_net), which checks a shared secret instead of a
+# user JWT. docs/runbooks/push-notifications.md
+[functions.send-push]
+verify_jwt = false
+
 [analytics]
 enabled = true
 port = 54327

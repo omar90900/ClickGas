@@ -655,4 +655,97 @@ class AppLocalizationsAr extends AppLocalizations {
   String openChargesTotal(String amount) {
     return 'المفتوح: $amount';
   }
+
+  @override
+  String get security => 'الأمان';
+
+  @override
+  String get changePassword => 'تغيير كلمة المرور';
+
+  @override
+  String get changePasswordBody =>
+      'أدخل كلمة المرور الحالية ثم الجديدة (6 أحرف أو أكثر).';
+
+  @override
+  String get currentPassword => 'كلمة المرور الحالية';
+
+  @override
+  String get newPassword => 'كلمة المرور الجديدة';
+
+  @override
+  String get passwordChanged => 'تم تغيير كلمة المرور';
+
+  @override
+  String get samePassword => 'يجب أن تختلف كلمة المرور الجديدة عن الحالية';
+
+  @override
+  String get wrongCurrentPassword => 'كلمة المرور الحالية غير صحيحة';
+
+  @override
+  String get notificationsTitle => 'الإشعارات';
+
+  @override
+  String get notificationsEmpty => 'لا توجد إشعارات بعد';
+
+  @override
+  String get markAllRead => 'تعليم الكل كمقروء';
+
+  @override
+  String get notifOrderUpdates => 'تحديثات الطلبات';
+
+  @override
+  String get notifPushOn => 'تصلك الإشعارات حتى عندما يكون التطبيق مغلقاً.';
+
+  @override
+  String get notifPushOff =>
+      'في هذا الإصدار تصلك الإشعارات فقط أثناء فتح التطبيق.';
+
+  @override
+  String get appearance => 'المظهر';
+
+  @override
+  String get helpSupport => 'المساعدة والدعم';
+
+  @override
+  String get contactSupport => 'اتصل بالدعم';
+
+  @override
+  String unreadCount(int count) {
+    return '$count جديد';
+  }
+
+  @override
+  String get statMemberSince => 'عضو منذ';
+
+  @override
+  String get justNow => 'الآن';
+
+  @override
+  String minutesAgo(int count) {
+    return 'قبل $count د';
+  }
+
+  @override
+  String hoursAgo(int count) {
+    return 'قبل $count س';
+  }
+
+  @override
+  String get notificationsEmptyBody =>
+      'ستظهر هنا الطلبات الجديدة والتأكيدات ورسائل الحساب.';
+
+  @override
+  String get notifOrderUpdatesBody => 'التأكيد والإلغاء والإسناد';
+
+  @override
+  String get notifNewOrders => 'طلبات جديدة قريبة';
+
+  @override
+  String get notifNewOrdersBody => 'أثناء اتصالك';
+
+  @override
+  String get statDeliveries => 'التوصيلات';
+
+  @override
+  String get statOnBoard => 'أسطوانات معك';
 }

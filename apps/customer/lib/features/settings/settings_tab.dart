@@ -1,16 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart' show DateFormat;
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/settings/app_settings.dart';
-import '../../core/theme/app_theme.dart';
 import '../../data/models/models.dart';
 import '../../data/repositories/catalog_repository.dart';
 import '../../state/session_controller.dart';
 import '../../widgets/common.dart';
+import 'change_password_screen.dart';
 import 'edit_profile_screen.dart';
+import 'notifications_screen.dart';
 
 const kAppVersion = '1.0.0';
 
+/// Keeps phone numbers left-to-right inside Arabic text.
+String _ltr(String s) =>
+    '${String.fromCharCode(0x2066)}$s${String.fromCharCode(0x2069)}';
+
+/// Profile and settings: who you are, your notifications, how the app
+/// looks, help, and sign-out.
 class SettingsTab extends StatefulWidget {
   const SettingsTab({super.key});
 
@@ -19,8 +28,77 @@ class SettingsTab extends StatefulWidget {
 }
 
 class _SettingsTabState extends State<SettingsTab> {
-  late final Future<List<City>> _cities =
-      context.read<CatalogRepository>().cities();
+  List<City> _cities = const [];
+  Future<OrderCounts>? _counts;
+  int _unread = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _refresh();
+    context.read<CatalogRepository>().cities().then((list) {
+      if (mounted) setState(() => _cities = list);
+    }).catchError((Object _) {});
+  }
+
+  void _refresh() {
+    final id = context.read<SessionController>().profile?.id;
+    if (id == null) return;
+    _counts = context.read<ProfileRepository>().orderCounts(id);
+    context.read<NotificationsRepository>().unreadCount().then((n) {
+      if (mounted) setState(() => _unread = n);
+    }).catchError((Object _) {});
+  }
+
+  Future<void> _open(Widget screen) async {
+    await Navigator.of(context).push(MaterialPageRoute(builder: (_) => screen));
+    if (mounted) setState(_refresh);
+  }
+
+  void _changePhoto(Profile profile) {
+    final session = context.read<SessionController>();
+    changeAvatar(
+      context,
+      repo: context.read<AvatarRepository>(),
+      userId: profile.id,
+      hasPhoto: profile.avatarUrl != null,
+      onChanged: (url) => session.updateProfile(profile.withAvatar(url)),
+    );
+  }
+
+  Future<void> _setPreference(Future<void> Function() change) async {
+    try {
+      await change();
+    } catch (e) {
+      if (mounted) showSnack(context, failureText(context, e), error: true);
+    }
+  }
+
+  Future<void> _pickLanguage(AppSettings settings) async {
+    final l = context.l10n;
+    final current = context.lang;
+    final picked = await showModalBottomSheet<String>(
+      context: context,
+      builder: (sheet) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (final (code, label) in [('ar', l.arabic), ('en', l.english)])
+              ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+                title: Text(label, style: const TextStyle(fontWeight: FontWeight.w700)),
+                trailing: code == current
+                    ? Icon(Icons.check_circle_rounded, color: sheet.accent)
+                    : null,
+                onTap: () => Navigator.of(sheet).pop(code),
+              ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+    if (picked != null) await settings.setLocale(Locale(picked));
+  }
 
   Future<void> _logout() async {
     final l = context.l10n;
@@ -35,172 +113,148 @@ class _SettingsTabState extends State<SettingsTab> {
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
-    final profile = context.watch<SessionController>().profile;
+    final session = context.watch<SessionController>();
     final settings = context.watch<AppSettings>();
+    final supportPhone = context.watch<AppConfig>().supportPhone;
+    final profile = session.profile;
     if (profile == null) return const LoadingView();
 
+    final city = _cities.where((c) => c.id == profile.cityId).firstOrNull;
+    final since = profile.createdAt == null
+        ? '–'
+        : DateFormat.yMMM(context.lang).format(profile.createdAt!.toLocal());
+
     return Scaffold(
-      appBar: AppBar(title: Text(l.settingsTitle)),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
-        children: [
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  UserAvatar(
-                    url: profile.avatarUrl,
-                    name: profile.fullName,
-                    radius: 32,
-                    editable: true,
-                    onTap: () {
-                      final session = context.read<SessionController>();
-                      changeAvatar(
-                        context,
-                        repo: context.read<AvatarRepository>(),
-                        userId: profile.id,
-                        hasPhoto: profile.avatarUrl != null,
-                        onChanged: (url) =>
-                            session.updateProfile(profile.withAvatar(url)),
-                      );
-                    },
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          profile.fullName,
-                          style: context.text.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                        Text(
-                          JordanPhone.display(profile.phone),
-                          textDirection: TextDirection.ltr,
-                          style: context.text.bodyMedium,
-                        ),
-                        if (profile.email != null)
-                          Text(
-                            profile.email!,
-                            style: context.text.bodySmall?.copyWith(
-                              color: context.colors.onSurfaceVariant,
-                            ),
-                          ),
-                        FutureBuilder<List<City>>(
-                          future: _cities,
-                          builder: (context, snap) {
-                            final city = snap.data
-                                ?.where((c) => c.id == profile.cityId)
-                                .firstOrNull;
-                            if (city == null) return const SizedBox.shrink();
-                            return Row(
-                              children: [
-                                Icon(Icons.location_city_rounded,
-                                    size: 14, color: context.accent),
-                                const SizedBox(width: 4),
-                                Text(city.name(context.lang),
-                                    style: context.text.bodySmall),
-                              ],
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+      appBar: AppBar(
+        title: Text(l.settingsTitle),
+        actions: [
+          IconButton(
+            tooltip: l.notificationsTitle,
+            onPressed: () => _open(const NotificationsScreen()),
+            icon: Badge(
+              isLabelVisible: _unread > 0,
+              label: Text('$_unread'),
+              backgroundColor: AppColors.danger,
+              child: const Icon(Icons.notifications_none_rounded),
             ),
           ),
-          const SizedBox(height: 16),
-          SectionTitle(l.account),
-          Card(
-            child: ListTile(
-              leading: Icon(Icons.edit_rounded, color: context.accent),
-              title: Text(l.editProfile),
-              trailing: const Icon(Icons.chevron_right_rounded),
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => EditProfileScreen(profile: profile),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          SectionTitle(l.preferences),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(l.language, style: context.text.titleSmall),
-                  const SizedBox(height: 8),
-                  SegmentedButton<String>(
-                    segments: [
-                      ButtonSegment(value: 'ar', label: Text(l.arabic)),
-                      ButtonSegment(value: 'en', label: Text(l.english)),
-                    ],
-                    selected: {context.lang},
-                    onSelectionChanged: (s) =>
-                        settings.setLocale(Locale(s.first)),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(l.theme, style: context.text.titleSmall),
-                  const SizedBox(height: 8),
-                  SegmentedButton<ThemeMode>(
-                    segments: [
-                      ButtonSegment(
-                        value: ThemeMode.system,
-                        label: Text(l.themeSystem),
-                      ),
-                      ButtonSegment(
-                        value: ThemeMode.light,
-                        label: Text(l.themeLight),
-                      ),
-                      ButtonSegment(
-                        value: ThemeMode.dark,
-                        label: Text(l.themeDark),
-                      ),
-                    ],
-                    selected: {settings.themeMode},
-                    onSelectionChanged: (s) => settings.setThemeMode(s.first),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Card(
-            child: ListTile(
-              leading: Icon(Icons.bug_report_outlined, color: context.accent),
-              title: Text(l.sendDiagnostics),
-              subtitle: Text(l.sendDiagnosticsBody),
-              isThreeLine: true,
-              onTap: () => sendDiagnostics(context),
-            ),
-          ),
-          const SizedBox(height: 12),
-          Card(
-            child: ListTile(
-              leading: Icon(Icons.info_outline_rounded, color: context.accent),
-              title: Text(l.aboutApp),
-              subtitle: Text(l.version(kAppVersion)),
-            ),
-          ),
-          const SizedBox(height: 24),
-          OutlinedButton.icon(
-            style: OutlinedButton.styleFrom(
-              foregroundColor: AppColors.danger,
-              side: const BorderSide(color: AppColors.danger),
-            ),
-            onPressed: _logout,
-            icon: const Icon(Icons.logout_rounded),
-            label: Text(l.logout),
-          ),
+          const SizedBox(width: 4),
         ],
+      ),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          setState(_refresh);
+          await _counts?.catchError((Object _) => const OrderCounts());
+        },
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 32),
+          children: [
+            FutureBuilder<OrderCounts>(
+              future: _counts,
+              builder: (context, snap) => ProfileHeader(
+                avatar: UserAvatar(
+                  url: profile.avatarUrl,
+                  name: profile.fullName,
+                  radius: 46,
+                  editable: true,
+                  onTap: () => _changePhoto(profile),
+                ),
+                name: profile.fullName,
+                lines: [
+                  _ltr(JordanPhone.display(profile.phone)),
+                  if (city != null) city.name(context.lang),
+                ],
+                onEdit: () => _open(EditProfileScreen(profile: profile)),
+                editLabel: l.editProfile,
+                stats: [
+                  ProfileStat(label: l.statOrders, value: '${snap.data?.total ?? '–'}'),
+                  ProfileStat(label: l.statDelivered, value: '${snap.data?.delivered ?? '–'}'),
+                  ProfileStat(label: l.statMemberSince, value: since),
+                ],
+              ),
+            ),
+            SettingsGroup(
+              title: l.account,
+              children: [
+                SettingsTile(
+                  icon: Icons.person_outline_rounded,
+                  title: l.personalInfo,
+                  subtitle: profile.email,
+                  onTap: () => _open(EditProfileScreen(profile: profile)),
+                ),
+                SettingsTile(
+                  icon: Icons.lock_outline_rounded,
+                  title: l.changePassword,
+                  onTap: () => _open(const ChangePasswordScreen()),
+                ),
+              ],
+            ),
+            SettingsGroup(
+              title: l.notificationsTitle,
+              footer: PushService.instance.available ? l.notifPushOn : l.notifPushOff,
+              children: [
+                SettingsSwitchTile(
+                  icon: Icons.local_shipping_outlined,
+                  title: l.notifOrderUpdates,
+                  subtitle: l.notifOrderUpdatesBody,
+                  value: profile.notifyOrderUpdates,
+                  onChanged: (v) => _setPreference(() => session.setNotifyOrderUpdates(v)),
+                ),
+              ],
+            ),
+            SettingsGroup(
+              title: l.appearance,
+              children: [
+                ThemeModePicker(
+                  value: settings.themeMode,
+                  onChanged: settings.setThemeMode,
+                  systemLabel: l.themeSystem,
+                  lightLabel: l.themeLight,
+                  darkLabel: l.themeDark,
+                ),
+                SettingsTile(
+                  icon: Icons.translate_rounded,
+                  title: l.language,
+                  value: context.lang == 'ar' ? l.arabic : l.english,
+                  onTap: () => _pickLanguage(settings),
+                ),
+              ],
+            ),
+            SettingsGroup(
+              title: l.helpSupport,
+              children: [
+                if (supportPhone != null && supportPhone.isNotEmpty)
+                  SettingsTile(
+                    icon: Icons.support_agent_rounded,
+                    title: l.contactSupport,
+                    value: _ltr(supportPhone),
+                    onTap: () => launchUrl(Uri(scheme: 'tel', path: supportPhone)),
+                  ),
+                SettingsTile(
+                  icon: Icons.bug_report_outlined,
+                  title: l.sendDiagnostics,
+                  subtitle: l.sendDiagnosticsBody,
+                  onTap: () => sendDiagnostics(context),
+                ),
+                SettingsTile(
+                  icon: Icons.info_outline_rounded,
+                  title: l.aboutApp,
+                  value: l.version(kAppVersion),
+                ),
+              ],
+            ),
+            SettingsGroup(
+              children: [
+                SettingsTile(
+                  icon: Icons.logout_rounded,
+                  title: l.logout,
+                  destructive: true,
+                  onTap: _logout,
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

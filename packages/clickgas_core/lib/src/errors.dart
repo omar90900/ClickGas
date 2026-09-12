@@ -17,6 +17,7 @@ enum FailureCode {
   emailTaken('EMAIL_TAKEN'),
   phoneTaken('PHONE_TAKEN'),
   weakPassword('WEAK_PASSWORD'),
+  samePassword('SAME_PASSWORD'),
   // ---- orders
   serviceUnavailable('SERVICE_UNAVAILABLE'),
   openOrderExists('OPEN_ORDER_EXISTS'),
@@ -86,6 +87,7 @@ class AppFailure implements Exception {
         'email_not_confirmed' => FailureCode.emailNotConfirmed,
         'user_already_exists' || 'email_exists' => FailureCode.emailTaken,
         'weak_password' => FailureCode.weakPassword,
+        'same_password' => FailureCode.samePassword,
         'over_request_rate_limit' ||
         'over_email_send_rate_limit' =>
           FailureCode.tooManyAttempts,

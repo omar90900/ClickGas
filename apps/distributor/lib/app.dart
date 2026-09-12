@@ -29,6 +29,7 @@ class DriverApp extends StatelessWidget {
         Provider(create: (_) => AvatarRepository(client)),
         Provider(create: (_) => DiagnosticsRepository(client)),
         Provider(create: (_) => DriverDocumentsRepository(client)),
+        Provider(create: (_) => NotificationsRepository(client)),
         Provider(create: (_) => LocationService()),
         FutureProvider<AppConfig>(
           create: (c) => c.read<CatalogRepository>().config(),
@@ -51,6 +52,8 @@ class DriverApp extends StatelessWidget {
             c.read<ProfileRepository>(),
             c.read<DriverRepository>(),
             c.read<ActiveOrdersController>(),
+            settings,
+            c.read<NotificationsRepository>(),
           ),
         ),
       ],

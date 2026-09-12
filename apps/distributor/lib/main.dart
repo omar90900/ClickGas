@@ -17,6 +17,8 @@ Future<void> main() => runGuardedApp(
         // Keeps the login token fresh while tracking runs in the background.
         SessionKeeper.install(Supabase.instance.client.auth);
         Log.i('supabase_ready', {'env': SupabaseConfig.environment});
+        // Pushes when the app is closed; a no-op without google-services.json.
+        await PushService.instance.init(app: 'distributor');
 
         return DriverApp(settings: settings);
       },

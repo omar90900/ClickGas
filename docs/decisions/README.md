@@ -13,11 +13,13 @@ one; if a decision changes, write a new record that supersedes the old.
 | [0005](0005-phone-login.md) | Phone login via a password-checking database function | Accepted |
 | [0006](0006-per-order-fee-cash-ledger.md) | 0.150 JOD fee per delivered order, cash with a ledger | Ledger superseded by 0011 |
 | [0007](0007-money-in-fils.md) | Money stored with 3 decimals (fils) | Accepted |
-| [0008](0008-notifications.md) | Local notifications now, push (FCM) in Phase 2 | Accepted |
+| [0008](0008-notifications.md) | Local notifications now, push (FCM) in Phase 2 | Push part superseded by 0014 |
 | [0009](0009-admin-web-app.md) | Admin dashboard as a Flutter web app with OpenStreetMap | Accepted |
 | [0010](0010-staff-roles-and-audit.md) | Staff roles checked in the database, every action audited | Accepted |
 | [0011](0011-revenue-and-charges.md) | Fees are platform revenue; charges replace the distributor ledger | Accepted |
 | [0012](0012-coverage-expiry-and-demo-data.md) | Widening search, order expiry, and demo data in the same project | Accepted |
+| [0013](0013-design-system.md) | One design system in the shared package, brand green #2CE881 | Accepted |
+| [0014](0014-push-notifications.md) | Push notifications: the database decides, an Edge Function delivers through FCM | Accepted |
 
 Template:
 

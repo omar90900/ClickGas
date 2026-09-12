@@ -1249,6 +1249,174 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open: {amount}'**
   String openChargesTotal(String amount);
+
+  /// No description provided for @security.
+  ///
+  /// In en, this message translates to:
+  /// **'Security'**
+  String get security;
+
+  /// No description provided for @changePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Change password'**
+  String get changePassword;
+
+  /// No description provided for @changePasswordBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your current password, then the new one (6 characters or more).'**
+  String get changePasswordBody;
+
+  /// No description provided for @currentPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Current password'**
+  String get currentPassword;
+
+  /// No description provided for @newPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'New password'**
+  String get newPassword;
+
+  /// No description provided for @passwordChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Password changed'**
+  String get passwordChanged;
+
+  /// No description provided for @samePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'The new password must be different from the current one'**
+  String get samePassword;
+
+  /// No description provided for @wrongCurrentPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'The current password is not correct'**
+  String get wrongCurrentPassword;
+
+  /// No description provided for @notificationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notificationsTitle;
+
+  /// No description provided for @notificationsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No notifications yet'**
+  String get notificationsEmpty;
+
+  /// No description provided for @markAllRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark all as read'**
+  String get markAllRead;
+
+  /// No description provided for @notifOrderUpdates.
+  ///
+  /// In en, this message translates to:
+  /// **'Order updates'**
+  String get notifOrderUpdates;
+
+  /// No description provided for @notifPushOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications reach you even when the app is closed.'**
+  String get notifPushOn;
+
+  /// No description provided for @notifPushOff.
+  ///
+  /// In en, this message translates to:
+  /// **'On this build, notifications arrive only while the app is open.'**
+  String get notifPushOff;
+
+  /// No description provided for @appearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get appearance;
+
+  /// No description provided for @helpSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Help & support'**
+  String get helpSupport;
+
+  /// No description provided for @contactSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Call support'**
+  String get contactSupport;
+
+  /// No description provided for @unreadCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} new'**
+  String unreadCount(int count);
+
+  /// No description provided for @statMemberSince.
+  ///
+  /// In en, this message translates to:
+  /// **'Member since'**
+  String get statMemberSince;
+
+  /// No description provided for @justNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Just now'**
+  String get justNow;
+
+  /// No description provided for @minutesAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} min ago'**
+  String minutesAgo(int count);
+
+  /// No description provided for @hoursAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} h ago'**
+  String hoursAgo(int count);
+
+  /// No description provided for @notificationsEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'New orders, confirmations and account messages will appear here.'**
+  String get notificationsEmptyBody;
+
+  /// No description provided for @notifOrderUpdatesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmations, cancellations and assignments'**
+  String get notifOrderUpdatesBody;
+
+  /// No description provided for @notifNewOrders.
+  ///
+  /// In en, this message translates to:
+  /// **'New orders nearby'**
+  String get notifNewOrders;
+
+  /// No description provided for @notifNewOrdersBody.
+  ///
+  /// In en, this message translates to:
+  /// **'While you are online'**
+  String get notifNewOrdersBody;
+
+  /// No description provided for @statDeliveries.
+  ///
+  /// In en, this message translates to:
+  /// **'Deliveries'**
+  String get statDeliveries;
+
+  /// No description provided for @statOnBoard.
+  ///
+  /// In en, this message translates to:
+  /// **'Cylinders on board'**
+  String get statOnBoard;
 }
 
 class _AppLocalizationsDelegate

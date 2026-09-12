@@ -4,7 +4,7 @@
     "start_url": ".",
     "display": "standalone",
     "background_color": "#FFFFFF",
-    "theme_color": "#53ED74",
+    "theme_color": "#2CE881",
     "description": "ClickGas admin dashboard: live operations, distributor approvals, prices, fees and balances.",
     "orientation": "any",
     "prefer_related_applications": false,
