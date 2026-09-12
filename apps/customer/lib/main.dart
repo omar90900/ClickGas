@@ -17,6 +17,7 @@ Future<void> main() async {
     url: SupabaseConfig.url,
     publishableKey: SupabaseConfig.publishableKey,
   );
+  SessionKeeper.install(Supabase.instance.client.auth);
   Log.i('supabase_ready', {'env': SupabaseConfig.environment});
 
   runApp(ClickGasApp(settings: settings));

@@ -1,17 +1,23 @@
 import 'dart:async';
+import 'dart:math' as math;
 
+import 'package:clickgas_core/clickgas_core.dart';
 import 'package:flutter/foundation.dart';
 
-import '../data/models/models.dart';
 import '../data/repositories/order_repository.dart';
 
 /// One realtime subscription to the signed-in customer's orders, shared by
 /// the Home (open-order banner), Tracking and My Orders tabs.
+///
+/// If the stream fails (lost connection, expired token), it reconnects by
+/// itself after 2, 4, 8... up to 30 seconds, refreshing the session first.
 class MyOrdersController extends ChangeNotifier {
   MyOrdersController(this._repo);
 
   final OrderRepository _repo;
   StreamSubscription<List<GasOrder>>? _sub;
+  Timer? _retry;
+  int _failures = 0;
   String? _customerId;
 
   List<GasOrder> _orders = const [];
@@ -35,38 +41,56 @@ class MyOrdersController extends ChangeNotifier {
   void bind(String? customerId) {
     if (customerId == _customerId) return;
     _customerId = customerId;
-    _sub?.cancel();
-    _sub = null;
     _orders = const [];
     _error = null;
+    _failures = 0;
     _loading = customerId != null;
-    if (customerId != null) {
-      _sub = _repo.watchCustomerOrders(customerId).listen(
-        (orders) {
-          _orders = orders;
-          _loading = false;
-          _error = null;
-          notifyListeners();
-        },
-        onError: (Object e) {
-          debugPrint('Orders stream error: $e');
-          _error = e;
-          _loading = false;
-          notifyListeners();
-        },
-      );
-    }
+    _subscribe();
     notifyListeners();
   }
 
-  void retry() {
+  void _subscribe() {
+    _retry?.cancel();
+    _sub?.cancel();
+    _sub = null;
     final id = _customerId;
-    _customerId = null;
-    bind(id);
+    if (id == null) return;
+    _sub = _repo.watchCustomerOrders(id).listen(
+      (orders) {
+        _orders = orders;
+        _loading = false;
+        _error = null;
+        _failures = 0;
+        notifyListeners();
+      },
+      onError: (Object e) {
+        Log.w('orders_stream_error', {'error': e.toString()});
+        _error = e;
+        _loading = false;
+        notifyListeners();
+        _scheduleReconnect();
+      },
+    );
+  }
+
+  void _scheduleReconnect() {
+    _retry?.cancel();
+    final delay = Duration(seconds: math.min(30, 2 << math.min(_failures, 4)));
+    _failures++;
+    _retry = Timer(delay, () async {
+      await SessionKeeper.instance?.ensureFresh();
+      _subscribe();
+    });
+  }
+
+  void retry() {
+    _failures = 0;
+    _subscribe();
   }
 
   @override
   void dispose() {
+    _retry?.cancel();
     _sub?.cancel();
     super.dispose();
   }

@@ -64,7 +64,9 @@ select is(
      (select id from public.orders where customer_id = '00000000-0000-0000-0000-00000000c001'))),
   'delivered', 'distributor delivers');
 
-select is(public.driver_balance(), 0.150::numeric, 'delivery books 0.150 in the ledger');
+select is(
+  (select service_fee + driver_fee from public.orders where customer_id = '00000000-0000-0000-0000-00000000c001'),
+  0.150::numeric, 'the delivered order carries 0.150 of platform fees');
 
 select is(
   (select cylinders_on_board from public.drivers where id = '00000000-0000-0000-0000-00000000d001'),

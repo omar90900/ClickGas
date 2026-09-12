@@ -96,7 +96,7 @@ class _DriversTable extends StatelessWidget {
         DataColumn(label: Text(l.colOnline)),
         DataColumn(label: Text(l.colOpen), numeric: true),
         DataColumn(label: Text(l.colDelivered), numeric: true),
-        DataColumn(label: Text(l.colOwes), numeric: true),
+        DataColumn(label: Text(l.colOpenCharges), numeric: true),
         DataColumn(label: Text(l.colDocuments)),
         DataColumn(label: Text(l.colJoined)),
       ],
@@ -121,9 +121,9 @@ class _DriversTable extends StatelessWidget {
               DataCell(Text('${d.openOrders}')),
               DataCell(Text('${d.deliveredOrders}')),
               DataCell(Text(
-                Fmt.amount(d.balance),
+                d.openCharges > 0 ? Fmt.amount(d.openCharges) : '-',
                 style: TextStyle(
-                  color: d.balance > 0 ? AppColors.danger : null,
+                  color: d.openCharges > 0 ? AppColors.warning : null,
                   fontWeight: FontWeight.w700,
                 ),
               )),

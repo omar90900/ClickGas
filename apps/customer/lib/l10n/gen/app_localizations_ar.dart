@@ -536,4 +536,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get profileMissing => 'تعذّر تحميل بيانات حسابك.';
+
+  @override
+  String get sessionExpired => 'انتهت جلستك. سجّل الدخول مجدداً.';
 }

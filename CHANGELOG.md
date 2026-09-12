@@ -3,7 +3,31 @@
 Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow the
 apps' `pubspec.yaml` version.
 
-## [Unreleased] - Phase 1: Admin core
+## [Unreleased] - Revenue model and session fix
+
+### Fixed
+- Apps stopped working after about an hour (expired login token while the
+  distributor app tracked in the background or a dashboard tab was hidden).
+  `SessionKeeper` renews the token even in the background, `guard()` retries
+  once after renewing, and order streams reconnect after errors
+  (docs/runbooks/session-expired.md).
+
+### Changed
+- ClickGas earns only the service fee per delivered order; delivery no longer
+  creates a debt for the distributor (ADR 0011).
+- Dashboard: **Balances** is replaced by **Finance**: income by day, agency and
+  distributor, customer and distributor fees, order value, and charges.
+
+### Added
+- Charges: fines or fees for particular items raised against a distributor
+  with an explanation, open → paid or waived; shown in the distributor's Sales
+  tab, the distributor panel and the order inspector.
+
+### Removed
+- `driver_ledger`, `driver_balance`, `record_driver_payment`,
+  `admin_adjust_balance`, `admin_balances`, and the "fees owed" card.
+
+## Phase 1: Admin core
 
 ### Added
 - Admin dashboard (`apps/admin`, Flutter web, Arabic/English): overview with

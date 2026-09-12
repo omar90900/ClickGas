@@ -1039,6 +1039,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'We couldn\'t load your account data.'**
   String get profileMissing;
+
+  /// No description provided for @sessionExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Your session ended. Sign in again.'**
+  String get sessionExpired;
 }
 
 class _AppLocalizationsDelegate

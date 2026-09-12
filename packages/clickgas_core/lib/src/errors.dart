@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'logger.dart';
+import 'session_keeper.dart';
 
 /// Stable error codes, shared with the database and documented in
 /// docs/errors.md. Database functions raise the same strings, e.g.
@@ -39,7 +40,9 @@ enum FailureCode {
   invalidSetting('INVALID_SETTING'),
   invalidTarget('INVALID_TARGET'),
   lastOwner('LAST_OWNER'),
+  chargeNotOpen('CHARGE_NOT_OPEN'),
   // ---- generic (NOT_FOUND last: it is the least specific match)
+  sessionExpired('SESSION_EXPIRED'),
   permissionDenied('PERMISSION_DENIED'),
   notFound('NOT_FOUND'),
   network('NETWORK'),
@@ -69,6 +72,9 @@ class AppFailure implements Exception {
 
   factory AppFailure.from(Object error) {
     if (error is AppFailure) return error;
+    if (SessionKeeper.isExpiredError(error)) {
+      return AppFailure(FailureCode.sessionExpired, detail: error.toString(), cause: error);
+    }
     if (error is SocketException ||
         error is TimeoutException ||
         error is AuthRetryableFetchException) {
@@ -126,13 +132,28 @@ class AppFailure implements Exception {
 
 /// Runs a server call, converts any failure into an [AppFailure] and logs
 /// it with the [operation] name, so every failure is traceable.
+///
+/// Before the call the token is refreshed if it is about to expire; if the
+/// call still fails with an expired token, the session is refreshed and the
+/// call retried once ([SessionKeeper]).
 Future<T> guard<T>(
   String operation,
   Future<T> Function() action, {
   Map<String, Object?> context = const {},
 }) async {
+  final keeper = SessionKeeper.instance;
   try {
-    return await action();
+    await keeper?.ensureFresh();
+    try {
+      return await action();
+    } catch (error) {
+      if (keeper == null || !SessionKeeper.isExpiredError(error)) rethrow;
+      Log.w('session_expired_retry', {'op': operation});
+      if (!await keeper.refresh()) {
+        throw AppFailure(FailureCode.sessionExpired, detail: error.toString(), cause: error);
+      }
+      return await action();
+    }
   } catch (error, stack) {
     final failure = AppFailure.from(error);
     final data = {

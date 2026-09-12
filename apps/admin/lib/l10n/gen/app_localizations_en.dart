@@ -282,9 +282,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navCustomers => 'Customers';
 
   @override
-  String get navBalances => 'Balances';
-
-  @override
   String get navSettings => 'Settings';
 
   @override
@@ -361,19 +358,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Everything, including prices, fees, settings and staff';
 
   @override
-  String get roleOperationsDesc => 'Orders, distributor approvals and payments';
+  String get roleOperationsDesc => 'Orders, distributor approvals and charges';
 
   @override
   String get roleSupportDesc => 'Customers; can see money but not change it';
-
-  @override
-  String get ledgerOrderFee => 'Delivery fees';
-
-  @override
-  String get ledgerPayment => 'Payment';
-
-  @override
-  String get ledgerAdjustment => 'Adjustment';
 
   @override
   String get actorSystem => 'System';
@@ -483,9 +471,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String newToday(int count) {
     return '$count new today';
   }
-
-  @override
-  String get kpiOutstanding => 'Fees owed by distributors';
 
   @override
   String get last14Days => 'Last 14 days';
@@ -641,9 +626,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get releases => 'Given back by distributors';
 
   @override
-  String get feesBooked => 'Fees booked';
-
-  @override
   String get staffActions => 'Staff actions';
 
   @override
@@ -774,9 +756,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get colDelivered => 'Delivered';
-
-  @override
-  String get colOwes => 'Owes';
 
   @override
   String get colDocuments => 'Documents';
@@ -917,55 +896,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cylindersOnBoard => 'Cylinders on board';
 
   @override
-  String get balanceSection => 'Fee balance';
-
-  @override
-  String owes(String amount) {
-    return 'Owes $amount';
-  }
-
-  @override
-  String inCredit(String amount) {
-    return 'In credit $amount';
-  }
-
-  @override
-  String get settled => 'Settled';
-
-  @override
-  String get recordPayment => 'Record payment';
-
-  @override
-  String get adjust => 'Adjust';
-
-  @override
-  String paymentTitle(String name) {
-    return 'Cash received from $name';
-  }
-
-  @override
-  String get paymentMessage =>
-      'Record the cash the distributor handed over. It lowers what they owe.';
-
-  @override
-  String adjustTitle(String name) {
-    return 'Adjust $name\'s balance';
-  }
-
-  @override
-  String get adjustMessage =>
-      'A positive amount adds to what they owe; a negative amount waives part of it.';
-
-  @override
-  String get paymentRecorded => 'Payment recorded';
-
-  @override
-  String get balanceAdjusted => 'Balance adjusted';
-
-  @override
-  String get noLedger => 'No fees booked yet.';
-
-  @override
   String get recentOrders => 'Recent orders';
 
   @override
@@ -987,38 +917,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get oftenCancels => 'Often cancels';
 
   @override
-  String get balancesNote =>
-      'Payment is cash only: each delivered order adds the customer\'s and the distributor\'s service fees to what the distributor owes. Record cash when they hand it over.';
-
-  @override
-  String get totalOwed => 'Owed to the platform';
-
-  @override
-  String get totalFees => 'Fees booked';
-
-  @override
-  String get totalPayments => 'Payments received';
-
-  @override
-  String get noBalances => 'No fees booked yet.';
-
-  @override
-  String get colDeliveries => 'Deliveries';
-
-  @override
   String get colFees => 'Fees';
-
-  @override
-  String get colPaid => 'Paid';
-
-  @override
-  String get colAdjustments => 'Adjustments';
-
-  @override
-  String get colBalance => 'Balance';
-
-  @override
-  String get colLastPayment => 'Last payment';
 
   @override
   String get servicesTitle => 'Services and prices';
@@ -1256,12 +1155,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get actOrderReturn => 'Returned order to the queue';
 
   @override
-  String get actLedgerPayment => 'Recorded a payment';
-
-  @override
-  String get actLedgerAdjust => 'Adjusted a balance';
-
-  @override
   String get actServiceUpdate => 'Edited a service';
 
   @override
@@ -1284,4 +1177,182 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get actStaffRemove => 'Removed staff';
+
+  @override
+  String get sessionExpired => 'Your session ended. Sign in again.';
+
+  @override
+  String get navFinance => 'Finance';
+
+  @override
+  String get financeNote =>
+      'The platform\'s income is the service fee on each delivered order (the customer\'s part and the distributor\'s part). Charges are separate: fines or fees for particular items raised against a distributor, each with an explanation.';
+
+  @override
+  String get rangeToday => 'Today';
+
+  @override
+  String get range7 => '7 days';
+
+  @override
+  String get range30 => '30 days';
+
+  @override
+  String get rangeMonth => 'This month';
+
+  @override
+  String get rangeCustom => 'Pick dates';
+
+  @override
+  String get kpiPlatformFees => 'Platform income';
+
+  @override
+  String get platformFeesCaption => 'Service fees on delivered orders';
+
+  @override
+  String get kpiCustomerFees => 'Customer fees';
+
+  @override
+  String get kpiDistributorFees => 'Distributor fees';
+
+  @override
+  String get kpiDeliveredOrders => 'Delivered orders';
+
+  @override
+  String get kpiOrderValue => 'Order value';
+
+  @override
+  String get orderValueCaption => 'Paid by customers to distributors';
+
+  @override
+  String get kpiAvgFee => 'Average income per order';
+
+  @override
+  String get feesByDay => 'Income by day';
+
+  @override
+  String get byAgency => 'By agency';
+
+  @override
+  String get byDistributor => 'By distributor';
+
+  @override
+  String get colDistributors => 'Distributors';
+
+  @override
+  String get colOrderValue => 'Order value';
+
+  @override
+  String get noAgency => 'No agency';
+
+  @override
+  String get noDeliveries => 'No delivered orders in this period.';
+
+  @override
+  String get charges => 'Charges';
+
+  @override
+  String get chargesNote =>
+      'Fines or fees for particular items, raised against a distributor with an explanation they see in their app.';
+
+  @override
+  String get newCharge => 'New charge';
+
+  @override
+  String get chargeKindFine => 'Fine';
+
+  @override
+  String get chargeKindItem => 'Item fee';
+
+  @override
+  String get chargeKindOther => 'Other';
+
+  @override
+  String get chargeOpen => 'Open';
+
+  @override
+  String get chargePaid => 'Paid';
+
+  @override
+  String get chargeWaived => 'Waived';
+
+  @override
+  String get chargeTitle => 'Title';
+
+  @override
+  String get chargeTitleHint => 'For example: late delivery, damaged valve';
+
+  @override
+  String get chargeNoteLabel => 'Explanation (the distributor sees it)';
+
+  @override
+  String get chargeCreated => 'Charge added';
+
+  @override
+  String get markPaid => 'Mark paid';
+
+  @override
+  String get waive => 'Waive';
+
+  @override
+  String get waiveTitle => 'Waive this charge';
+
+  @override
+  String get markPaidConfirm => 'Mark this charge as paid?';
+
+  @override
+  String get chargeSettled => 'Charge updated';
+
+  @override
+  String get noCharges => 'No charges.';
+
+  @override
+  String chargeForOrder(int number) {
+    return 'Order #$number';
+  }
+
+  @override
+  String get kpiOpenCharges => 'Open charges';
+
+  @override
+  String get kpiFeesMonth => 'Income this month';
+
+  @override
+  String get colOpenCharges => 'Open charges';
+
+  @override
+  String get chargeDistributor => 'Charge the distributor';
+
+  @override
+  String get chargeNotOpen => 'This charge is already settled.';
+
+  @override
+  String get chargesRaised => 'Raised in period';
+
+  @override
+  String get chargesPaidTotal => 'Paid in period';
+
+  @override
+  String get chargesWaivedTotal => 'Waived in period';
+
+  @override
+  String get colCharge => 'Charge';
+
+  @override
+  String get colAmount => 'Amount';
+
+  @override
+  String get colDate => 'Date';
+
+  @override
+  String get colExplanation => 'Explanation';
+
+  @override
+  String get actChargeCreate => 'Added a charge';
+
+  @override
+  String get actChargePaid => 'Marked a charge paid';
+
+  @override
+  String get actChargeWaived => 'Waived a charge';
 }

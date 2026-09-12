@@ -279,9 +279,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get navCustomers => 'العملاء';
 
   @override
-  String get navBalances => 'الأرصدة';
-
-  @override
   String get navSettings => 'الإعدادات';
 
   @override
@@ -358,19 +355,10 @@ class AppLocalizationsAr extends AppLocalizations {
       'كل شيء، بما فيها الأسعار والرسوم والإعدادات والفريق';
 
   @override
-  String get roleOperationsDesc => 'الطلبات واعتماد الموزّعين والدفعات';
+  String get roleOperationsDesc => 'الطلبات واعتماد الموزّعين والمطالبات';
 
   @override
   String get roleSupportDesc => 'العملاء؛ يرى المبالغ دون تعديلها';
-
-  @override
-  String get ledgerOrderFee => 'رسوم التوصيل';
-
-  @override
-  String get ledgerPayment => 'دفعة';
-
-  @override
-  String get ledgerAdjustment => 'تسوية';
 
   @override
   String get actorSystem => 'النظام';
@@ -480,9 +468,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String newToday(int count) {
     return '$count جديد اليوم';
   }
-
-  @override
-  String get kpiOutstanding => 'رسوم مستحقة على الموزّعين';
 
   @override
   String get last14Days => 'آخر 14 يوماً';
@@ -638,9 +623,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get releases => 'أعاده موزّعون';
 
   @override
-  String get feesBooked => 'الرسوم المسجّلة';
-
-  @override
   String get staffActions => 'إجراءات الفريق';
 
   @override
@@ -771,9 +753,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get colDelivered => 'تم توصيلها';
-
-  @override
-  String get colOwes => 'مستحق';
 
   @override
   String get colDocuments => 'الوثائق';
@@ -913,54 +892,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get cylindersOnBoard => 'الجرار في المركبة';
 
   @override
-  String get balanceSection => 'رصيد الرسوم';
-
-  @override
-  String owes(String amount) {
-    return 'مستحق عليه $amount';
-  }
-
-  @override
-  String inCredit(String amount) {
-    return 'رصيد له $amount';
-  }
-
-  @override
-  String get settled => 'مسدَّد';
-
-  @override
-  String get recordPayment => 'تسجيل دفعة';
-
-  @override
-  String get adjust => 'تسوية';
-
-  @override
-  String paymentTitle(String name) {
-    return 'نقد مستلم من $name';
-  }
-
-  @override
-  String get paymentMessage => 'سجّل النقد الذي سلّمه الموزّع. يُخصم مما عليه.';
-
-  @override
-  String adjustTitle(String name) {
-    return 'تسوية رصيد $name';
-  }
-
-  @override
-  String get adjustMessage =>
-      'المبلغ الموجب يُضاف إلى ما عليه، والسالب يُعفيه من جزء منه.';
-
-  @override
-  String get paymentRecorded => 'تم تسجيل الدفعة';
-
-  @override
-  String get balanceAdjusted => 'تمت التسوية';
-
-  @override
-  String get noLedger => 'لا توجد رسوم مسجّلة بعد.';
-
-  @override
   String get recentOrders => 'آخر الطلبات';
 
   @override
@@ -982,38 +913,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get oftenCancels => 'يلغي كثيراً';
 
   @override
-  String get balancesNote =>
-      'الدفع نقدي فقط: كل طلب يُسلَّم يضيف رسوم الخدمة الخاصة بالعميل والموزّع إلى ما على الموزّع. سجّل النقد عند تسليمه.';
-
-  @override
-  String get totalOwed => 'المستحق للمنصة';
-
-  @override
-  String get totalFees => 'الرسوم المسجّلة';
-
-  @override
-  String get totalPayments => 'الدفعات المستلمة';
-
-  @override
-  String get noBalances => 'لا توجد رسوم مسجّلة بعد.';
-
-  @override
-  String get colDeliveries => 'التوصيلات';
-
-  @override
   String get colFees => 'الرسوم';
-
-  @override
-  String get colPaid => 'المدفوع';
-
-  @override
-  String get colAdjustments => 'التسويات';
-
-  @override
-  String get colBalance => 'الرصيد';
-
-  @override
-  String get colLastPayment => 'آخر دفعة';
 
   @override
   String get servicesTitle => 'الخدمات والأسعار';
@@ -1249,12 +1149,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get actOrderReturn => 'أرجع طلباً للانتظار';
 
   @override
-  String get actLedgerPayment => 'سجّل دفعة';
-
-  @override
-  String get actLedgerAdjust => 'سوّى رصيداً';
-
-  @override
   String get actServiceUpdate => 'عدّل خدمة';
 
   @override
@@ -1277,4 +1171,182 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get actStaffRemove => 'أزال عضواً من الفريق';
+
+  @override
+  String get sessionExpired => 'انتهت جلستك. سجّل الدخول مجدداً.';
+
+  @override
+  String get navFinance => 'المالية';
+
+  @override
+  String get financeNote =>
+      'دخل المنصة هو رسوم الخدمة على كل طلب يُسلَّم (جزء العميل وجزء الموزّع). المطالبات منفصلة: غرامات أو رسوم على بنود محددة تُسجَّل على موزّع مع توضيح لكل منها.';
+
+  @override
+  String get rangeToday => 'اليوم';
+
+  @override
+  String get range7 => '7 أيام';
+
+  @override
+  String get range30 => '30 يوماً';
+
+  @override
+  String get rangeMonth => 'هذا الشهر';
+
+  @override
+  String get rangeCustom => 'اختر التواريخ';
+
+  @override
+  String get kpiPlatformFees => 'دخل المنصة';
+
+  @override
+  String get platformFeesCaption => 'رسوم الخدمة على الطلبات المسلّمة';
+
+  @override
+  String get kpiCustomerFees => 'رسوم العملاء';
+
+  @override
+  String get kpiDistributorFees => 'رسوم الموزّعين';
+
+  @override
+  String get kpiDeliveredOrders => 'طلبات مسلّمة';
+
+  @override
+  String get kpiOrderValue => 'قيمة الطلبات';
+
+  @override
+  String get orderValueCaption => 'يدفعها العملاء للموزّعين';
+
+  @override
+  String get kpiAvgFee => 'متوسط الدخل لكل طلب';
+
+  @override
+  String get feesByDay => 'الدخل حسب اليوم';
+
+  @override
+  String get byAgency => 'حسب الوكالة';
+
+  @override
+  String get byDistributor => 'حسب الموزّع';
+
+  @override
+  String get colDistributors => 'الموزّعون';
+
+  @override
+  String get colOrderValue => 'قيمة الطلبات';
+
+  @override
+  String get noAgency => 'بدون وكالة';
+
+  @override
+  String get noDeliveries => 'لا توجد طلبات مسلّمة في هذه الفترة.';
+
+  @override
+  String get charges => 'المطالبات';
+
+  @override
+  String get chargesNote =>
+      'غرامات أو رسوم على بنود محددة تُسجَّل على الموزّع مع توضيح يظهر له في التطبيق.';
+
+  @override
+  String get newCharge => 'مطالبة جديدة';
+
+  @override
+  String get chargeKindFine => 'غرامة';
+
+  @override
+  String get chargeKindItem => 'رسوم بند';
+
+  @override
+  String get chargeKindOther => 'أخرى';
+
+  @override
+  String get chargeOpen => 'مفتوحة';
+
+  @override
+  String get chargePaid => 'مدفوعة';
+
+  @override
+  String get chargeWaived => 'معفاة';
+
+  @override
+  String get chargeTitle => 'العنوان';
+
+  @override
+  String get chargeTitleHint => 'مثال: تأخير في التوصيل، صمام تالف';
+
+  @override
+  String get chargeNoteLabel => 'التوضيح (يراه الموزّع)';
+
+  @override
+  String get chargeCreated => 'تمت إضافة المطالبة';
+
+  @override
+  String get markPaid => 'تم الدفع';
+
+  @override
+  String get waive => 'إعفاء';
+
+  @override
+  String get waiveTitle => 'الإعفاء من هذه المطالبة';
+
+  @override
+  String get markPaidConfirm => 'تسجيل هذه المطالبة كمدفوعة؟';
+
+  @override
+  String get chargeSettled => 'تم تحديث المطالبة';
+
+  @override
+  String get noCharges => 'لا توجد مطالبات.';
+
+  @override
+  String chargeForOrder(int number) {
+    return 'الطلب #$number';
+  }
+
+  @override
+  String get kpiOpenCharges => 'مطالبات مفتوحة';
+
+  @override
+  String get kpiFeesMonth => 'دخل هذا الشهر';
+
+  @override
+  String get colOpenCharges => 'مطالبات مفتوحة';
+
+  @override
+  String get chargeDistributor => 'مطالبة الموزّع';
+
+  @override
+  String get chargeNotOpen => 'هذه المطالبة مُسوّاة مسبقاً.';
+
+  @override
+  String get chargesRaised => 'سُجّلت في الفترة';
+
+  @override
+  String get chargesPaidTotal => 'دُفعت في الفترة';
+
+  @override
+  String get chargesWaivedTotal => 'أُعفيت في الفترة';
+
+  @override
+  String get colCharge => 'المطالبة';
+
+  @override
+  String get colAmount => 'المبلغ';
+
+  @override
+  String get colDate => 'التاريخ';
+
+  @override
+  String get colExplanation => 'التوضيح';
+
+  @override
+  String get actChargeCreate => 'أضاف مطالبة';
+
+  @override
+  String get actChargePaid => 'سجّل دفع مطالبة';
+
+  @override
+  String get actChargeWaived => 'أعفى من مطالبة';
 }

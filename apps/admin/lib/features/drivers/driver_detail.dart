@@ -6,20 +6,20 @@ import '../../data/admin_models.dart';
 import '../../data/admin_repository.dart';
 import '../../state/staff_session.dart';
 import '../../widgets/common.dart';
+import '../finance/charges.dart';
 import '../orders/orders_page.dart';
 
 Future<void> showDriverDetail(BuildContext context, String driverId, {VoidCallback? onChanged}) =>
     showSidePanel(context, width: 760, builder: (_) => DriverDetail(driverId: driverId, onChanged: onChanged));
 
 class _DriverData {
-  const _DriverData(this.driver, this.documents, this.ledger);
+  const _DriverData(this.driver, this.documents);
   final AdminDriver driver;
   final List<DriverDocument> documents;
-  final List<LedgerEntry> ledger;
 }
 
-/// One distributor: approval with documents, account state, workload, fee
-/// balance with payments, and recent orders.
+/// One distributor: approval with documents, account state, workload,
+/// charges, and recent orders.
 class DriverDetail extends StatelessWidget {
   const DriverDetail({super.key, required this.driverId, this.onChanged});
 
@@ -35,13 +35,8 @@ class DriverDetail extends StatelessWidget {
         final r = await Future.wait<Object>([
           repo.driver(driverId),
           docs.list(driverId),
-          repo.ledger(driverId, limit: 30),
         ]);
-        return _DriverData(
-          r[0] as AdminDriver,
-          r[1] as List<DriverDocument>,
-          r[2] as List<LedgerEntry>,
-        );
+        return _DriverData(r[0] as AdminDriver, r[1] as List<DriverDocument>);
       },
       builder: (context, data, reload) => _Body(
         data: data,
@@ -113,43 +108,6 @@ class _Body extends StatelessWidget {
       if (!context.mounted) return;
       await _act(context, () => repo.setAccountActive(d.id, true), l.accountUnblocked);
     }
-  }
-
-  Future<void> _payment(BuildContext context) async {
-    final l = context.l10n;
-    final result = await askAmount(
-      context,
-      title: l.paymentTitle(d.fullName),
-      message: l.paymentMessage,
-      confirmLabel: l.recordPayment,
-    );
-    if (result == null || !context.mounted) return;
-    await _act(
-      context,
-      () => context.read<AdminRepository>().recordPayment(
-            d.id,
-            result.amount,
-            note: result.note.isEmpty ? null : result.note,
-          ),
-      l.paymentRecorded,
-    );
-  }
-
-  Future<void> _adjust(BuildContext context) async {
-    final l = context.l10n;
-    final result = await askAmount(
-      context,
-      title: l.adjustTitle(d.fullName),
-      message: l.adjustMessage,
-      allowNegative: true,
-      noteRequired: true,
-    );
-    if (result == null || !context.mounted) return;
-    await _act(
-      context,
-      () => context.read<AdminRepository>().adjustBalance(d.id, result.amount, result.note),
-      l.balanceAdjusted,
-    );
   }
 
   @override
@@ -272,51 +230,7 @@ class _Body extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          SectionCard(
-            title: l.balanceSection,
-            subtitle: d.balance > 0
-                ? l.owes(Fmt.money(context, d.balance))
-                : d.balance < 0
-                    ? l.inCredit(Fmt.money(context, -d.balance))
-                    : l.settled,
-            actions: [
-              if (ops)
-                TextButton.icon(
-                  onPressed: () => _payment(context),
-                  icon: const Icon(Icons.payments_rounded, size: 18),
-                  label: Text(l.recordPayment),
-                ),
-              if (role.isOwner)
-                TextButton(onPressed: () => _adjust(context), child: Text(l.adjust)),
-            ],
-            child: data.ledger.isEmpty
-                ? Text(l.noLedger)
-                : Column(
-                    children: [
-                      for (final e in data.ledger)
-                        ListTile(
-                          dense: true,
-                          contentPadding: EdgeInsets.zero,
-                          title: Text(ledgerKindLabel(l, e.kind)),
-                          subtitle: e.note == null ? null : Text(e.note!, maxLines: 2, overflow: TextOverflow.ellipsis),
-                          trailing: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(
-                                Fmt.amount(e.amount),
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w800,
-                                  color: e.amount < 0 ? AppColors.brandDeep : null,
-                                ),
-                              ),
-                              Text(Fmt.dateTime(context, e.createdAt), style: context.text.labelSmall),
-                            ],
-                          ),
-                        ),
-                    ],
-                  ),
-          ),
+          ChargesSection(driverId: d.id, driverName: d.fullName, onChanged: onChanged),
           const SizedBox(height: 12),
           SectionCard(
             title: l.recentOrders,

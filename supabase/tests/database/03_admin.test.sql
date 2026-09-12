@@ -1,7 +1,7 @@
 -- Staff roles, audit trail and staff actions (Phase 1 admin core).
 -- Run with: supabase test db
 begin;
-select plan(41);
+select plan(45);
 
 -- ---------------------------------------------------------------- fixtures
 -- owner c001, support c002, customer c003, distributor c004
@@ -54,8 +54,8 @@ select throws_ok(
   $$ select public.admin_set_driver_status('00000000-0000-0000-0000-0000000c0004', 'approved') $$,
   'P0001', 'PERMISSION_DENIED', 'support cannot approve distributors');
 select throws_ok(
-  $$ select public.record_driver_payment('00000000-0000-0000-0000-0000000c0004', 1) $$,
-  'P0001', 'PERMISSION_DENIED', 'support cannot record payments');
+  $$ select public.admin_create_charge('00000000-0000-0000-0000-0000000c0004', 'fine', 'Late', 1, 'late delivery') $$,
+  'P0001', 'PERMISSION_DENIED', 'support cannot raise charges');
 select throws_ok(
   $$ select public.admin_set_account_active('00000000-0000-0000-0000-0000000c0003', false) $$,
   'P0001', 'REASON_REQUIRED', 'blocking needs a reason');
@@ -121,12 +121,25 @@ select ok(
 select ok(public.admin_live_map() ? 'drivers', 'the live map returns distributors and orders');
 
 -- ---------------------------------------------------------------- owner: money and settings
+select throws_ok(
+  $$ select public.admin_create_charge('00000000-0000-0000-0000-0000000c0004', 'fine', 'Late delivery', 2.5) $$,
+  'P0001', 'REASON_REQUIRED', 'a charge needs an explanation');
 select is(
-  (select amount from public.record_driver_payment('00000000-0000-0000-0000-0000000c0004', 2.5, 'cash at office')),
-  -2.500::numeric, 'a payment is stored as a negative ledger row');
+  (select status::text from public.admin_create_charge(
+     '00000000-0000-0000-0000-0000000c0004', 'fine', 'Late delivery', 2.5, 'Arrived two hours late')),
+  'open', 'the owner raises a charge');
 select is(
-  (select balance from public.admin_balances() where driver_id = '00000000-0000-0000-0000-0000000c0004'),
-  -2.500::numeric, 'balances reflect the payment');
+  (select open_charges from public.admin_list_drivers(p_driver_id := '00000000-0000-0000-0000-0000000c0004')),
+  2.500::numeric, 'open charges show on the distributor');
+select is(
+  (select status::text from public.admin_settle_charge((select max(id) from public.driver_charges), 'paid')),
+  'paid', 'a charge is marked paid');
+select throws_ok(
+  $$ select public.admin_settle_charge((select max(id) from public.driver_charges), 'waived', 'duplicate') $$,
+  'P0001', 'CHARGE_NOT_OPEN', 'a settled charge cannot change');
+select is(
+  (public.admin_finance(now() - interval '1 day', now() + interval '1 day') -> 'charges' ->> 'paid_amount')::numeric,
+  2.5::numeric, 'the finance report counts the paid charge');
 select throws_ok($$ select public.admin_update_config('{"nope": 1}') $$,
   'P0001', 'INVALID_SETTING', 'unknown settings are refused');
 select throws_ok($$ select public.admin_update_config('{"driver_radius_km": "far"}') $$,

@@ -1,8 +1,8 @@
 import 'package:clickgas_core/clickgas_core.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-/// Distributor side: own profile and location, dispatch RPCs, sales and fee
-/// balance. Throws only [AppFailure]; dispatch refusals arrive as codes such
+/// Distributor side: own profile and location, dispatch RPCs, sales and
+/// charges. Throws only [AppFailure]; dispatch refusals arrive as codes such
 /// as [FailureCode.maxActiveOrders] (docs/errors.md).
 class DriverRepository {
   DriverRepository(this._client);
@@ -146,13 +146,22 @@ class DriverRepository {
         return rows.map(OrderRelease.fromMap).toList();
       });
 
-  /// What this distributor owes the platform in service fees (JOD).
-  Future<double> feeBalance() => guard('sales.fee_balance', () async {
-        final value = await _client.rpc('driver_balance');
-        return switch (value) {
-          num n => n.toDouble(),
-          String s => double.tryParse(s) ?? 0,
-          _ => 0.0,
-        };
+  /// Fines or item fees staff raised against this distributor, newest first
+  /// (docs/business-rules.md#charges).
+  Future<List<DriverCharge>> charges(String driverId) =>
+      guard('sales.charges', () async {
+        final rows = await _client
+            .from('driver_charges')
+            .select('*, orders(order_number)')
+            .eq('driver_id', driverId)
+            .order('created_at', ascending: false)
+            .limit(50);
+        return rows.map((r) {
+          final order = r['orders'];
+          return DriverCharge.fromMap({
+            ...r,
+            if (order is Map) 'order_number': order['order_number'],
+          });
+        }).toList();
       });
 }

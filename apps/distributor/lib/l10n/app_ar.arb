@@ -138,9 +138,6 @@
   "sendDiagnostics": "إرسال تقرير تشخيص",
   "sendDiagnosticsBody": "يرسل نشاط التطبيق الأخير لفريق الدعم للمساعدة في حل مشكلة. لا يتضمن كلمات السر أبداً.",
   "diagnosticsSent": "تم الإرسال. رقمك المرجعي {id}.",
-  "feesOwed": "رسوم الخدمة المستحقة",
-  "feesOwedBody": "0.150 د.أ عن كل طلب موصَل (0.100 تُحصّل من العميل + 0.050 رسوم الموزع)، تُسوّى أسبوعياً مع كليك غاز.",
-  "feesSettled": "لا توجد مستحقات",
 
   "salesTitle": "سجل المبيعات",
   "today": "اليوم",
@@ -193,5 +190,16 @@
   "upload": "رفع",
   "replace": "استبدال",
   "documentUploaded": "تم الرفع. سيراجعها الفريق قريباً.",
-  "documentExpired": "انتهت صلاحية هذه الوثيقة. ارفع وثيقة سارية."
+  "documentExpired": "انتهت صلاحية هذه الوثيقة. ارفع وثيقة سارية.",
+
+  "sessionExpired": "انتهت جلستك. سجّل الدخول مجدداً.",
+  "chargesTitle": "المطالبات",
+  "chargesBody": "غرامات أو رسوم على بنود محددة من فريق كليك غاز، مع سبب كل منها.",
+  "chargeOpen": "مفتوحة",
+  "chargePaid": "مدفوعة",
+  "chargeWaived": "معفاة",
+  "chargeKindFine": "غرامة",
+  "chargeKindItem": "رسوم بند",
+  "chargeKindOther": "أخرى",
+  "openChargesTotal": "المفتوح: {amount}"
 }

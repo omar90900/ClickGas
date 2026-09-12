@@ -153,9 +153,6 @@
   "sendDiagnosticsBody": "Sends the app's recent activity to support to help solve a problem. Passwords are never included.",
   "diagnosticsSent": "Sent. Your reference number is {id}.",
   "@diagnosticsSent": {"placeholders": {"id": {"type": "int"}}},
-  "feesOwed": "Service fees owed",
-  "feesOwedBody": "0.150 JOD per delivered order (0.100 collected from the customer + 0.050 distributor fee). Settled weekly with ClickGas.",
-  "feesSettled": "Nothing owed",
 
   "salesTitle": "Sales log",
   "today": "Today",
@@ -212,5 +209,17 @@
   "upload": "Upload",
   "replace": "Replace",
   "documentUploaded": "Uploaded. The team will review it soon.",
-  "documentExpired": "This document has expired. Upload a valid one."
+  "documentExpired": "This document has expired. Upload a valid one.",
+
+  "sessionExpired": "Your session ended. Sign in again.",
+  "chargesTitle": "Charges",
+  "chargesBody": "Fines or fees for particular items from the ClickGas team, each with its reason.",
+  "chargeOpen": "Open",
+  "chargePaid": "Paid",
+  "chargeWaived": "Waived",
+  "chargeKindFine": "Fine",
+  "chargeKindItem": "Item fee",
+  "chargeKindOther": "Other",
+  "openChargesTotal": "Open: {amount}",
+  "@openChargesTotal": {"placeholders":{"amount":{"type":"String"}}}
 }

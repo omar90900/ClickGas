@@ -59,6 +59,16 @@ void main() {
       expect(f.detail, contains('boom'));
     });
 
+    test('expired tokens from any Supabase service become SESSION_EXPIRED', () {
+      expect(
+        AppFailure.from(const PostgrestException(message: 'JWT expired', code: 'PGRST303')).code,
+        FailureCode.sessionExpired,
+      );
+      expect(SessionKeeper.isExpiredError(Exception('"exp" claim timestamp check failed: jwt expired')), isTrue);
+      expect(SessionKeeper.isExpiredError(Exception('InvalidJWTToken: Token has expired 12 seconds ago')), isTrue);
+      expect(SessionKeeper.isExpiredError(const PostgrestException(message: 'ORDER_TOO_FAR')), isFalse);
+    });
+
     test('an AppFailure passes through unchanged', () {
       const original = AppFailure(FailureCode.orderTooFar, detail: 'x');
       expect(identical(AppFailure.from(original), original), isTrue);
@@ -92,6 +102,27 @@ void main() {
       final entries = Log.snapshot();
       expect(entries, hasLength(Log.capacity));
       expect((entries.first['data'] as Map)['i'], 25);
+    });
+  });
+
+  group('charges', () {
+    test('a charge row keeps its explanation and order', () {
+      final c = DriverCharge.fromMap({
+        'id': 7,
+        'driver_id': 'd1',
+        'order_id': 'o1',
+        'order_number': 1042,
+        'kind': 'item_fee',
+        'title': 'Valve replacement',
+        'note': 'Valve broken during delivery',
+        'amount': '3.500',
+        'status': 'open',
+      });
+      expect(c.kind, ChargeKind.itemFee);
+      expect(c.amount, 3.5);
+      expect(c.isOpen, isTrue);
+      expect(c.orderNumber, 1042);
+      expect(ChargeStatus.parse('waived'), ChargeStatus.waived);
     });
   });
 

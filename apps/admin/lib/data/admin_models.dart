@@ -133,7 +133,12 @@ class Overview {
   final int documentsToReview;
   final int customersTotal;
   final int customersNewToday;
-  final double feesOutstanding;
+
+  /// Platform income (service fees) this calendar month.
+  final double feesMonth;
+
+  /// Charges raised against distributors that are still open.
+  final double chargesOpen;
   final List<DayStat> days;
 
   const Overview({
@@ -153,7 +158,8 @@ class Overview {
     this.documentsToReview = 0,
     this.customersTotal = 0,
     this.customersNewToday = 0,
-    this.feesOutstanding = 0,
+    this.feesMonth = 0,
+    this.chargesOpen = 0,
     this.days = const [],
   });
 
@@ -174,7 +180,8 @@ class Overview {
         documentsToReview: _i(m['documents_to_review']),
         customersTotal: _i(m['customers_total']),
         customersNewToday: _i(m['customers_new_today']),
-        feesOutstanding: _d(m['fees_outstanding']),
+        feesMonth: _d(m['fees_month']),
+        chargesOpen: _d(m['charges_open']),
         days: _list(m['last_14_days']).map(DayStat.fromMap).toList(),
       );
 }
@@ -342,8 +349,8 @@ class AdminDriver {
   final int openOrders;
   final int deliveredOrders;
 
-  /// What the distributor owes the platform now (negative = in credit).
-  final double balance;
+  /// Sum of this distributor's open charges (fines, item fees).
+  final double openCharges;
   final int documentsPending;
   final int documentsTotal;
 
@@ -371,7 +378,7 @@ class AdminDriver {
     this.ratingCount = 0,
     this.openOrders = 0,
     this.deliveredOrders = 0,
-    this.balance = 0,
+    this.openCharges = 0,
     this.documentsPending = 0,
     this.documentsTotal = 0,
   });
@@ -400,7 +407,7 @@ class AdminDriver {
         ratingCount: _i(m['rating_count']),
         openOrders: _i(m['open_orders']),
         deliveredOrders: _i(m['delivered_orders']),
-        balance: _d(m['balance']),
+        openCharges: _d(m['open_charges']),
         documentsPending: _i(m['documents_pending']),
         documentsTotal: _i(m['documents_total']),
       );
@@ -701,50 +708,6 @@ class ReleaseEntry {
       );
 }
 
-enum LedgerKind {
-  orderFee('order_fee'),
-  payment('payment'),
-  adjustment('adjustment');
-
-  const LedgerKind(this.value);
-  final String value;
-
-  static LedgerKind parse(Object? v) =>
-      values.firstWhere((k) => k.value == v, orElse: () => adjustment);
-}
-
-/// A `driver_ledger` row: positive = owed by the distributor, negative =
-/// paid or waived.
-class LedgerEntry {
-  final int id;
-  final String driverId;
-  final String? orderId;
-  final LedgerKind kind;
-  final double amount;
-  final String? note;
-  final DateTime? createdAt;
-
-  const LedgerEntry({
-    required this.id,
-    required this.driverId,
-    required this.kind,
-    required this.amount,
-    this.orderId,
-    this.note,
-    this.createdAt,
-  });
-
-  factory LedgerEntry.fromMap(Map<String, dynamic> m) => LedgerEntry(
-        id: _i(m['id']),
-        driverId: m['driver_id'] as String,
-        orderId: m['order_id'] as String?,
-        kind: LedgerKind.parse(m['kind']),
-        amount: _d(m['amount']),
-        note: m['note'] as String?,
-        createdAt: _date(m['created_at']),
-      );
-}
-
 /// A row of the `admin_actions` audit trail.
 class AdminAction {
   final int id;
@@ -794,7 +757,9 @@ class OrderDetail {
   final PersonCard? driver;
   final List<OrderEvent> events;
   final List<ReleaseEntry> releases;
-  final List<LedgerEntry> ledger;
+
+  /// Charges raised about this order (fines, item fees).
+  final List<DriverCharge> charges;
   final List<AdminAction> actions;
 
   const OrderDetail({
@@ -805,7 +770,7 @@ class OrderDetail {
     this.driver,
     this.events = const [],
     this.releases = const [],
-    this.ledger = const [],
+    this.charges = const [],
     this.actions = const [],
   });
 
@@ -821,51 +786,134 @@ class OrderDetail {
       driver: driver.isEmpty ? null : PersonCard.fromMap(driver),
       events: _list(m['events']).map(OrderEvent.fromMap).toList(),
       releases: _list(m['releases']).map(ReleaseEntry.fromMap).toList(),
-      ledger: _list(m['ledger']).map(LedgerEntry.fromMap).toList(),
+      charges: _list(m['charges']).map(DriverCharge.fromMap).toList(),
       actions: _list(m['actions']).map(AdminAction.fromMap).toList(),
     );
   }
 }
 
-// ---------------------------------------------------------------- money
+// ---------------------------------------------------------------- finance
 
-/// A row of `admin_balances()`.
-class Balance {
-  final String driverId;
-  final String fullName;
-  final String phone;
-  final DriverStatus status;
-  final double fees;
-  final double payments;
-  final double adjustments;
-  final double balance;
-  final int deliveries;
-  final DateTime? lastPaymentAt;
+/// `admin_finance(from, to)`: platform income is the service fee on each
+/// delivered order (docs/decisions/0011-revenue-and-charges.md).
+class FinanceReport {
+  final int deliveredOrders;
+  final int cylinders;
 
-  const Balance({
-    required this.driverId,
-    required this.fullName,
-    required this.phone,
-    required this.status,
-    this.fees = 0,
-    this.payments = 0,
-    this.adjustments = 0,
-    this.balance = 0,
-    this.deliveries = 0,
-    this.lastPaymentAt,
+  /// What customers paid distributors (cylinders + delivery + service fee).
+  final double orderValue;
+  final double customerFees;
+  final double distributorFees;
+  final double platformFees;
+  final List<DayStat> days;
+  final List<AgencyIncome> agencies;
+  final List<DistributorIncome> distributors;
+  final ChargeSummary charges;
+
+  const FinanceReport({
+    this.deliveredOrders = 0,
+    this.cylinders = 0,
+    this.orderValue = 0,
+    this.customerFees = 0,
+    this.distributorFees = 0,
+    this.platformFees = 0,
+    this.days = const [],
+    this.agencies = const [],
+    this.distributors = const [],
+    this.charges = const ChargeSummary(),
   });
 
-  factory Balance.fromMap(Map<String, dynamic> m) => Balance(
-        driverId: m['driver_id'] as String,
-        fullName: m['full_name'] as String? ?? '',
-        phone: m['phone'] as String? ?? '',
-        status: DriverStatus.parse(m['status']),
+  double get averageFee => deliveredOrders == 0 ? 0 : platformFees / deliveredOrders;
+
+  factory FinanceReport.fromMap(Map<String, dynamic> m) {
+    final t = _map(m['totals']);
+    return FinanceReport(
+      deliveredOrders: _i(t['delivered_orders']),
+      cylinders: _i(t['cylinders']),
+      orderValue: _d(t['order_value']),
+      customerFees: _d(t['customer_fees']),
+      distributorFees: _d(t['distributor_fees']),
+      platformFees: _d(t['platform_fees']),
+      days: _list(m['by_day'])
+          .map((d) => DayStat(
+                day: DateTime.tryParse(d['day'] as String? ?? '') ?? DateTime(2000),
+                orders: _i(d['delivered']),
+                delivered: _i(d['delivered']),
+                fees: _d(d['fees']),
+              ))
+          .toList(),
+      agencies: _list(m['by_agency']).map(AgencyIncome.fromMap).toList(),
+      distributors: _list(m['by_distributor']).map(DistributorIncome.fromMap).toList(),
+      charges: ChargeSummary.fromMap(_map(m['charges'])),
+    );
+  }
+}
+
+class AgencyIncome {
+  /// Empty when distributors have no agency name.
+  final String agency;
+  final int distributors;
+  final int delivered;
+  final double fees;
+
+  const AgencyIncome({required this.agency, this.distributors = 0, this.delivered = 0, this.fees = 0});
+
+  factory AgencyIncome.fromMap(Map<String, dynamic> m) => AgencyIncome(
+        agency: m['agency'] as String? ?? '',
+        distributors: _i(m['distributors']),
+        delivered: _i(m['delivered']),
         fees: _d(m['fees']),
-        payments: _d(m['payments']),
-        adjustments: _d(m['adjustments']),
-        balance: _d(m['balance']),
-        deliveries: _i(m['deliveries']),
-        lastPaymentAt: _date(m['last_payment_at']),
+      );
+}
+
+class DistributorIncome {
+  final String driverId;
+  final String fullName;
+  final String agency;
+  final int delivered;
+  final double orderValue;
+  final double fees;
+
+  const DistributorIncome({
+    required this.driverId,
+    required this.fullName,
+    this.agency = '',
+    this.delivered = 0,
+    this.orderValue = 0,
+    this.fees = 0,
+  });
+
+  factory DistributorIncome.fromMap(Map<String, dynamic> m) => DistributorIncome(
+        driverId: m['driver_id'] as String? ?? '',
+        fullName: m['full_name'] as String? ?? '',
+        agency: m['agency'] as String? ?? '',
+        delivered: _i(m['delivered']),
+        orderValue: _d(m['order_value']),
+        fees: _d(m['fees']),
+      );
+}
+
+class ChargeSummary {
+  final int openCount;
+  final double openAmount;
+  final double raisedAmount;
+  final double paidAmount;
+  final double waivedAmount;
+
+  const ChargeSummary({
+    this.openCount = 0,
+    this.openAmount = 0,
+    this.raisedAmount = 0,
+    this.paidAmount = 0,
+    this.waivedAmount = 0,
+  });
+
+  factory ChargeSummary.fromMap(Map<String, dynamic> m) => ChargeSummary(
+        openCount: _i(m['open_count']),
+        openAmount: _d(m['open_amount']),
+        raisedAmount: _d(m['raised_amount']),
+        paidAmount: _d(m['paid_amount']),
+        waivedAmount: _d(m['waived_amount']),
       );
 }
 

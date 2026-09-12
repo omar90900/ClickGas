@@ -126,10 +126,10 @@ String staffRoleDescription(AppLocalizations l, StaffRole r) => switch (r) {
       StaffRole.support => l.roleSupportDesc,
     };
 
-String ledgerKindLabel(AppLocalizations l, LedgerKind k) => switch (k) {
-      LedgerKind.orderFee => l.ledgerOrderFee,
-      LedgerKind.payment => l.ledgerPayment,
-      LedgerKind.adjustment => l.ledgerAdjustment,
+String chargeKindLabel(AppLocalizations l, ChargeKind k) => switch (k) {
+      ChargeKind.fine => l.chargeKindFine,
+      ChargeKind.itemFee => l.chargeKindItem,
+      ChargeKind.other => l.chargeKindOther,
     };
 
 String actorLabel(AppLocalizations l, UserRole? r) => switch (r) {
@@ -159,8 +159,9 @@ String actionLabel(AppLocalizations l, String action) => switch (action) {
       'order.cancel' => l.actOrderCancel,
       'order.assign' => l.actOrderAssign,
       'order.return_to_queue' => l.actOrderReturn,
-      'ledger.payment' => l.actLedgerPayment,
-      'ledger.adjust' => l.actLedgerAdjust,
+      'charge.create' => l.actChargeCreate,
+      'charge.paid' => l.actChargePaid,
+      'charge.waived' => l.actChargeWaived,
       'service.update' => l.actServiceUpdate,
       'service.create' => l.actServiceCreate,
       'fees.set' => l.actFeesSet,
@@ -203,6 +204,8 @@ String failureText(BuildContext context, Object error) {
     FailureCode.invalidSetting => l.invalidSetting(detail),
     FailureCode.invalidTarget => l.invalidTarget(detail),
     FailureCode.lastOwner => l.lastOwner,
+    FailureCode.chargeNotOpen => l.chargeNotOpen,
+    FailureCode.sessionExpired => l.sessionExpired,
     FailureCode.notFound => l.notFound,
     FailureCode.notVerifiedDriver => l.notVerifiedDriver,
     FailureCode.maxActiveOrders => l.maxActiveOrders,

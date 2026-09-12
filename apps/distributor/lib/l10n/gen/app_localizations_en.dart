@@ -462,16 +462,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get feesOwed => 'Service fees owed';
-
-  @override
-  String get feesOwedBody =>
-      '0.150 JOD per delivered order (0.100 collected from the customer + 0.050 distributor fee). Settled weekly with ClickGas.';
-
-  @override
-  String get feesSettled => 'Nothing owed';
-
-  @override
   String get salesTitle => 'Sales log';
 
   @override
@@ -634,4 +624,37 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get documentExpired =>
       'This document has expired. Upload a valid one.';
+
+  @override
+  String get sessionExpired => 'Your session ended. Sign in again.';
+
+  @override
+  String get chargesTitle => 'Charges';
+
+  @override
+  String get chargesBody =>
+      'Fines or fees for particular items from the ClickGas team, each with its reason.';
+
+  @override
+  String get chargeOpen => 'Open';
+
+  @override
+  String get chargePaid => 'Paid';
+
+  @override
+  String get chargeWaived => 'Waived';
+
+  @override
+  String get chargeKindFine => 'Fine';
+
+  @override
+  String get chargeKindItem => 'Item fee';
+
+  @override
+  String get chargeKindOther => 'Other';
+
+  @override
+  String openChargesTotal(String amount) {
+    return 'Open: $amount';
+  }
 }

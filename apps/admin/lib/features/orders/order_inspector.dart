@@ -7,6 +7,7 @@ import '../../data/admin_repository.dart';
 import '../../state/staff_session.dart';
 import '../../widgets/common.dart';
 import '../drivers/driver_detail.dart';
+import '../finance/charges.dart';
 
 /// Opens the order inspector; [onChanged] runs after a staff action so the
 /// page underneath can refresh.
@@ -261,16 +262,32 @@ class _InspectorBody extends StatelessWidget {
               ),
             ),
           ],
-          if (detail.ledger.isNotEmpty) ...[
+          if (detail.charges.isNotEmpty || (role.canOperate && driver != null)) ...[
             const SizedBox(height: 12),
             SectionCard(
-              title: l.feesBooked,
-              child: Column(
-                children: [
-                  for (final e in detail.ledger)
-                    InfoRow(label: ledgerKindLabel(l, e.kind), value: Fmt.money(context, e.amount)),
-                ],
-              ),
+              title: l.charges,
+              padding: const EdgeInsets.only(bottom: 8),
+              actions: [
+                if (role.canOperate && driver != null)
+                  TextButton.icon(
+                    onPressed: () async {
+                      if (await raiseCharge(
+                        context,
+                        driverId: driver.id,
+                        driverName: driver.fullName,
+                        orderId: o.id,
+                        orderNumber: o.orderNumber,
+                      )) {
+                        await onChanged();
+                      }
+                    },
+                    icon: const Icon(Icons.add_rounded),
+                    label: Text(l.chargeDistributor),
+                  ),
+              ],
+              child: detail.charges.isEmpty
+                  ? Padding(padding: const EdgeInsets.all(16), child: Text(l.noCharges))
+                  : ChargesTable(charges: detail.charges, showDriver: false, onChanged: onChanged),
             ),
           ],
           if (detail.actions.isNotEmpty) ...[

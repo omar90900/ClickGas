@@ -461,16 +461,6 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get feesOwed => 'رسوم الخدمة المستحقة';
-
-  @override
-  String get feesOwedBody =>
-      '0.150 د.أ عن كل طلب موصَل (0.100 تُحصّل من العميل + 0.050 رسوم الموزع)، تُسوّى أسبوعياً مع كليك غاز.';
-
-  @override
-  String get feesSettled => 'لا توجد مستحقات';
-
-  @override
   String get salesTitle => 'سجل المبيعات';
 
   @override
@@ -632,4 +622,37 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get documentExpired => 'انتهت صلاحية هذه الوثيقة. ارفع وثيقة سارية.';
+
+  @override
+  String get sessionExpired => 'انتهت جلستك. سجّل الدخول مجدداً.';
+
+  @override
+  String get chargesTitle => 'المطالبات';
+
+  @override
+  String get chargesBody =>
+      'غرامات أو رسوم على بنود محددة من فريق كليك غاز، مع سبب كل منها.';
+
+  @override
+  String get chargeOpen => 'مفتوحة';
+
+  @override
+  String get chargePaid => 'مدفوعة';
+
+  @override
+  String get chargeWaived => 'معفاة';
+
+  @override
+  String get chargeKindFine => 'غرامة';
+
+  @override
+  String get chargeKindItem => 'رسوم بند';
+
+  @override
+  String get chargeKindOther => 'أخرى';
+
+  @override
+  String openChargesTotal(String amount) {
+    return 'المفتوح: $amount';
+  }
 }

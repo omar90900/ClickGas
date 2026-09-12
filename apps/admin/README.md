@@ -10,7 +10,7 @@ shared `clickgas_core` package as the customer and distributor apps.
 | Orders | all staff | Search by number, phone, name, status, date; order inspector with every event |
 | Distributors | all staff (actions: owner, operations) | Approval queue with documents; approve, reject, suspend, block |
 | Customers | all staff | Search, order history, block and unblock |
-| Balances | all staff (payments: owner, operations) | Fees owed by each distributor; record cash received |
+| Finance | all staff (charges: owner, operations; waive: owner) | Platform income from service fees by day, agency and distributor; charges (fines, item fees) with explanations |
 | Settings | owner | Prices, service fees, dispatch settings, cities, feature flags |
 | Staff | owner | Add staff and set roles |
 | Audit log | all staff | Every staff action with who, when and why |

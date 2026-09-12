@@ -6,9 +6,9 @@ import '../../l10n/gen/app_localizations.dart';
 import '../../state/staff_session.dart';
 import '../../widgets/common.dart';
 import '../audit/audit_page.dart';
-import '../balances/balances_page.dart';
 import '../customers/customers_page.dart';
 import '../drivers/drivers_page.dart';
+import '../finance/finance_page.dart';
 import '../live/live_map_page.dart';
 import '../orders/orders_page.dart';
 import '../overview/overview_page.dart';
@@ -23,7 +23,7 @@ enum AdminPage {
   orders(Icons.receipt_long_rounded),
   drivers(Icons.local_shipping_rounded),
   customers(Icons.people_alt_rounded),
-  balances(Icons.account_balance_wallet_rounded),
+  finance(Icons.insights_rounded),
   settings(Icons.tune_rounded, ownerOnly: true),
   staff(Icons.badge_rounded, ownerOnly: true),
   audit(Icons.history_rounded);
@@ -38,7 +38,7 @@ enum AdminPage {
         orders => l.navOrders,
         drivers => l.navDrivers,
         customers => l.navCustomers,
-        balances => l.navBalances,
+        finance => l.navFinance,
         settings => l.navSettings,
         staff => l.navStaff,
         audit => l.navAudit,
@@ -84,7 +84,7 @@ class _AdminShellState extends State<AdminShell> {
         AdminPage.orders => const OrdersPage(),
         AdminPage.drivers => DriversPage(key: ValueKey(_driverFilter), initialStatus: _driverFilter),
         AdminPage.customers => const CustomersPage(),
-        AdminPage.balances => const BalancesPage(),
+        AdminPage.finance => const FinancePage(),
         AdminPage.settings => const SettingsPage(),
         AdminPage.staff => const StaffPage(),
         AdminPage.audit => const AuditPage(),

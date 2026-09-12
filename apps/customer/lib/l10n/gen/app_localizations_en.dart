@@ -535,4 +535,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileMissing => 'We couldn\'t load your account data.';
+
+  @override
+  String get sessionExpired => 'Your session ended. Sign in again.';
 }

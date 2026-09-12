@@ -22,11 +22,12 @@ class _Entry {
 class _Sales {
   final List<GasOrder> delivered;
   final List<OrderRelease> releases;
-  final double feesOwed;
-  const _Sales(this.delivered, this.releases, this.feesOwed);
+  final List<DriverCharge> charges;
+  const _Sales(this.delivered, this.releases, this.charges);
 }
 
-/// Fee balance, delivered and cancelled orders, daily / monthly totals.
+/// Charges from the team, delivered and cancelled orders, daily / monthly
+/// totals.
 class SalesTab extends StatefulWidget {
   const SalesTab({super.key});
 
@@ -47,7 +48,7 @@ class _SalesTabState extends State<SalesTab> {
     return (
       repo.deliveredSince(id, monthStart),
       repo.releasesSince(id, monthStart),
-      repo.feeBalance(),
+      repo.charges(id),
     ).wait.then((r) => _Sales(r.$1, r.$2, r.$3));
   }
 
@@ -111,8 +112,10 @@ class _SalesTabState extends State<SalesTab> {
             child: ListView(
               padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
               children: [
-                _FeesCard(owed: sales.feesOwed),
-                const SizedBox(height: 12),
+                if (sales.charges.isNotEmpty) ...[
+                  _ChargesCard(charges: sales.charges),
+                  const SizedBox(height: 12),
+                ],
                 _StatsCard(title: l.today, orders: today),
                 const SizedBox(height: 12),
                 _StatsCard(title: l.thisMonth, orders: sales.delivered),
@@ -182,55 +185,91 @@ class _SalesTabState extends State<SalesTab> {
   }
 }
 
-/// Service fees owed to the platform (docs/business-rules.md#fees).
-class _FeesCard extends StatelessWidget {
-  const _FeesCard({required this.owed});
-  final double owed;
+/// Fines or item fees from the team, each with its explanation
+/// (docs/business-rules.md#charges). Shown only when there are any.
+class _ChargesCard extends StatelessWidget {
+  const _ChargesCard({required this.charges});
+  final List<DriverCharge> charges;
 
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
-    final settled = owed <= 0;
+    final open = charges.where((c) => c.isOpen).fold<double>(0, (s, c) => s + c.amount);
     return Card(
-      color: settled ? null : AppColors.warning.withValues(alpha: 0.10),
+      color: open > 0 ? AppColors.warning.withValues(alpha: 0.08) : null,
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Icon(
-              settled
-                  ? Icons.check_circle_rounded
-                  : Icons.account_balance_wallet_rounded,
-              color: settled ? context.accent : AppColors.warning,
-              size: 32,
+            Row(
+              children: [
+                Icon(Icons.receipt_rounded, color: open > 0 ? AppColors.warning : context.accent),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    l.chargesTitle,
+                    style: context.text.titleSmall?.copyWith(fontWeight: FontWeight.w800),
+                  ),
+                ),
+                if (open > 0)
+                  Text(
+                    l.openChargesTotal(Fmt.money(context, open)),
+                    style: context.text.titleSmall?.copyWith(fontWeight: FontWeight.w900),
+                  ),
+              ],
             ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
+            const SizedBox(height: 4),
+            Text(
+              l.chargesBody,
+              style: context.text.bodySmall?.copyWith(color: context.colors.onSurfaceVariant),
+            ),
+            for (final c in charges.take(10)) ...[
+              const Divider(height: 20),
+              Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    l.feesOwed,
-                    style: context.text.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w800,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(c.title, style: const TextStyle(fontWeight: FontWeight.w700)),
+                        const SizedBox(height: 2),
+                        Text(c.note, style: context.text.bodySmall),
+                        const SizedBox(height: 4),
+                        Text(
+                          [
+                            chargeKindLabel(l, c.kind),
+                            if (c.orderNumber != null) l.orderNumber(c.orderNumber!),
+                            Fmt.dateTime(context, c.createdAt),
+                          ].join(' · '),
+                          style: context.text.labelSmall?.copyWith(color: context.colors.onSurfaceVariant),
+                        ),
+                      ],
                     ),
                   ),
-                  Text(
-                    settled ? l.feesSettled : Fmt.money(context, owed),
-                    style: context.text.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    l.feesOwedBody,
-                    style: context.text.bodySmall?.copyWith(
-                      color: context.colors.onSurfaceVariant,
-                    ),
+                  const SizedBox(width: 12),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        Fmt.money(context, c.amount),
+                        style: TextStyle(
+                          fontWeight: FontWeight.w900,
+                          decoration: c.status == ChargeStatus.waived ? TextDecoration.lineThrough : null,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      switch (c.status) {
+                        ChargeStatus.open => Tag(l.chargeOpen, AppColors.warning),
+                        ChargeStatus.paid => Tag(l.chargePaid, context.accent),
+                        ChargeStatus.waived => Tag(l.chargeWaived, Colors.grey),
+                      },
+                    ],
                   ),
                 ],
               ),
-            ),
+            ],
           ],
         ),
       ),

@@ -1,4 +1,5 @@
-// End-to-end check of the staff functions (migration 20260912150000_admin_core)
+// End-to-end check of the staff functions (migrations admin_core and
+// revenue_and_charges)
 // against a real Supabase project. Creates a temporary owner, support staff,
 // customer and distributor, exercises the admin_* functions, then deletes
 // everything it created (accounts, orders, audit rows). It never changes
@@ -191,14 +192,31 @@ try {
   const blockDrv = await rpc('admin_set_account_active', support.token, { p_user_id: drv.id, p_active: false, p_reason: 'e2e test' });
   check(code(blockDrv).includes('PERMISSION_DENIED'), 'support cannot block distributors', blockDrv.j);
 
-  // ---------------------------------------------------------------- money
-  const supPay = await rpc('record_driver_payment', support.token, { p_driver_id: drv.id, p_amount: 1 });
-  check(code(supPay).includes('PERMISSION_DENIED'), 'support cannot record payments', supPay.j);
-  const pay = await rpc('record_driver_payment', owner.token, { p_driver_id: drv.id, p_amount: 2.5, p_note: 'e2e' });
-  check(Number(pay.j?.amount) === -2.5, 'payment stored as -2.500', pay.j);
-  const balances = await rpc('admin_balances', owner.token);
-  const mine = balances.j?.find?.((b) => b.driver_id === drv.id);
-  check(mine && Number(mine.balance) === -2.5 && Number(mine.payments) === 2.5, 'balances show the payment', mine ?? balances.j);
+  // ---------------------------------------------------------------- charges and finance
+  const charge = { p_driver_id: drv.id, p_kind: 'fine', p_title: 'Late delivery', p_amount: 2.5 };
+  const supCharge = await rpc('admin_create_charge', support.token, { ...charge, p_note: 'arrived late' });
+  check(code(supCharge).includes('PERMISSION_DENIED'), 'support cannot raise charges', supCharge.j);
+  const noNote = await rpc('admin_create_charge', owner.token, charge);
+  check(code(noNote).includes('REASON_REQUIRED'), 'a charge needs an explanation', noNote.j);
+  const raised = await rpc('admin_create_charge', owner.token, { ...charge, p_note: 'Arrived two hours late' });
+  check(raised.j?.status === 'open' && Number(raised.j?.amount) === 2.5, 'owner raises a charge', raised.j);
+  const seen = await call(`/rest/v1/driver_charges?select=title,note,amount,status`, { token: drv.token });
+  check(seen.j?.length === 1 && seen.j[0].note === 'Arrived two hours late', 'the distributor sees the charge and why', seen.j);
+  const listed = await rpc('admin_list_charges', support.token, { p_driver_id: drv.id });
+  check(listed.j?.[0]?.driver_name === 'E2E driver' && listed.j[0].created_by_name === 'E2E owner', 'charge list with names', listed.j);
+  const supWaive = await rpc('admin_settle_charge', support.token, { p_charge_id: raised.j?.id, p_status: 'waived', p_note: 'goodwill' });
+  check(code(supWaive).includes('PERMISSION_DENIED'), 'only the owner waives', supWaive.j);
+  const paid = await rpc('admin_settle_charge', owner.token, { p_charge_id: raised.j?.id, p_status: 'paid' });
+  check(paid.j?.status === 'paid', 'owner marks it paid', paid.j);
+  const again = await rpc('admin_settle_charge', owner.token, { p_charge_id: raised.j?.id, p_status: 'waived', p_note: 'goodwill' });
+  check(code(again).includes('CHARGE_NOT_OPEN'), 'a settled charge cannot change', again.j);
+  const now = new Date();
+  const finance = await rpc('admin_finance', support.token, {
+    p_from: new Date(now.getTime() - 86400000).toISOString(),
+    p_to: new Date(now.getTime() + 86400000).toISOString(),
+  });
+  check(finance.j?.totals && finance.j?.by_day?.length >= 2 && Number(finance.j?.charges?.paid_amount) >= 2.5,
+    'finance report: totals, days and charges', finance.j);
 
   // ---------------------------------------------------------------- settings (no real change)
   const cfg = (await call('/rest/v1/app_config?select=driver_radius_km', { token: owner.token })).j?.[0];

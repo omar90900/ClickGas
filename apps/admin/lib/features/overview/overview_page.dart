@@ -80,6 +80,12 @@ class _OverviewBody extends StatelessWidget {
               icon: Icons.payments_rounded,
             ),
             KpiCard(
+              label: l.kpiFeesMonth,
+              value: Fmt.money(context, o.feesMonth),
+              icon: Icons.calendar_month_rounded,
+              onTap: () => nav.go(AdminPage.finance),
+            ),
+            KpiCard(
               label: l.kpiSalesToday,
               value: Fmt.money(context, o.salesToday),
               icon: Icons.point_of_sale_rounded,
@@ -136,10 +142,11 @@ class _OverviewBody extends StatelessWidget {
               onTap: () => nav.go(AdminPage.customers),
             ),
             KpiCard(
-              label: l.kpiOutstanding,
-              value: Fmt.money(context, o.feesOutstanding),
-              icon: Icons.account_balance_wallet_rounded,
-              onTap: () => nav.go(AdminPage.balances),
+              label: l.kpiOpenCharges,
+              value: Fmt.money(context, o.chargesOpen),
+              icon: Icons.receipt_rounded,
+              color: AppColors.warning,
+              onTap: () => nav.go(AdminPage.finance),
             ),
           ],
         ),

@@ -29,6 +29,7 @@ String failureText(BuildContext context, Object error) {
     FailureCode.orderNotConfirmable ||
     FailureCode.orderNotRateable =>
       l.orderChanged,
+    FailureCode.sessionExpired => l.sessionExpired,
     FailureCode.permissionDenied => l.permissionDenied,
     FailureCode.network => l.networkError,
     _ => l.errorWithCode(f.code.value),

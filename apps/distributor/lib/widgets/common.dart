@@ -54,11 +54,18 @@ String failureText(BuildContext context, Object error, {int maxOrders = 3}) {
     FailureCode.notVerifiedDriver => l.notVerifiedError,
     FailureCode.invalidTransition => l.orderChanged,
     FailureCode.documentExpired => l.documentExpired,
+    FailureCode.sessionExpired => l.sessionExpired,
     FailureCode.permissionDenied => l.permissionDenied,
     FailureCode.network => l.networkError,
     _ => l.errorWithCode(f.code.value),
   };
 }
+
+String chargeKindLabel(AppLocalizations l, ChargeKind k) => switch (k) {
+      ChargeKind.fine => l.chargeKindFine,
+      ChargeKind.itemFee => l.chargeKindItem,
+      ChargeKind.other => l.chargeKindOther,
+    };
 
 String vehicleTypeLabel(AppLocalizations l, String code) => switch (code) {
       'pickup' => l.vehiclePickup,

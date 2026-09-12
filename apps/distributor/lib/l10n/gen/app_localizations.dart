@@ -884,24 +884,6 @@ abstract class AppLocalizations {
   /// **'Sent. Your reference number is {id}.'**
   String diagnosticsSent(int id);
 
-  /// No description provided for @feesOwed.
-  ///
-  /// In en, this message translates to:
-  /// **'Service fees owed'**
-  String get feesOwed;
-
-  /// No description provided for @feesOwedBody.
-  ///
-  /// In en, this message translates to:
-  /// **'0.150 JOD per delivered order (0.100 collected from the customer + 0.050 distributor fee). Settled weekly with ClickGas.'**
-  String get feesOwedBody;
-
-  /// No description provided for @feesSettled.
-  ///
-  /// In en, this message translates to:
-  /// **'Nothing owed'**
-  String get feesSettled;
-
   /// No description provided for @salesTitle.
   ///
   /// In en, this message translates to:
@@ -1207,6 +1189,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This document has expired. Upload a valid one.'**
   String get documentExpired;
+
+  /// No description provided for @sessionExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Your session ended. Sign in again.'**
+  String get sessionExpired;
+
+  /// No description provided for @chargesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Charges'**
+  String get chargesTitle;
+
+  /// No description provided for @chargesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Fines or fees for particular items from the ClickGas team, each with its reason.'**
+  String get chargesBody;
+
+  /// No description provided for @chargeOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get chargeOpen;
+
+  /// No description provided for @chargePaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get chargePaid;
+
+  /// No description provided for @chargeWaived.
+  ///
+  /// In en, this message translates to:
+  /// **'Waived'**
+  String get chargeWaived;
+
+  /// No description provided for @chargeKindFine.
+  ///
+  /// In en, this message translates to:
+  /// **'Fine'**
+  String get chargeKindFine;
+
+  /// No description provided for @chargeKindItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Item fee'**
+  String get chargeKindItem;
+
+  /// No description provided for @chargeKindOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get chargeKindOther;
+
+  /// No description provided for @openChargesTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Open: {amount}'**
+  String openChargesTotal(String amount);
 }
 
 class _AppLocalizationsDelegate

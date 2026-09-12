@@ -16,7 +16,8 @@ belongs. Decisions behind it are recorded in [decisions/](decisions/).
 4. **Every failure has a name.** Repositories throw only `AppFailure` with a
    stable `FailureCode` ([errors.md](errors.md)). The server raises the same codes.
 5. **Nothing changes silently.** Schema changes are numbered migrations, order
-   status changes are recorded in `order_events`, fees in `driver_ledger`.
+   status changes are recorded in `order_events`, staff actions in
+   `admin_actions`, charges in `driver_charges`.
 6. **Written down as it's built.** A feature is done when its docs, tests and
    error codes are.
 
@@ -97,7 +98,7 @@ sequenceDiagram
   DA->>DB: drivers.lat/lng every 5 s
   DB-->>CA: Realtime: truck position
   DA->>DB: complete_order(id)
-  Note over DB: status=delivered, stock -= qty,<br/>ledger += 0.150
+  Note over DB: status=delivered, stock -= qty<br/>(order fees = platform revenue)
   DB-->>CA: Realtime update: delivered
   CA->>DB: confirm_delivery(id), rate_order(id)
 ```

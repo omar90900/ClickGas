@@ -125,42 +125,63 @@ class AdminRepository {
         Log.i('order_assigned_by_staff', {'order_id': orderId, 'driver_id': driverId});
       }, context: {'order_id': orderId, 'driver_id': driverId});
 
-  // ---------------------------------------------------------- money
+  // ---------------------------------------------------------- finance & charges
 
-  Future<List<Balance>> balances() => guard('admin.balances', () async {
-        return _rows(await _client.rpc('admin_balances')).map(Balance.fromMap).toList();
+  /// Income and charges for [from]..[to] (end exclusive).
+  Future<FinanceReport> finance(DateTime from, DateTime to) => guard('admin.finance', () async {
+        final value = await _client.rpc('admin_finance', params: {
+          'p_from': from.toUtc().toIso8601String(),
+          'p_to': to.toUtc().toIso8601String(),
+        });
+        return FinanceReport.fromMap(_row(value));
       });
 
-  Future<List<LedgerEntry>> ledger(String driverId, {int limit = 100}) =>
-      guard('admin.ledger', () async {
-        final rows = await _client
-            .from('driver_ledger')
-            .select()
-            .eq('driver_id', driverId)
-            .order('created_at', ascending: false)
-            .limit(limit);
-        return rows.map(LedgerEntry.fromMap).toList();
-      });
-
-  Future<void> recordPayment(String driverId, double amount, {String? note}) =>
-      guard('admin.record_payment', () async {
-        await _client.rpc('record_driver_payment', params: {
+  Future<Paged<DriverCharge>> charges({
+    ChargeStatus? status,
+    String? driverId,
+    int limit = 100,
+    int offset = 0,
+  }) =>
+      guard('admin.charges', () async {
+        final rows = await _client.rpc('admin_list_charges', params: {
+          'p_status': status?.name,
           'p_driver_id': driverId,
+          'p_limit': limit,
+          'p_offset': offset,
+        });
+        return Paged.fromRows(_rows(rows), DriverCharge.fromMap);
+      });
+
+  /// A fine or item fee with the explanation the distributor sees.
+  Future<void> createCharge({
+    required String driverId,
+    required ChargeKind kind,
+    required String title,
+    required double amount,
+    required String note,
+    String? orderId,
+  }) =>
+      guard('admin.create_charge', () async {
+        await _client.rpc('admin_create_charge', params: {
+          'p_driver_id': driverId,
+          'p_kind': kind.value,
+          'p_title': title,
           'p_amount': amount,
           'p_note': note,
+          'p_order_id': orderId,
         });
-        Log.i('payment_recorded', {'driver_id': driverId, 'amount': amount});
+        Log.i('charge_created', {'driver_id': driverId, 'kind': kind.value});
       }, context: {'driver_id': driverId});
 
-  /// Positive adds to what the distributor owes; negative waives.
-  Future<void> adjustBalance(String driverId, double amount, String reason) =>
-      guard('admin.adjust_balance', () async {
-        await _client.rpc('admin_adjust_balance', params: {
-          'p_driver_id': driverId,
-          'p_amount': amount,
-          'p_reason': reason,
+  /// Paid (owner, operations) or waived (owner, with a reason).
+  Future<void> settleCharge(int chargeId, ChargeStatus status, {String? note}) =>
+      guard('admin.settle_charge', () async {
+        await _client.rpc('admin_settle_charge', params: {
+          'p_charge_id': chargeId,
+          'p_status': status.name,
+          'p_note': note,
         });
-      }, context: {'driver_id': driverId});
+      }, context: {'charge_id': chargeId, 'status': status.name});
 
   // ---------------------------------------------------------- prices & fees
 

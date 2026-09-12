@@ -5,7 +5,7 @@
 //   node tools/e2e/order_cycle.mjs            (reads .secrets/supabase.env)
 //
 // Needs: SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, SUPABASE_SECRET_KEY.
-// Requires migrations up to 20260912090000_foundation.sql.
+// Requires migrations up to 20260912200000_revenue_and_charges.sql.
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -79,8 +79,8 @@ try {
   check(old.status === 404, `old email_for_phone lookup is gone (HTTP ${old.status})`);
 
   // Fees in force
-  const fees = await call('/rest/v1/current_fees?select=customer_fee,driver_fee');
-  check(Number(fees.j[0]?.customer_fee) === 0.1 && Number(fees.j[0]?.driver_fee) === 0.05,
+  const feeRow = await call('/rest/v1/current_fees?select=customer_fee,driver_fee');
+  check(Number(feeRow.j[0]?.customer_fee) === 0.1 && Number(feeRow.j[0]?.driver_fee) === 0.05,
     'current fees are 0.100 (customer) + 0.050 (distributor)');
 
   // Distributor ready
@@ -97,8 +97,12 @@ try {
             delivery_lat: NEAR[0], delivery_lng: NEAR[1], total_price: 0.01 },
   });
   const order = created.j[0];
-  check(order && Number(order.total_price) === 14.1 && Number(order.service_fee) === 0.1 && Number(order.driver_fee) === 0.05,
-    `server sets total 14.100 = 2 × 7.000 + 0.100 fee (got ${order?.total_price})`);
+  // Expected total from the live settings: 2 × price + delivery fee + customer fee.
+  const price = Number((await call('/rest/v1/services?id=eq.1&select=price')).j[0].price);
+  const delivery = Number((await call('/rest/v1/app_config?select=delivery_fee')).j[0].delivery_fee);
+  const expected = Math.round((2 * price + delivery + 0.1) * 1000) / 1000;
+  check(order && Number(order.total_price) === expected && Number(order.service_fee) === 0.1 && Number(order.driver_fee) === 0.05,
+    `server sets total ${expected} = 2 × ${price} + ${delivery} delivery + 0.100 fee (got ${order?.total_price})`);
 
   const direct = await call(`/rest/v1/orders?id=eq.${order.id}`, {
     method: 'PATCH', token: cust.token, body: { status: 'delivered' }, prefer: 'return=representation',
@@ -117,11 +121,11 @@ try {
   const done = await rpc('complete_order', drv.token, { p_order_id: order.id });
   check(done.j?.status === 'delivered', 'distributor marks delivered');
 
-  const ledger = await call(`/rest/v1/driver_ledger?select=kind,amount&order_id=eq.${order.id}`, { token: drv.token });
-  check(ledger.j?.length === 1 && Number(ledger.j[0].amount) === 0.15 && ledger.j[0].kind === 'order_fee',
-    'ledger books 0.150 for the delivery');
-  const balance = await rpc('driver_balance', drv.token);
-  check(Number(balance.j) === 0.15, `distributor owes 0.150 (got ${balance.j})`);
+  const fees = await call(`/rest/v1/orders?id=eq.${order.id}&select=service_fee,driver_fee`, { token: drv.token });
+  const platform = Math.round((Number(fees.j?.[0]?.service_fee) + Number(fees.j?.[0]?.driver_fee)) * 1000);
+  check(platform === 150, 'the delivered order carries 0.150 of platform fees');
+  const charges = await call(`/rest/v1/driver_charges?driver_id=eq.${drv.id}&select=id`, { token: drv.token });
+  check(Array.isArray(charges.j) && charges.j.length === 0, 'delivery creates no charge for the distributor');
 
   const again = await rpc('start_delivery', drv.token, { p_order_id: order.id });
   check(errCode(again).includes('INVALID_TRANSITION'), 'delivered order cannot go back on the way');

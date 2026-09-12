@@ -68,17 +68,28 @@ Anything else is rejected with `INVALID_TRANSITION`. *(table `order_transitions`
 - A distributor may give an order back (release); it returns to pending for
   others and is recorded in `order_releases`.
 
-## Fees
+## Fees (platform revenue)
 
-- **0.150 JOD per delivered order**, not per cylinder: the customer pays
-  **0.100** (shown as "Service fee"), the distributor **0.050**. *(ADR 0006)*
-- The customer pays everything in cash to the distributor, who therefore owes
-  the platform **0.150** per delivery. This is booked in `driver_ledger` when
-  the order is marked delivered.
-- Cancelled, expired and released orders are never charged.
-- Staff record payments from distributors (`record_driver_payment`); the
-  distributor sees the balance in the Sales tab.
+- ClickGas is a service platform: agencies and their distributors own the
+  cylinders. The platform's only income is the **service fee per delivered
+  order**, not per cylinder: **0.100** from the customer (shown as "Service
+  fee") and **0.050** from the distributor. *(ADR 0006, 0011)*
+- Each order keeps the fees in force when it was placed; the finance report
+  counts them when the order is delivered. Cancelled, expired and released
+  orders earn nothing.
+- The customer pays in cash to the distributor. Collecting the fees from
+  distributors or agencies happens outside the app for now; the finance
+  report per agency is the basis.
 - Money has 3 decimals (fils). *(ADR 0007)*
+
+## Charges
+
+- Staff can raise a **charge** against a distributor: a fine, a fee for a
+  particular item, or other, with a title, an amount and an **explanation the
+  distributor sees** in the Sales tab. It may point to one of their orders.
+- A charge is **open** until it is **paid** (owner or operations) or
+  **waived** (owner only, with a reason). A settled charge can't change.
+- Every charge and settlement is in the audit log. *(ADR 0011)*
 
 ## Ratings
 
@@ -104,17 +115,18 @@ role and writes `admin_actions`. *(ADR 0010)*
 
 | Can… | Owner | Operations | Support |
 |---|:-:|:-:|:-:|
-| See the overview, live map, orders, distributors, customers, balances, audit log | ✓ | ✓ | ✓ |
+| See the overview, live map, orders, distributors, customers, finance, audit log | ✓ | ✓ | ✓ |
 | Block / unblock customers | ✓ | ✓ | ✓ |
 | Approve, reject, suspend distributors; review documents; block distributors | ✓ | ✓ | |
 | Cancel or reassign orders | ✓ | ✓ | |
-| Record cash from distributors | ✓ | ✓ | |
-| Adjust (waive) balances | ✓ | | |
+| Raise charges and mark them paid | ✓ | ✓ | |
+| Waive a charge | ✓ | | |
 | Prices, fees, settings, cities, feature flags | ✓ | | |
 | Add, change or remove staff | ✓ | | |
 
 - Blocking, rejecting, suspending, cancelling, reassigning, rejecting a
-  document and adjusting a balance **need a reason** (saved in the audit log).
+  document, raising and waiving a charge **need a reason** (saved in the
+  audit log).
 - There is always at least one owner.
 - Staff can reassign an order only to an approved, active distributor with a
   free slot and enough cylinders; online status and distance are not checked

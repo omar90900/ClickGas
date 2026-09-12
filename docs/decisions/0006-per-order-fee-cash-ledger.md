@@ -1,6 +1,6 @@
 # 0006. 0.150 JOD fee per delivered order, cash with a ledger
 
-- Status: Accepted
+- Status: Fee amounts accepted; the ledger is superseded by [0011](0011-revenue-and-charges.md)
 - Date: 2026-09-12
 
 ## Context

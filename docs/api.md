@@ -59,13 +59,14 @@ Errors: `NOT_A_VERIFIED_DRIVER`, `DRIVER_OFFLINE`, `MAX_ACTIVE_ORDERS`,
 accepted → on the way. Errors: `INVALID_TRANSITION`.
 
 ### `complete_order(p_order_id uuid) → orders`
-→ delivered; lowers stock; books 0.150 in `driver_ledger`. Errors: `INVALID_TRANSITION`.
+→ delivered; lowers stock. The order's fees count as platform revenue. Errors: `INVALID_TRANSITION`.
 
 ### `release_order(p_order_id uuid, p_reason text = null) → orders`
 Gives the order back to pending; logged in `order_releases`. Errors: `INVALID_TRANSITION`.
 
-### `driver_balance() → numeric`
-What the caller owes the platform (JOD).
+### Own charges: `select from driver_charges`
+Fines or item fees staff raised, with `title`, `note` (explanation),
+`amount`, `status` (open/paid/waived) and optional `order_id`.
 
 ### Own row: `update drivers`
 Allowed columns: `is_online, lat, lng, heading, location_updated_at, vehicle_plate, vehicle_model, wallet_number, cylinders_on_board, agency_name`.
@@ -93,14 +94,15 @@ who isn't staff gets `PERMISSION_DENIED`. Reasons need 3+ characters
 | `admin_whoami()` | anyone | own `user_id, full_name, email, role`, or no row when not staff |
 | `admin_overview()` | staff | jsonb: today (Asia/Amman) orders placed/delivered/cancelled/expired, fees, cash, median seconds to accept, waiting, waiting > 10 min, distributors online/approved/pending, documents to review, customers, fees outstanding, `last_14_days[]` |
 | `admin_live_map()` | staff | jsonb `{orders: [...open orders with position], drivers: [...online or busy with position]}` |
-| `admin_list_drivers(p_status = null, p_search = null, p_driver_id = null)` | staff | distributors with status, live state, open/delivered counts, `balance`, document counts; pending first |
+| `admin_list_drivers(p_status = null, p_search = null, p_driver_id = null)` | staff | distributors with status, live state, open/delivered counts, `open_charges`, document counts; pending first |
 | `admin_list_customers(p_search = null, p_limit = 50, p_offset = 0)` | staff | customers with order counts and `total_count` |
 | `admin_search_orders(p_search, p_statuses text[], p_city_id, p_driver_id, p_customer_id, p_from, p_to, p_limit = 50, p_offset = 0)` | staff | orders with customer and distributor names/phones and `total_count`; search matches order number, names and phones |
-| `admin_order_detail(p_order_id)` | staff | jsonb `{order, customer, driver, events[], releases[], ledger[], actions[]}`. Error: `NOT_FOUND` |
-| `admin_balances()` | staff | per distributor: `fees, payments, adjustments, balance, deliveries, last_payment_at` |
+| `admin_order_detail(p_order_id)` | staff | jsonb `{order, customer, driver, events[], releases[], charges[], actions[]}`. Error: `NOT_FOUND` |
+| `admin_finance(p_from, p_to)` | staff | jsonb: `totals` (delivered orders, cylinders, order value, customer fees, distributor fees, platform fees), `by_day[]` (Asia/Amman), `by_agency[]`, `by_distributor[]`, `charges` (open, raised, paid, waived). Error: `INVALID_SETTING` (period over 400 days) |
+| `admin_list_charges(p_status = null, p_driver_id = null, p_limit = 100, p_offset = 0)` | staff | charges with distributor, agency, order number, who raised/settled, `total_count`; open first |
 
 Staff also read these tables directly (RLS): `profiles`, `drivers`, `orders`,
-`order_events`, `order_releases`, `driver_ledger`, `driver_documents`,
+`order_events`, `order_releases`, `driver_charges`, `driver_documents`,
 `services` and `cities` (including hidden), `fee_settings`, `price_history`,
 `staff_members`, `admin_actions`, `diagnostics`, `job_runs`, and files in
 `driver-docs` (signed URLs).
@@ -120,12 +122,12 @@ Staff also read these tables directly (RLS): `profiles`, `drivers`, `orders`,
 | `admin_cancel_order(p_order_id, p_reason)` | owner, operations | cancels an open order | `REASON_REQUIRED`, `ORDER_NOT_CANCELLABLE` |
 | `admin_assign_order(p_order_id, p_driver_id, p_reason)` | owner, operations | gives the order to an approved distributor (same slot and stock checks as `accept_order`, not online/distance), or `p_driver_id = null` puts it back in the queue | `REASON_REQUIRED`, `INVALID_TRANSITION`, `NOT_A_VERIFIED_DRIVER`, `MAX_ACTIVE_ORDERS`, `NOT_ENOUGH_CYLINDERS` |
 
-### Money
+### Charges ([ADR 0011](decisions/0011-revenue-and-charges.md))
 
 | Function | Roles | Does | Errors |
 |---|---|---|---|
-| `record_driver_payment(p_driver_id, p_amount, p_note = null)` | owner, operations | cash received (negative ledger row) | `INVALID_AMOUNT`, `NOT_FOUND` |
-| `admin_adjust_balance(p_driver_id, p_amount, p_reason)` | owner | + adds to what is owed, − waives | `REASON_REQUIRED`, `INVALID_AMOUNT`, `NOT_FOUND` |
+| `admin_create_charge(p_driver_id, p_kind, p_title, p_amount, p_note, p_order_id = null)` | owner, operations | fine / item fee / other with an explanation the distributor sees; the order, if given, must be theirs | `REASON_REQUIRED` (no explanation), `INVALID_SETTING`, `INVALID_AMOUNT`, `NOT_FOUND`, `INVALID_TARGET` |
+| `admin_settle_charge(p_charge_id, p_status, p_note = null)` | paid: owner, operations; waived: owner with a reason | closes an open charge | `REASON_REQUIRED`, `NOT_FOUND`, `CHARGE_NOT_OPEN` |
 
 ### Settings (owner)
 
@@ -149,7 +151,7 @@ Staff also read these tables directly (RLS): `profiles`, `drivers`, `orders`,
 | `orders` | customer: own; distributor: assigned | Realtime |
 | `order_events` | parties of the order | audit trail |
 | `order_releases` | the distributor who released | |
-| `driver_ledger` | the distributor (own), staff | |
+| `driver_charges` | the distributor (own), staff | written only by `admin_create_charge` / `admin_settle_charge` |
 | `cities`, `services`, `app_config`, `current_fees`, `feature_flags` | everyone, even before sign-in | |
 | `diagnostics` | insert own, read own; staff read all | |
 | storage `avatars/<user id>/…` | public read, owner write | |

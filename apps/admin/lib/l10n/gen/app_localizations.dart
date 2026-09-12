@@ -572,12 +572,6 @@ abstract class AppLocalizations {
   /// **'Customers'**
   String get navCustomers;
 
-  /// No description provided for @navBalances.
-  ///
-  /// In en, this message translates to:
-  /// **'Balances'**
-  String get navBalances;
-
   /// No description provided for @navSettings.
   ///
   /// In en, this message translates to:
@@ -731,7 +725,7 @@ abstract class AppLocalizations {
   /// No description provided for @roleOperationsDesc.
   ///
   /// In en, this message translates to:
-  /// **'Orders, distributor approvals and payments'**
+  /// **'Orders, distributor approvals and charges'**
   String get roleOperationsDesc;
 
   /// No description provided for @roleSupportDesc.
@@ -739,24 +733,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Customers; can see money but not change it'**
   String get roleSupportDesc;
-
-  /// No description provided for @ledgerOrderFee.
-  ///
-  /// In en, this message translates to:
-  /// **'Delivery fees'**
-  String get ledgerOrderFee;
-
-  /// No description provided for @ledgerPayment.
-  ///
-  /// In en, this message translates to:
-  /// **'Payment'**
-  String get ledgerPayment;
-
-  /// No description provided for @ledgerAdjustment.
-  ///
-  /// In en, this message translates to:
-  /// **'Adjustment'**
-  String get ledgerAdjustment;
 
   /// No description provided for @actorSystem.
   ///
@@ -955,12 +931,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} new today'**
   String newToday(int count);
-
-  /// No description provided for @kpiOutstanding.
-  ///
-  /// In en, this message translates to:
-  /// **'Fees owed by distributors'**
-  String get kpiOutstanding;
 
   /// No description provided for @last14Days.
   ///
@@ -1220,12 +1190,6 @@ abstract class AppLocalizations {
   /// **'Given back by distributors'**
   String get releases;
 
-  /// No description provided for @feesBooked.
-  ///
-  /// In en, this message translates to:
-  /// **'Fees booked'**
-  String get feesBooked;
-
   /// No description provided for @staffActions.
   ///
   /// In en, this message translates to:
@@ -1465,12 +1429,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delivered'**
   String get colDelivered;
-
-  /// No description provided for @colOwes.
-  ///
-  /// In en, this message translates to:
-  /// **'Owes'**
-  String get colOwes;
 
   /// No description provided for @colDocuments.
   ///
@@ -1712,84 +1670,6 @@ abstract class AppLocalizations {
   /// **'Cylinders on board'**
   String get cylindersOnBoard;
 
-  /// No description provided for @balanceSection.
-  ///
-  /// In en, this message translates to:
-  /// **'Fee balance'**
-  String get balanceSection;
-
-  /// No description provided for @owes.
-  ///
-  /// In en, this message translates to:
-  /// **'Owes {amount}'**
-  String owes(String amount);
-
-  /// No description provided for @inCredit.
-  ///
-  /// In en, this message translates to:
-  /// **'In credit {amount}'**
-  String inCredit(String amount);
-
-  /// No description provided for @settled.
-  ///
-  /// In en, this message translates to:
-  /// **'Settled'**
-  String get settled;
-
-  /// No description provided for @recordPayment.
-  ///
-  /// In en, this message translates to:
-  /// **'Record payment'**
-  String get recordPayment;
-
-  /// No description provided for @adjust.
-  ///
-  /// In en, this message translates to:
-  /// **'Adjust'**
-  String get adjust;
-
-  /// No description provided for @paymentTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Cash received from {name}'**
-  String paymentTitle(String name);
-
-  /// No description provided for @paymentMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Record the cash the distributor handed over. It lowers what they owe.'**
-  String get paymentMessage;
-
-  /// No description provided for @adjustTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Adjust {name}\'s balance'**
-  String adjustTitle(String name);
-
-  /// No description provided for @adjustMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'A positive amount adds to what they owe; a negative amount waives part of it.'**
-  String get adjustMessage;
-
-  /// No description provided for @paymentRecorded.
-  ///
-  /// In en, this message translates to:
-  /// **'Payment recorded'**
-  String get paymentRecorded;
-
-  /// No description provided for @balanceAdjusted.
-  ///
-  /// In en, this message translates to:
-  /// **'Balance adjusted'**
-  String get balanceAdjusted;
-
-  /// No description provided for @noLedger.
-  ///
-  /// In en, this message translates to:
-  /// **'No fees booked yet.'**
-  String get noLedger;
-
   /// No description provided for @recentOrders.
   ///
   /// In en, this message translates to:
@@ -1832,71 +1712,11 @@ abstract class AppLocalizations {
   /// **'Often cancels'**
   String get oftenCancels;
 
-  /// No description provided for @balancesNote.
-  ///
-  /// In en, this message translates to:
-  /// **'Payment is cash only: each delivered order adds the customer\'s and the distributor\'s service fees to what the distributor owes. Record cash when they hand it over.'**
-  String get balancesNote;
-
-  /// No description provided for @totalOwed.
-  ///
-  /// In en, this message translates to:
-  /// **'Owed to the platform'**
-  String get totalOwed;
-
-  /// No description provided for @totalFees.
-  ///
-  /// In en, this message translates to:
-  /// **'Fees booked'**
-  String get totalFees;
-
-  /// No description provided for @totalPayments.
-  ///
-  /// In en, this message translates to:
-  /// **'Payments received'**
-  String get totalPayments;
-
-  /// No description provided for @noBalances.
-  ///
-  /// In en, this message translates to:
-  /// **'No fees booked yet.'**
-  String get noBalances;
-
-  /// No description provided for @colDeliveries.
-  ///
-  /// In en, this message translates to:
-  /// **'Deliveries'**
-  String get colDeliveries;
-
   /// No description provided for @colFees.
   ///
   /// In en, this message translates to:
   /// **'Fees'**
   String get colFees;
-
-  /// No description provided for @colPaid.
-  ///
-  /// In en, this message translates to:
-  /// **'Paid'**
-  String get colPaid;
-
-  /// No description provided for @colAdjustments.
-  ///
-  /// In en, this message translates to:
-  /// **'Adjustments'**
-  String get colAdjustments;
-
-  /// No description provided for @colBalance.
-  ///
-  /// In en, this message translates to:
-  /// **'Balance'**
-  String get colBalance;
-
-  /// No description provided for @colLastPayment.
-  ///
-  /// In en, this message translates to:
-  /// **'Last payment'**
-  String get colLastPayment;
 
   /// No description provided for @servicesTitle.
   ///
@@ -2342,18 +2162,6 @@ abstract class AppLocalizations {
   /// **'Returned order to the queue'**
   String get actOrderReturn;
 
-  /// No description provided for @actLedgerPayment.
-  ///
-  /// In en, this message translates to:
-  /// **'Recorded a payment'**
-  String get actLedgerPayment;
-
-  /// No description provided for @actLedgerAdjust.
-  ///
-  /// In en, this message translates to:
-  /// **'Adjusted a balance'**
-  String get actLedgerAdjust;
-
   /// No description provided for @actServiceUpdate.
   ///
   /// In en, this message translates to:
@@ -2401,6 +2209,354 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Removed staff'**
   String get actStaffRemove;
+
+  /// No description provided for @sessionExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Your session ended. Sign in again.'**
+  String get sessionExpired;
+
+  /// No description provided for @navFinance.
+  ///
+  /// In en, this message translates to:
+  /// **'Finance'**
+  String get navFinance;
+
+  /// No description provided for @financeNote.
+  ///
+  /// In en, this message translates to:
+  /// **'The platform\'s income is the service fee on each delivered order (the customer\'s part and the distributor\'s part). Charges are separate: fines or fees for particular items raised against a distributor, each with an explanation.'**
+  String get financeNote;
+
+  /// No description provided for @rangeToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get rangeToday;
+
+  /// No description provided for @range7.
+  ///
+  /// In en, this message translates to:
+  /// **'7 days'**
+  String get range7;
+
+  /// No description provided for @range30.
+  ///
+  /// In en, this message translates to:
+  /// **'30 days'**
+  String get range30;
+
+  /// No description provided for @rangeMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get rangeMonth;
+
+  /// No description provided for @rangeCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick dates'**
+  String get rangeCustom;
+
+  /// No description provided for @kpiPlatformFees.
+  ///
+  /// In en, this message translates to:
+  /// **'Platform income'**
+  String get kpiPlatformFees;
+
+  /// No description provided for @platformFeesCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Service fees on delivered orders'**
+  String get platformFeesCaption;
+
+  /// No description provided for @kpiCustomerFees.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer fees'**
+  String get kpiCustomerFees;
+
+  /// No description provided for @kpiDistributorFees.
+  ///
+  /// In en, this message translates to:
+  /// **'Distributor fees'**
+  String get kpiDistributorFees;
+
+  /// No description provided for @kpiDeliveredOrders.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivered orders'**
+  String get kpiDeliveredOrders;
+
+  /// No description provided for @kpiOrderValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Order value'**
+  String get kpiOrderValue;
+
+  /// No description provided for @orderValueCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid by customers to distributors'**
+  String get orderValueCaption;
+
+  /// No description provided for @kpiAvgFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Average income per order'**
+  String get kpiAvgFee;
+
+  /// No description provided for @feesByDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Income by day'**
+  String get feesByDay;
+
+  /// No description provided for @byAgency.
+  ///
+  /// In en, this message translates to:
+  /// **'By agency'**
+  String get byAgency;
+
+  /// No description provided for @byDistributor.
+  ///
+  /// In en, this message translates to:
+  /// **'By distributor'**
+  String get byDistributor;
+
+  /// No description provided for @colDistributors.
+  ///
+  /// In en, this message translates to:
+  /// **'Distributors'**
+  String get colDistributors;
+
+  /// No description provided for @colOrderValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Order value'**
+  String get colOrderValue;
+
+  /// No description provided for @noAgency.
+  ///
+  /// In en, this message translates to:
+  /// **'No agency'**
+  String get noAgency;
+
+  /// No description provided for @noDeliveries.
+  ///
+  /// In en, this message translates to:
+  /// **'No delivered orders in this period.'**
+  String get noDeliveries;
+
+  /// No description provided for @charges.
+  ///
+  /// In en, this message translates to:
+  /// **'Charges'**
+  String get charges;
+
+  /// No description provided for @chargesNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Fines or fees for particular items, raised against a distributor with an explanation they see in their app.'**
+  String get chargesNote;
+
+  /// No description provided for @newCharge.
+  ///
+  /// In en, this message translates to:
+  /// **'New charge'**
+  String get newCharge;
+
+  /// No description provided for @chargeKindFine.
+  ///
+  /// In en, this message translates to:
+  /// **'Fine'**
+  String get chargeKindFine;
+
+  /// No description provided for @chargeKindItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Item fee'**
+  String get chargeKindItem;
+
+  /// No description provided for @chargeKindOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get chargeKindOther;
+
+  /// No description provided for @chargeOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get chargeOpen;
+
+  /// No description provided for @chargePaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get chargePaid;
+
+  /// No description provided for @chargeWaived.
+  ///
+  /// In en, this message translates to:
+  /// **'Waived'**
+  String get chargeWaived;
+
+  /// No description provided for @chargeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get chargeTitle;
+
+  /// No description provided for @chargeTitleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'For example: late delivery, damaged valve'**
+  String get chargeTitleHint;
+
+  /// No description provided for @chargeNoteLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Explanation (the distributor sees it)'**
+  String get chargeNoteLabel;
+
+  /// No description provided for @chargeCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Charge added'**
+  String get chargeCreated;
+
+  /// No description provided for @markPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark paid'**
+  String get markPaid;
+
+  /// No description provided for @waive.
+  ///
+  /// In en, this message translates to:
+  /// **'Waive'**
+  String get waive;
+
+  /// No description provided for @waiveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Waive this charge'**
+  String get waiveTitle;
+
+  /// No description provided for @markPaidConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark this charge as paid?'**
+  String get markPaidConfirm;
+
+  /// No description provided for @chargeSettled.
+  ///
+  /// In en, this message translates to:
+  /// **'Charge updated'**
+  String get chargeSettled;
+
+  /// No description provided for @noCharges.
+  ///
+  /// In en, this message translates to:
+  /// **'No charges.'**
+  String get noCharges;
+
+  /// No description provided for @chargeForOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Order #{number}'**
+  String chargeForOrder(int number);
+
+  /// No description provided for @kpiOpenCharges.
+  ///
+  /// In en, this message translates to:
+  /// **'Open charges'**
+  String get kpiOpenCharges;
+
+  /// No description provided for @kpiFeesMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Income this month'**
+  String get kpiFeesMonth;
+
+  /// No description provided for @colOpenCharges.
+  ///
+  /// In en, this message translates to:
+  /// **'Open charges'**
+  String get colOpenCharges;
+
+  /// No description provided for @chargeDistributor.
+  ///
+  /// In en, this message translates to:
+  /// **'Charge the distributor'**
+  String get chargeDistributor;
+
+  /// No description provided for @chargeNotOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'This charge is already settled.'**
+  String get chargeNotOpen;
+
+  /// No description provided for @chargesRaised.
+  ///
+  /// In en, this message translates to:
+  /// **'Raised in period'**
+  String get chargesRaised;
+
+  /// No description provided for @chargesPaidTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid in period'**
+  String get chargesPaidTotal;
+
+  /// No description provided for @chargesWaivedTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Waived in period'**
+  String get chargesWaivedTotal;
+
+  /// No description provided for @colCharge.
+  ///
+  /// In en, this message translates to:
+  /// **'Charge'**
+  String get colCharge;
+
+  /// No description provided for @colAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get colAmount;
+
+  /// No description provided for @colDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get colDate;
+
+  /// No description provided for @colExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Explanation'**
+  String get colExplanation;
+
+  /// No description provided for @actChargeCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Added a charge'**
+  String get actChargeCreate;
+
+  /// No description provided for @actChargePaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Marked a charge paid'**
+  String get actChargePaid;
+
+  /// No description provided for @actChargeWaived.
+  ///
+  /// In en, this message translates to:
+  /// **'Waived a charge'**
+  String get actChargeWaived;
 }
 
 class _AppLocalizationsDelegate

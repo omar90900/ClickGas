@@ -701,6 +701,98 @@ class DriverOrder {
       );
 }
 
+// ---------------------------------------------------------------- charges
+
+enum ChargeKind {
+  fine('fine'),
+  itemFee('item_fee'),
+  other('other');
+
+  const ChargeKind(this.value);
+  final String value;
+
+  static ChargeKind parse(Object? v) =>
+      values.firstWhere((k) => k.value == v, orElse: () => other);
+}
+
+enum ChargeStatus {
+  open,
+  paid,
+  waived;
+
+  static ChargeStatus parse(Object? v) =>
+      values.firstWhere((s) => s.name == v, orElse: () => open);
+}
+
+/// A fine or item fee staff raised against a distributor (`driver_charges`,
+/// or a row of `admin_list_charges` with the names filled in). Not the
+/// per-order service fee, which is platform revenue on the order itself.
+class DriverCharge {
+  final int id;
+  final String driverId;
+  final String? orderId;
+  final int? orderNumber;
+  final ChargeKind kind;
+  final String title;
+
+  /// The explanation the distributor sees.
+  final String note;
+  final double amount;
+  final ChargeStatus status;
+  final DateTime? createdAt;
+  final DateTime? settledAt;
+  final String? settleNote;
+
+  // Filled by admin_list_charges only.
+  final String? driverName;
+  final String? driverPhone;
+  final String? agencyName;
+  final String? createdByName;
+  final String? settledByName;
+
+  const DriverCharge({
+    required this.id,
+    required this.driverId,
+    required this.kind,
+    required this.title,
+    required this.note,
+    required this.amount,
+    this.status = ChargeStatus.open,
+    this.orderId,
+    this.orderNumber,
+    this.createdAt,
+    this.settledAt,
+    this.settleNote,
+    this.driverName,
+    this.driverPhone,
+    this.agencyName,
+    this.createdByName,
+    this.settledByName,
+  });
+
+  bool get isOpen => status == ChargeStatus.open;
+
+  factory DriverCharge.fromMap(Map<String, dynamic> m) => DriverCharge(
+        id: _i(m['id']),
+        driverId: m['driver_id'] as String,
+        orderId: m['order_id'] as String?,
+        orderNumber: m['order_number'] == null ? null : _i(m['order_number']),
+        kind: ChargeKind.parse(m['kind']),
+        title: m['title'] as String? ?? '',
+        note: m['note'] as String? ?? '',
+        amount: _d(m['amount']),
+        status: ChargeStatus.parse(m['status']),
+        createdAt: _date(m['created_at']),
+        settledAt: _date(m['settled_at']),
+        settleNote: m['settle_note'] as String?,
+        driverName: m['driver_name'] as String?,
+        driverPhone: m['driver_phone'] as String?,
+        agencyName: m['agency_name'] as String?,
+        createdByName: m['created_by_name'] as String?,
+        settledByName: m['settled_by_name'] as String?,
+      );
+}
+
 /// An order the driver released back to other drivers (`order_releases`).
 class OrderRelease {
   final int id;

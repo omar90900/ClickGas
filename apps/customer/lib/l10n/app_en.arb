@@ -181,5 +181,7 @@
   "driverAccountBody": "This app is for customers. The distributor app is coming soon.",
   "accountDisabledTitle": "Account disabled",
   "accountDisabledBody": "Your account has been disabled. Please contact support.",
-  "profileMissing": "We couldn't load your account data."
+  "profileMissing": "We couldn't load your account data.",
+
+  "sessionExpired": "Your session ended. Sign in again."
 }

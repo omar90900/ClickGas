@@ -34,13 +34,13 @@ select throws_ok(
   '42501', null, 'a customer cannot change their own role');
 
 select throws_ok(
-  $$ insert into public.driver_ledger (driver_id, kind, amount)
-     values ('00000000-0000-0000-0000-00000000a001', 'payment', -1) $$,
-  '42501', null, 'nobody writes the ledger directly');
+  $$ insert into public.driver_charges (driver_id, kind, title, note, amount)
+     values ('00000000-0000-0000-0000-00000000a001', 'fine', 'Test', 'test note', 1) $$,
+  '42501', null, 'nobody writes charges directly');
 
 select throws_ok(
-  $$ select public.record_driver_payment('00000000-0000-0000-0000-00000000a001', 1) $$,
-  'P0001', 'PERMISSION_DENIED', 'only staff record payments');
+  $$ select public.admin_create_charge('00000000-0000-0000-0000-00000000a001', 'fine', 'Late', 1, 'late delivery') $$,
+  'P0001', 'PERMISSION_DENIED', 'only staff raise charges');
 
 select * from finish();
 rollback;

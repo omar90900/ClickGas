@@ -58,6 +58,41 @@ void main() {
     });
   });
 
+  group('finance', () {
+    test('the report adds up income and keeps charges apart', () {
+      final r = FinanceReport.fromMap({
+        'totals': {
+          'delivered_orders': 4,
+          'order_value': '56.400',
+          'customer_fees': '0.400',
+          'distributor_fees': '0.200',
+          'platform_fees': '0.600',
+        },
+        'by_day': [
+          {'day': '2026-09-12', 'delivered': 4, 'fees': 0.6},
+        ],
+        'by_agency': [
+          {'agency': '', 'distributors': 2, 'delivered': 4, 'fees': 0.6},
+        ],
+        'by_distributor': [
+          {'driver_id': 'd1', 'full_name': 'D', 'agency': 'A', 'delivered': 4, 'order_value': 56.4, 'fees': 0.6},
+        ],
+        'charges': {'open_count': 1, 'open_amount': '2.500', 'paid_amount': 1},
+      });
+      expect(r.platformFees, 0.6);
+      expect(r.averageFee, closeTo(0.15, 1e-9));
+      expect(r.days.single.fees, 0.6);
+      expect(r.agencies.single.agency, isEmpty);
+      expect(r.distributors.single.orderValue, 56.4);
+      expect(r.charges.openAmount, 2.5);
+      expect(r.charges.openCount, 1);
+    });
+
+    test('an empty period has no average', () {
+      expect(FinanceReport.fromMap({}).averageFee, 0);
+    });
+  });
+
   group('fees', () {
     test('the latest fee row that has started is in force', () {
       final now = DateTime(2026, 9, 12, 12);

@@ -51,7 +51,8 @@ When a user reports "code XYZ", find it here, then open
 | Code | Raised by | Meaning | What to check |
 |---|---|---|---|
 | `REASON_REQUIRED` | reject, suspend, block, cancel, reassign, reject document, adjust balance | No reason, or under 3 characters | The reason goes to `admin_actions.reason` |
-| `INVALID_AMOUNT` | `record_driver_payment`, `admin_adjust_balance`, `admin_set_fees`, services | Amount missing, zero, negative or out of range (payment ≤ 10 000, fee 0-5, price 0-1000) | Detail shows the value |
+| `INVALID_AMOUNT` | `admin_create_charge`, `admin_set_fees`, services | Amount missing, zero, negative or out of range (charge ≤ 10 000, fee 0-5, price 0-1000) | Detail shows the value |
+| `CHARGE_NOT_OPEN` | `admin_settle_charge` | The charge is already paid or waived | Refresh; see who settled it |
 | `INVALID_SETTING` | `admin_update_config`, services, `admin_set_fees` | Unknown key, wrong type, out of range, duplicate service code, fee date in the past | Detail names the setting and its range |
 | `INVALID_TARGET` | `admin_set_account_active`, `admin_save_staff` | Blocking a staff account, or making a distributor staff | Use the Staff page for staff |
 | `LAST_OWNER` | `admin_save_staff`, `admin_remove_staff` | The change would leave no owner | Add another owner first |
@@ -64,6 +65,7 @@ When a user reports "code XYZ", find it here, then open
 |---|---|---|---|
 | `INVALID_TRANSITION` | `check_order_transition` trigger, driver RPCs | A status change not listed in `order_transitions` (for example delivering a cancelled order) | Detail shows `order N: from -> to by actor` |
 | `PERMISSION_DENIED` | Postgres `42501`, staff functions | Row Level Security or a column grant refused the change | The caller's role |
+| `SESSION_EXPIRED` | the app (`SessionKeeper`) | The login token expired and could not be renewed; the app signs out | [runbooks/session-expired.md](runbooks/session-expired.md) |
 | `NETWORK` | the app | No connection or timeout | Phone connectivity |
 | `UNKNOWN` | the app | Anything not mapped; shown as "code UNKNOWN" | The diagnostics upload has the full error |
 
