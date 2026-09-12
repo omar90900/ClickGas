@@ -16,7 +16,10 @@ build/
 .flutter-plugins-dependencies
 .pub-cache/
 .pub/
-coverage/
+# Test coverage output only (a bare "coverage/" also hid lib/features/coverage).
+/coverage/
+apps/*/coverage/
+packages/*/coverage/
 *.g.dart.tmp
 
 # ---------------------------------------------------------------- Supabase CLI
