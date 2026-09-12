@@ -5,6 +5,19 @@ apps' `pubspec.yaml` version.
 
 ## [Unreleased] - Coverage and demo readiness
 
+### Fixed
+- The customer app stayed on the launch image: its APK had been built without
+  the `jni` native library (two builds at once), so plugin registration
+  stopped and Supabase could not start. All apps now start through
+  `runGuardedApp`, which shows a clear bilingual error screen instead of
+  hanging (docs/runbooks/app-stuck-on-launch.md).
+- CI uses the same Flutter version as development (3.47.3).
+- A distributor whose phone stopped reporting stayed "online" forever and
+  showed on the customer map. Customers now only see positions under 10
+  minutes old, and the every-minute job switches off distributors silent for
+  15 minutes (`20260913120000_auto_offline.sql`); the distributor app
+  re-confirms "online" with each position.
+
 ### Added
 - Widening search: a waiting order is offered 2 → 4 → 6 km away (every 5
   minutes); the dispatch radius is back to 2 km.

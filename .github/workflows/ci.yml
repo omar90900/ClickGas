@@ -18,6 +18,8 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
+          # Same version as development machines, so analyzer rules match.
+          flutter-version: 3.47.3
           cache: true
       - name: Get dependencies (whole workspace)
         run: flutter pub get
@@ -82,6 +84,8 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
+          # Same version as development machines, so analyzer rules match.
+          flutter-version: 3.47.3
           cache: true
       - run: flutter pub get
       - name: Build customer

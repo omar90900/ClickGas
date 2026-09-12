@@ -42,8 +42,17 @@ class _HomeTabState extends State<HomeTab> {
   BitmapDescriptor? _truckIcon;
 
   late Future<(List<GasService>, AppConfig)> _catalog = _loadCatalog();
-  late final Stream<List<DriverLocation>> _drivers =
-      context.read<DriverRepository>().watchOnlineDrivers();
+  /// Online distributors whose position is under 10 minutes old (the same
+  /// rule as coverage_check): a phone that stopped reporting is not shown.
+  late final Stream<List<DriverLocation>> _drivers = context
+      .read<DriverRepository>()
+      .watchOnlineDrivers()
+      .map((all) => all.where(_isFresh).toList());
+
+  static bool _isFresh(DriverLocation d) {
+    final at = d.updatedAt;
+    return at != null && DateTime.now().difference(at) < const Duration(minutes: 10);
+  }
 
   int? _serviceId;
   int _quantity = 1;

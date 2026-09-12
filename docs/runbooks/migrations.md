@@ -49,7 +49,8 @@ union all select 'order_releases', to_regclass('public.order_releases') is not n
 | `20260912090000_foundation.sql` | 2026-09-12 (verified by `tools/e2e/order_cycle.mjs`, 16/16) |
 | `20260912150000_admin_core.sql` | 2026-09-12 (verified by `tools/e2e/admin_cycle.mjs`, 42/42, and `order_cycle.mjs`, 16/16) |
 | `20260912200000_revenue_and_charges.sql` | 2026-09-12 (verified by `admin_cycle.mjs` and `order_cycle.mjs`, all checks) |
-| `20260913090000_coverage_and_demo.sql` | pending |
+| `20260913090000_coverage_and_demo.sql` | 2026-09-12 (pg_cron job running: a `job_runs` row every minute) |
+| `20260913120000_auto_offline.sql` | pending |
 
 If a run fails with "already exists", the file was applied before; check with
 the query above instead of running it again.

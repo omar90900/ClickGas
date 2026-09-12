@@ -22,5 +22,6 @@ export 'src/repositories/diagnostics_repository.dart';
 export 'src/repositories/driver_documents_repository.dart';
 export 'src/repositories/profile_repository.dart';
 export 'src/session_keeper.dart';
+export 'src/startup.dart';
 export 'src/supabase_config.dart';
 export 'src/user_avatar.dart';

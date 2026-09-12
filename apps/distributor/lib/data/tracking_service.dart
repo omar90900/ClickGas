@@ -73,9 +73,9 @@ class TrackingService extends ChangeNotifier {
     if (last != null && now.difference(last) < writeInterval) return;
     _lastWrite = now;
     final id = _driverId;
-    if (id == null) return;
+    if (id == null || _sub == null) return;
     _drivers
-        .updateLocation(id, p.latitude, p.longitude, p.heading)
+        .updateLocation(id, p.latitude, p.longitude, p.heading, online: true)
         .catchError((Object e) => debugPrint('Location write failed: $e'));
   }
 

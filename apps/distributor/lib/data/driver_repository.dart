@@ -43,18 +43,23 @@ class DriverRepository {
         },
       );
 
+  /// [online] re-confirms is_online with the position: the server switches
+  /// off distributors silent for 15 minutes (expire_stale_orders), and this
+  /// switches an active one straight back on after a gap in signal.
   Future<void> updateLocation(
     String driverId,
     double lat,
     double lng,
-    double? heading,
-  ) =>
+    double? heading, {
+    bool online = false,
+  }) =>
       guard('driver.update_location', () async {
         await _client.from('drivers').update({
           'lat': lat,
           'lng': lng,
           'heading': heading,
           'location_updated_at': DateTime.now().toUtc().toIso8601String(),
+          if (online) 'is_online': true,
         }).eq('id', driverId);
       });
 

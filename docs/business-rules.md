@@ -62,6 +62,10 @@ Anything else is rejected with `INVALID_TRANSITION`. *(table `order_transitions`
 - An order nobody accepts within **`order_expiry_minutes` = 20** becomes
   **expired** (checked every minute). The customer is notified and offered
   "Order again".
+- A distributor whose app hasn't sent a position for **15 minutes** is
+  switched offline by the same every-minute job (phone off, no signal, app
+  killed). The app switches them back on with its next position. Customers
+  only see distributors whose position is under 10 minutes old.
 - A distributor sees pending orders offered to their position, nearest
   first, with the customer's name and notes.
 - They can hold **`max_active_orders` = 3** accepted or on-the-way orders. A slot

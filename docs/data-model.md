@@ -89,3 +89,4 @@ Also added in migration 7: `profiles.is_demo`, `orders.is_demo`,
 | `20260912150000_admin_core.sql` | staff roles, audit trail, staff read access, distributor status and documents, staff actions, price history, dashboard functions |
 | `20260912200000_revenue_and_charges.sql` | fees are revenue only; ledger removed; `driver_charges`; `admin_finance` |
 | `20260913090000_coverage_and_demo.sql` | widening search, order expiry (pg_cron), coverage checks and gaps, demo flags and seed mode, `admin_coverage` |
+| `20260913120000_auto_offline.sql` | the every-minute job also switches off distributors silent for 15 minutes |

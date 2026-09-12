@@ -1,24 +1,23 @@
 import 'package:clickgas_core/clickgas_core.dart';
-import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app.dart';
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  Log.install(app: 'distributor');
+Future<void> main() => runGuardedApp(
+      app: 'distributor',
+      start: () async {
+        final settings = AppSettings();
+        await settings.load();
+        await NotificationService.instance.init();
 
-  final settings = AppSettings();
-  await settings.load();
-  await NotificationService.instance.init();
+        await Supabase.initialize(
+          url: SupabaseConfig.url,
+          publishableKey: SupabaseConfig.publishableKey,
+        );
+        // Keeps the login token fresh while tracking runs in the background.
+        SessionKeeper.install(Supabase.instance.client.auth);
+        Log.i('supabase_ready', {'env': SupabaseConfig.environment});
 
-  await Supabase.initialize(
-    url: SupabaseConfig.url,
-    publishableKey: SupabaseConfig.publishableKey,
-  );
-  // Keeps the login token fresh while tracking runs in the background.
-  SessionKeeper.install(Supabase.instance.client.auth);
-  Log.i('supabase_ready', {'env': SupabaseConfig.environment});
-
-  runApp(DriverApp(settings: settings));
-}
+        return DriverApp(settings: settings);
+      },
+    );
