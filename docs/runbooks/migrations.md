@@ -43,7 +43,7 @@ union all select 'order_releases', to_regclass('public.order_releases') is not n
 | `20260911000000_init.sql` | 2026-09-11 |
 | `20260911120000_driver_app.sql` | 2026-09-11 |
 | `20260911180000_slots_avatars.sql` | 2026-09-11 |
-| `20260912090000_foundation.sql` | pending |
+| `20260912090000_foundation.sql` | 2026-09-12 (verified by `tools/e2e/order_cycle.mjs`, 16/16) |
 
 If a run fails with "already exists", the file was applied before; check with
 the query above instead of running it again.
