@@ -1,0 +1,18 @@
+# Store text with LF in the repository on every OS; Windows checkouts may use
+# CRLF locally. Keeps diffs clean between Windows, macOS and CI (Linux).
+* text=auto eol=lf
+
+# Windows-only scripts keep CRLF.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary files - never touch.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ico binary
+*.jar binary
+*.docx binary
+*.ttf binary
+*.otf binary
