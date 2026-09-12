@@ -1,0 +1,35 @@
+# ---------------------------------------------------------------- secrets
+# Never commit keys, passwords or signing material. See docs/runbooks/secrets.md.
+.secrets/
+*.env
+.env*
+env/*.local.json
+**/android/local.properties
+**/android/key.properties
+*.jks
+*.keystore
+
+# ---------------------------------------------------------------- Dart / Flutter
+.dart_tool/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+coverage/
+*.g.dart.tmp
+
+# ---------------------------------------------------------------- Supabase CLI
+supabase/.temp/
+supabase/.branches/
+
+# ---------------------------------------------------------------- tooling
+node_modules/
+tools/**/node_modules/
+
+# ---------------------------------------------------------------- OS / editors
+.DS_Store
+Thumbs.db
+*.iml
+.idea/
+*.swp

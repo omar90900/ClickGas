@@ -1,0 +1,52 @@
+name: clickgas_driver
+description: "ClickGas Driver - distributor app (receive and deliver gas orders)."
+publish_to: 'none'
+version: 1.0.0+1
+
+resolution: workspace
+
+environment:
+  sdk: ^3.13.3
+
+dependencies:
+  clickgas_core:
+    path: ../../packages/clickgas_core
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  geolocator: ^14.0.3
+  google_fonts: ^8.2.1
+  google_maps_flutter: ^2.18.0
+  intl: ^0.20.3
+  provider: ^6.1.5+1
+  shared_preferences: ^2.5.5
+  supabase_flutter: ^2.17.2
+  url_launcher: ^6.3.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
+
+flutter:
+  generate: true
+  assets:
+    - assets/icon/app_icon.png
+  uses-material-design: true
+
+# Launcher icons: `dart run flutter_launcher_icons`
+flutter_launcher_icons:
+  image_path: assets/icon/app_icon.png
+  android: true
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: assets/icon/app_icon_foreground.png
+  min_sdk_android: 24
+  ios: true
+  remove_alpha_ios: true
+  web:
+    generate: true
+    image_path: assets/icon/app_icon.png
+    background_color: "#FFFFFF"
+    theme_color: "#53ED74"

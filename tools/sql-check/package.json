@@ -1,0 +1,10 @@
+{
+  "name": "clickgas-sql-check",
+  "private": true,
+  "description": "Parses SQL migrations (including PL/pgSQL bodies) with the real PostgreSQL parser.",
+  "type": "module",
+  "dependencies": {
+    "libpg-query": "^18.1.4",
+    "pgsql-parser": "^17.0.0"
+  }
+}

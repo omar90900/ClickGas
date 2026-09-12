@@ -1,0 +1,85 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  flutter:
+    name: Analyze and test (Flutter)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Get dependencies (whole workspace)
+        run: flutter pub get
+      - name: Generate translations
+        run: |
+          (cd apps/customer && flutter gen-l10n)
+          (cd apps/distributor && flutter gen-l10n)
+      - name: Analyze
+        run: flutter analyze apps packages
+      - name: Test shared package
+        working-directory: packages/clickgas_core
+        run: flutter test
+      - name: Test customer app
+        working-directory: apps/customer
+        run: flutter test
+
+  database:
+    name: Database tests (pgTAP)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Start local Supabase with all migrations
+        run: supabase db start
+      - name: Run pgTAP tests
+        run: supabase test db
+
+  sql-syntax:
+    name: SQL syntax
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Check every migration
+        working-directory: tools/sql-check
+        run: |
+          npm ci --no-audit --no-fund
+          for f in ../../supabase/migrations/*.sql; do node check.mjs "$f"; done
+
+  android:
+    name: Build Android (debug)
+    if: github.ref == 'refs/heads/main'
+    needs: flutter
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - name: Build customer
+        working-directory: apps/customer
+        run: flutter build apk --debug --dart-define-from-file=../../env/dev.json
+      - name: Build distributor
+        working-directory: apps/distributor
+        run: flutter build apk --debug --dart-define-from-file=../../env/dev.json

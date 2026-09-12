@@ -1,0 +1,21 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Customer (dev)",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "apps/customer",
+      "program": "lib/main.dart",
+      "args": ["--dart-define-from-file=../../env/dev.json"]
+    },
+    {
+      "name": "Distributor (dev)",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "apps/distributor",
+      "program": "lib/main.dart",
+      "args": ["--dart-define-from-file=../../env/dev.json"]
+    }
+  ]
+}

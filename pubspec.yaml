@@ -1,0 +1,13 @@
+# ClickGas monorepo - one pub workspace, one set of dependency versions.
+# Run `flutter pub get` here once; it resolves every member below.
+name: clickgas_workspace
+description: ClickGas - customer app, distributor app and shared packages.
+publish_to: none
+
+environment:
+  sdk: ^3.13.3
+
+workspace:
+  - apps/customer
+  - apps/distributor
+  - packages/clickgas_core
