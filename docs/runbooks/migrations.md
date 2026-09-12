@@ -47,7 +47,7 @@ union all select 'order_releases', to_regclass('public.order_releases') is not n
 | `20260911180000_slots_avatars.sql` | 2026-09-11 |
 | `20260912090000_foundation.sql` | 2026-09-12 (verified by `tools/e2e/order_cycle.mjs`, 16/16) |
 | `20260912150000_admin_core.sql` | 2026-09-12 (verified by `tools/e2e/admin_cycle.mjs`, 42/42, and `order_cycle.mjs`, 16/16) |
-| `20260912200000_revenue_and_charges.sql` | pending |
+| `20260912200000_revenue_and_charges.sql` | 2026-09-12 (verified by `admin_cycle.mjs` and `order_cycle.mjs`, all checks) |
 
 If a run fails with "already exists", the file was applied before; check with
 the query above instead of running it again.
