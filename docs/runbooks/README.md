@@ -18,5 +18,6 @@ diagnostics reference) and ends with a fix or a clear next step.
 | [release-builds.md](release-builds.md) | Signing key, Maps key fingerprints, building release APKs |
 | [migrations.md](migrations.md) | Applying or checking database changes |
 | [secrets.md](secrets.md) | Keys: where they are, how to rotate them |
+| [new-computer.md](new-computer.md) | Backing up before a reinstall and setting up a new computer |
 
 All SQL below runs in Supabase › SQL Editor (as the project owner).
