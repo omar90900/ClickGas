@@ -121,6 +121,7 @@ class _OrdersTabState extends State<OrdersTab> {
     final active = context.watch<ActiveOrdersController>();
     final config = context.watch<AppConfig>();
     final repo = context.read<DriverRepository>();
+    final wallets = context.read<WalletRepository>();
     final me = tracking.position;
     final full = active.count >= config.maxActiveOrders;
 
@@ -162,24 +163,50 @@ class _OrdersTabState extends State<OrdersTab> {
                       l.myActiveOrders(active.count, config.maxActiveOrders),
                     ),
                     for (final o in active.orders) ...[
-                      _ActiveOrderCard(
-                        order: o,
-                        distance: distanceTo(o.lat, o.lng),
-                        busy: _busyId == o.id,
-                        onStart: () => _run(o.id, () => repo.startDelivery(o.id)),
-                        onDelivered: () async {
-                          if (await confirmDialog(context, l.markDeliveredConfirm,
-                              confirmLabel: l.markDelivered)) {
-                            await _run(o.id, () => repo.complete(o.id));
-                          }
-                        },
-                        onRelease: () async {
-                          if (await confirmDialog(context, l.releaseOrderConfirm,
-                              confirmLabel: l.releaseOrder, destructive: true)) {
-                            await _run(o.id, () => repo.release(o.id),
-                                success: l.orderReleased);
-                          }
-                        },
+                      _PaymentWatch(
+                        key: ValueKey(o.id),
+                        orderId: o.paymentMethod == PaymentMethod.wallet ? o.id : null,
+                        builder: (payment) => _ActiveOrderCard(
+                          order: o,
+                          payment: payment,
+                          distance: distanceTo(o.lat, o.lng),
+                          busy: _busyId == o.id,
+                          onStart: () => _run(o.id, () => repo.startDelivery(o.id)),
+                          onDelivered: () async {
+                            if (await confirmDialog(context, l.markDeliveredConfirm,
+                                confirmLabel: l.markDelivered)) {
+                              await _run(o.id, () => repo.complete(o.id));
+                            }
+                          },
+                          onRelease: () async {
+                            if (await confirmDialog(context, l.releaseOrderConfirm,
+                                confirmLabel: l.releaseOrder, destructive: true)) {
+                              await _run(o.id, () => repo.release(o.id),
+                                  success: l.orderReleased);
+                            }
+                          },
+                          onConfirmPayment: () async {
+                            if (await confirmDialog(
+                                context, l.confirmPaymentConfirm(Fmt.money(context, o.totalPrice)),
+                                confirmLabel: l.paymentReceived)) {
+                              await _run(o.id, () => wallets.confirmPayment(o.id),
+                                  success: l.paymentConfirmedSnack);
+                            }
+                          },
+                          onCashPayment: () async {
+                            if (await confirmDialog(context, l.cashInsteadConfirm,
+                                confirmLabel: l.paidInCashInstead)) {
+                              await _run(o.id, () => wallets.confirmPayment(o.id, inCash: true),
+                                  success: l.paymentConfirmedSnack);
+                            }
+                          },
+                          onDisputePayment: () async {
+                            final note = await _askNote(context);
+                            if (note != null) {
+                              await _run(o.id, () => wallets.disputePayment(o.id, note));
+                            }
+                          },
+                        ),
                       ),
                       const SizedBox(height: 10),
                     ],
@@ -241,22 +268,94 @@ class _OrdersTabState extends State<OrdersTab> {
   }
 }
 
+/// Streams a wallet order's payment for its card; [orderId] is null for cash
+/// orders.
+class _PaymentWatch extends StatefulWidget {
+  const _PaymentWatch({super.key, required this.orderId, required this.builder});
+
+  final String? orderId;
+  final Widget Function(OrderPayment? payment) builder;
+
+  @override
+  State<_PaymentWatch> createState() => _PaymentWatchState();
+}
+
+class _PaymentWatchState extends State<_PaymentWatch> {
+  late final Stream<OrderPayment?>? _stream = widget.orderId == null
+      ? null
+      : context.read<WalletRepository>().watchPayment(widget.orderId!);
+
+  @override
+  Widget build(BuildContext context) => _stream == null
+      ? widget.builder(null)
+      : StreamBuilder<OrderPayment?>(
+          stream: _stream,
+          builder: (context, snap) => widget.builder(snap.data),
+        );
+}
+
+/// "Not received": what the distributor sees in their wallet (3+ characters).
+Future<String?> _askNote(BuildContext context) {
+  final l = context.l10n;
+  final controller = TextEditingController();
+  final form = GlobalKey<FormState>();
+  return showDialog<String>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      title: Text(l.disputeTitle),
+      content: Form(
+        key: form,
+        child: TextFormField(
+          controller: controller,
+          autofocus: true,
+          maxLength: 200,
+          minLines: 1,
+          maxLines: 3,
+          decoration: InputDecoration(hintText: l.disputeHint),
+          validator: (v) => (v ?? '').trim().length < 3 ? l.walletNoteRequired : null,
+        ),
+      ),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l.cancel)),
+        FilledButton(
+          onPressed: () {
+            if (form.currentState!.validate()) Navigator.pop(ctx, controller.text.trim());
+          },
+          child: Text(l.paymentNotReceived),
+        ),
+      ],
+    ),
+  );
+}
+
 class _ActiveOrderCard extends StatelessWidget {
   const _ActiveOrderCard({
     required this.order,
+    required this.payment,
     required this.distance,
     required this.busy,
     required this.onStart,
     required this.onDelivered,
     required this.onRelease,
+    required this.onConfirmPayment,
+    required this.onCashPayment,
+    required this.onDisputePayment,
   });
 
   final DriverOrder order;
+  final OrderPayment? payment;
   final double? distance;
   final bool busy;
   final VoidCallback onStart;
   final VoidCallback onDelivered;
   final VoidCallback onRelease;
+  final VoidCallback onConfirmPayment;
+  final VoidCallback onCashPayment;
+  final VoidCallback onDisputePayment;
+
+  /// A wallet order is handed over only once its payment is confirmed.
+  bool get _unpaid =>
+      order.paymentMethod == PaymentMethod.wallet && !(payment?.status.isSettled ?? false);
 
   @override
   Widget build(BuildContext context) {
@@ -292,18 +391,25 @@ class _ActiveOrderCard extends StatelessWidget {
             const SizedBox(height: 8),
             Row(
               children: [
-                UserAvatar(
-                  url: order.customerAvatar,
-                  name: order.customerName,
-                  radius: 16,
-                ),
-                const SizedBox(width: 8),
+                ServiceBadge(serviceCode: order.serviceCode),
+                const SizedBox(width: 10),
                 Expanded(
-                  child: Text(
-                    order.customerName,
-                    style: context.text.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${order.serviceName(context.lang)} × ${order.quantity}',
+                        style: context.text.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      Text(
+                        order.customerName,
+                        style: context.text.bodyMedium?.copyWith(
+                          color: context.colors.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 if (distance != null)
@@ -311,26 +417,28 @@ class _ActiveOrderCard extends StatelessWidget {
                       style: context.text.labelLarge),
               ],
             ),
-            const SizedBox(height: 4),
-            Text(
-              '${order.serviceName(context.lang)} · '
-              '${l.quantityCount(order.quantity)} · '
-              '${Fmt.money(context, order.totalPrice)} · '
-              '${order.paymentMethod == PaymentMethod.cash ? l.cash : l.card}',
-              style: context.text.bodyMedium,
+            const SizedBox(height: 10),
+            OrderFactRow(
+              icon: Icons.payments_rounded,
+              text: '${Fmt.money(context, order.totalPrice)} · '
+                  '${paymentMethodLabel(l, order.paymentMethod)}',
+              emphasize: true,
             ),
-            if ((order.address ?? '').isNotEmpty || (order.notes ?? '').isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 4),
-                child: Text(
-                  [order.address, order.notes]
-                      .whereType<String>()
-                      .where((s) => s.isNotEmpty)
-                      .join(' — '),
-                  style: context.text.bodySmall?.copyWith(
-                    color: context.colors.onSurfaceVariant,
-                  ),
-                ),
+            if ((order.address ?? '').isNotEmpty)
+              OrderFactRow(
+                icon: Icons.place_rounded,
+                text: order.address!,
+              ),
+            if ((order.notes ?? '').isNotEmpty)
+              CustomerNote(note: order.notes!),
+            if (order.paymentMethod == PaymentMethod.wallet)
+              _WalletPaymentBox(
+                payment: payment,
+                amount: order.totalPrice,
+                busy: busy,
+                onConfirm: onConfirmPayment,
+                onCash: onCashPayment,
+                onDispute: onDisputePayment,
               ),
             const SizedBox(height: 12),
             if (order.awaitingConfirmation)
@@ -390,7 +498,9 @@ class _ActiveOrderCard extends StatelessWidget {
                           ? null
                           : order.status == OrderStatus.accepted
                               ? onStart
-                              : onDelivered,
+                              : _unpaid
+                                  ? null
+                                  : onDelivered,
                       icon: busy
                           ? const ButtonSpinner()
                           : Icon(order.status == OrderStatus.accepted
@@ -427,23 +537,15 @@ class _NearbyOrderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
-    final description = [
-      '${order.serviceName(context.lang)} · ${l.quantityCount(order.quantity)}',
-      if ((order.address ?? '').isNotEmpty) order.address!,
-      if ((order.notes ?? '').isNotEmpty) order.notes!,
-    ].join('\n');
     return Opacity(
       opacity: locked ? 0.5 : 1,
       child: Card(
         child: Padding(
           padding: const EdgeInsets.all(14),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              UserAvatar(
-                url: order.customerAvatar,
-                name: order.customerName,
-                radius: 22,
-              ),
+              ServiceBadge(serviceCode: order.serviceCode),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -453,7 +555,7 @@ class _NearbyOrderCard extends StatelessWidget {
                       children: [
                         Flexible(
                           child: Text(
-                            order.customerName,
+                            '${order.serviceName(context.lang)} × ${order.quantity}',
                             overflow: TextOverflow.ellipsis,
                             style: context.text.titleMedium?.copyWith(
                               fontWeight: FontWeight.w800,
@@ -464,22 +566,27 @@ class _NearbyOrderCard extends StatelessWidget {
                         Tag(Fmt.distance(context, order.distanceM), context.accent),
                       ],
                     ),
-                    const SizedBox(height: 4),
                     Text(
-                      description,
-                      maxLines: 3,
+                      order.customerName,
                       overflow: TextOverflow.ellipsis,
-                      style: context.text.bodySmall?.copyWith(
+                      style: context.text.bodyMedium?.copyWith(
                         color: context.colors.onSurfaceVariant,
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      Fmt.money(context, order.totalPrice),
-                      style: context.text.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w900,
-                      ),
+                    const SizedBox(height: 8),
+                    OrderFactRow(
+                      icon: Icons.payments_rounded,
+                      text: '${Fmt.money(context, order.totalPrice)} · '
+                          '${paymentMethodLabel(l, order.paymentMethod)}',
+                      emphasize: true,
                     ),
+                    if ((order.address ?? '').isNotEmpty)
+                      OrderFactRow(
+                        icon: Icons.place_rounded,
+                        text: order.address!,
+                      ),
+                    if ((order.notes ?? '').isNotEmpty)
+                      CustomerNote(note: order.notes!),
                   ],
                 ),
               ),
@@ -496,6 +603,91 @@ class _NearbyOrderCard extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Wallet order: pay-on-arrival reminder, what the customer said, and the
+/// distributor's answer. "Mark delivered" stays off until this is settled.
+class _WalletPaymentBox extends StatelessWidget {
+  const _WalletPaymentBox({
+    required this.payment,
+    required this.amount,
+    required this.busy,
+    required this.onConfirm,
+    required this.onCash,
+    required this.onDispute,
+  });
+
+  final OrderPayment? payment;
+  final double amount;
+  final bool busy;
+  final VoidCallback onConfirm;
+  final VoidCallback onCash;
+  final VoidCallback onDispute;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    final status = payment?.status;
+    final (color, icon, text) = switch (status) {
+      PaymentStatus.confirmed => (context.accent, Icons.verified_rounded, l.paymentConfirmedDone),
+      PaymentStatus.cash => (context.accent, Icons.payments_rounded, l.paymentCashDone),
+      PaymentStatus.claimed => (AppColors.warning, Icons.account_balance_wallet_rounded, l.paymentClaimedHint),
+      PaymentStatus.disputed => (AppColors.danger, Icons.report_gmailerrorred_rounded, l.paymentDisputedWait),
+      _ => (AppColors.info, Icons.account_balance_wallet_rounded, l.payOnArrivalHint(Fmt.money(context, amount))),
+    };
+    final open = status != null && !status.isSettled;
+    return Container(
+      margin: const EdgeInsets.only(top: 8),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(icon, size: 18, color: color),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(text, style: context.text.bodySmall?.copyWith(fontWeight: FontWeight.w600)),
+              ),
+            ],
+          ),
+          if (payment?.reference != null)
+            Padding(
+              padding: const EdgeInsetsDirectional.only(start: 24, top: 4),
+              child: Text(l.paymentReferenceValue(payment!.reference!), style: context.text.bodySmall),
+            ),
+          if (open) ...[
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 4,
+              children: [
+                FilledButton.tonalIcon(
+                  onPressed: busy ? null : onConfirm,
+                  icon: const Icon(Icons.check_rounded, size: 18),
+                  label: Text(l.paymentReceived),
+                ),
+                if (status == PaymentStatus.claimed)
+                  OutlinedButton(
+                    onPressed: busy ? null : onDispute,
+                    child: Text(l.paymentNotReceived),
+                  ),
+                TextButton(
+                  onPressed: busy ? null : onCash,
+                  child: Text(l.paidInCashInstead),
+                ),
+              ],
+            ),
+          ],
+        ],
       ),
     );
   }

@@ -226,5 +226,50 @@
   "notificationsEmptyBody": "Updates about your orders will appear here.",
   "notifOrderUpdatesBody": "Accepted, on the way, delivered",
   "statOrders": "Orders",
-  "statDelivered": "Delivered"
+  "statDelivered": "Delivered",
+  "statCylinders": "Cylinders",
+  "statSpent": "Spent",
+  "statsThisMonth": "This month",
+  "statsThisYear": "This year",
+  "statsCylindersCount": "{count, plural, =1{1 cylinder} other{{count} cylinders}}",
+  "@statsCylindersCount": {
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "format": "compact"
+      }
+    }
+  },
+  "wallet": "Wallet",
+  "walletOrderNote": "You'll pay the distributor from your e-wallet (Orange Money, Zain Cash, Umniah or CliQ) when they arrive.",
+  "walletPayTitle": "Pay by wallet",
+  "walletPayOnArrival": "Pay when the distributor arrives, then wait until they confirm they received the money.",
+  "walletAmount": "Amount to send",
+  "walletPayTo": "Send it to",
+  "walletNumber": "Wallet number",
+  "cliqAlias": "CliQ alias",
+  "copy": "Copy",
+  "copied": "Copied",
+  "openWallet": "Open {wallet}",
+  "@openWallet": {"placeholders": {"wallet": {"type": "String"}}},
+  "walletOpenManually": "Open your wallet app and send the amount to the details above.",
+  "cliqHowTo": "Send it with CliQ from any bank or wallet app.",
+  "iPaid": "I've paid",
+  "iPaidTitle": "Tell the distributor you paid",
+  "paidWith": "Paid from",
+  "paymentReference": "Transaction number (optional)",
+  "paymentReferenceValue": "Transaction {ref}",
+  "@paymentReferenceValue": {"placeholders": {"ref": {"type": "String"}}},
+  "paymentClaimedWait": "Waiting for the distributor to confirm they received it.",
+  "paymentConfirmed": "The distributor confirmed they received your payment.",
+  "paymentCashDone": "Paid in cash.",
+  "paymentDisputed": "The distributor hasn't received it: {note}",
+  "@paymentDisputed": {"placeholders": {"note": {"type": "String"}}},
+  "paymentDisputedHelp": "Check your wallet and pay again, or pay in cash.",
+  "paymentStatusAwaiting": "Not paid",
+  "paymentStatusClaimed": "Awaiting confirmation",
+  "paymentStatusConfirmed": "Confirmed",
+  "paymentStatusDisputed": "Not received",
+  "paymentStatusCash": "Cash",
+  "walletDetailsPending": "The distributor's wallet details will appear here."
 }

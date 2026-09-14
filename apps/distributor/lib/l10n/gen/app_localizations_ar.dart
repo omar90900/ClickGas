@@ -255,6 +255,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get cylindersUpdated => 'تم تحديث عدد الجرات';
 
   @override
+  String get cylindersRange => 'أدخل رقمًا بين 0 و500';
+
+  @override
+  String get earnedThisMonth => 'هذا الشهر';
+
+  @override
+  String get earnedThisYear => 'هذه السنة';
+
+  @override
   String activeOrdersCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -748,4 +757,136 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get statOnBoard => 'أسطوانات معك';
+
+  @override
+  String get wallet => 'محفظة';
+
+  @override
+  String get walletsTitle => 'الدفع بالمحفظة';
+
+  @override
+  String get walletsSubtitle => 'بيانات أورنج موني أو زين كاش أو أمنية أو CliQ';
+
+  @override
+  String get walletsHelp =>
+      'العملاء الذين يختارون المحفظة يدفعون لك عند وصولك. أكّد في التطبيق فقط بعد أن ترى المبلغ في محفظتك.';
+
+  @override
+  String get walletDisclaimerTitle => 'تنبيه مهم';
+
+  @override
+  String get walletDisclaimer =>
+      'كليك غاز غير مسؤولة عن أي خطأ في بيانات محفظتك ولا عن المبالغ التي تُرسل إلى بيانات خاطئة. راجع كل رقم قبل الحفظ.';
+
+  @override
+  String get walletAcceptTerms =>
+      'راجعت بياناتي وأوافق على أن كليك غاز غير مسؤولة عن أي خطأ فيها.';
+
+  @override
+  String get walletTermsRequired => 'ضع علامة للموافقة قبل الحفظ.';
+
+  @override
+  String get addWallet => 'إضافة محفظة';
+
+  @override
+  String get editWallet => 'تعديل المحفظة';
+
+  @override
+  String get walletProvider => 'المحفظة';
+
+  @override
+  String get walletAccountName => 'الاسم على الحساب';
+
+  @override
+  String get walletNumber => 'رقم المحفظة';
+
+  @override
+  String get cliqAlias => 'اسم CliQ المستعار (اختياري)';
+
+  @override
+  String get walletNumberOrAlias => 'أدخل رقم المحفظة أو اسم CliQ';
+
+  @override
+  String get walletSaved => 'تم حفظ المحفظة';
+
+  @override
+  String get walletRemoved => 'تم حذف المحفظة';
+
+  @override
+  String get removeWallet => 'حذف المحفظة';
+
+  @override
+  String get removeWalletConfirm =>
+      'حذف هذه المحفظة؟ لن يتمكن العملاء من الدفع لك عبرها.';
+
+  @override
+  String get noWallets => 'لا توجد محفظة بعد';
+
+  @override
+  String get noWalletsBody => 'أضف محفظة لتستقبل الطلبات المدفوعة بالمحفظة.';
+
+  @override
+  String get walletPaused => 'متوقفة';
+
+  @override
+  String get invalidWallet => 'تحقق من بيانات المحفظة: هناك قيمة غير صحيحة.';
+
+  @override
+  String get noWalletAccount =>
+      'هذا الطلب مدفوع بالمحفظة. أضف محفظتك من الإعدادات › الدفع بالمحفظة لتقبله.';
+
+  @override
+  String get paymentNotConfirmedError =>
+      'أكّد استلام الدفعة من المحفظة أولًا، ثم علّم الطلب كمُسلَّم.';
+
+  @override
+  String payOnArrivalHint(String amount) {
+    return 'يدفع العميل $amount بالمحفظة عند وصولك. تحقق من محفظتك قبل تسليم الجرة.';
+  }
+
+  @override
+  String get paymentClaimedHint => 'يقول العميل إنه دفع. تحقق من محفظتك.';
+
+  @override
+  String paymentReferenceValue(String ref) {
+    return 'رقم العملية $ref';
+  }
+
+  @override
+  String get paymentReceived => 'استلمت المبلغ';
+
+  @override
+  String get paymentNotReceived => 'لم يصل';
+
+  @override
+  String get paidInCashInstead => 'دفع نقدًا';
+
+  @override
+  String confirmPaymentConfirm(String amount) {
+    return 'هل وصل $amount إلى محفظتك؟';
+  }
+
+  @override
+  String get cashInsteadConfirm => 'هل دفع لك العميل نقدًا بدلًا من المحفظة؟';
+
+  @override
+  String get disputeTitle => 'لم يصل المبلغ';
+
+  @override
+  String get disputeHint => 'ماذا ترى؟ مثلًا: لم يصل أي مبلغ بعد';
+
+  @override
+  String get walletNoteRequired => 'اكتب 3 أحرف على الأقل.';
+
+  @override
+  String get paymentConfirmedDone => 'تم استلام المبلغ';
+
+  @override
+  String get paymentCashDone => 'تم الدفع نقدًا';
+
+  @override
+  String get paymentDisputedWait => 'أبلغت أن المبلغ لم يصل. بانتظار العميل.';
+
+  @override
+  String get paymentConfirmedSnack => 'تم تأكيد الدفع';
 }

@@ -665,4 +665,132 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get statDelivered => 'Delivered';
+
+  @override
+  String get statCylinders => 'Cylinders';
+
+  @override
+  String get statSpent => 'Spent';
+
+  @override
+  String get statsThisMonth => 'This month';
+
+  @override
+  String get statsThisYear => 'This year';
+
+  @override
+  String statsCylindersCount(num count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(
+      locale: localeName,
+    );
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString cylinders',
+      one: '1 cylinder',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get wallet => 'Wallet';
+
+  @override
+  String get walletOrderNote =>
+      'You\'ll pay the distributor from your e-wallet (Orange Money, Zain Cash, Umniah or CliQ) when they arrive.';
+
+  @override
+  String get walletPayTitle => 'Pay by wallet';
+
+  @override
+  String get walletPayOnArrival =>
+      'Pay when the distributor arrives, then wait until they confirm they received the money.';
+
+  @override
+  String get walletAmount => 'Amount to send';
+
+  @override
+  String get walletPayTo => 'Send it to';
+
+  @override
+  String get walletNumber => 'Wallet number';
+
+  @override
+  String get cliqAlias => 'CliQ alias';
+
+  @override
+  String get copy => 'Copy';
+
+  @override
+  String get copied => 'Copied';
+
+  @override
+  String openWallet(String wallet) {
+    return 'Open $wallet';
+  }
+
+  @override
+  String get walletOpenManually =>
+      'Open your wallet app and send the amount to the details above.';
+
+  @override
+  String get cliqHowTo => 'Send it with CliQ from any bank or wallet app.';
+
+  @override
+  String get iPaid => 'I\'ve paid';
+
+  @override
+  String get iPaidTitle => 'Tell the distributor you paid';
+
+  @override
+  String get paidWith => 'Paid from';
+
+  @override
+  String get paymentReference => 'Transaction number (optional)';
+
+  @override
+  String paymentReferenceValue(String ref) {
+    return 'Transaction $ref';
+  }
+
+  @override
+  String get paymentClaimedWait =>
+      'Waiting for the distributor to confirm they received it.';
+
+  @override
+  String get paymentConfirmed =>
+      'The distributor confirmed they received your payment.';
+
+  @override
+  String get paymentCashDone => 'Paid in cash.';
+
+  @override
+  String paymentDisputed(String note) {
+    return 'The distributor hasn\'t received it: $note';
+  }
+
+  @override
+  String get paymentDisputedHelp =>
+      'Check your wallet and pay again, or pay in cash.';
+
+  @override
+  String get paymentStatusAwaiting => 'Not paid';
+
+  @override
+  String get paymentStatusClaimed => 'Awaiting confirmation';
+
+  @override
+  String get paymentStatusConfirmed => 'Confirmed';
+
+  @override
+  String get paymentStatusDisputed => 'Not received';
+
+  @override
+  String get paymentStatusCash => 'Cash';
+
+  @override
+  String get walletDetailsPending =>
+      'The distributor\'s wallet details will appear here.';
 }

@@ -10,6 +10,7 @@ import 'change_password_screen.dart';
 import 'documents_screen.dart';
 import 'edit_profile_screen.dart';
 import 'notifications_screen.dart';
+import 'wallets_screen.dart';
 
 const kAppVersion = '1.0.0';
 
@@ -28,7 +29,7 @@ class SettingsTab extends StatefulWidget {
 
 class _SettingsTabState extends State<SettingsTab> {
   List<City> _cities = const [];
-  Future<OrderCounts>? _counts;
+  Future<DriverEarnings>? _earnings;
   int _unread = 0;
 
   @override
@@ -43,7 +44,7 @@ class _SettingsTabState extends State<SettingsTab> {
   void _refresh() {
     final id = context.read<DriverSession>().profile?.id;
     if (id == null) return;
-    _counts = context.read<ProfileRepository>().orderCounts(id, asDriver: true);
+    _earnings = context.read<ProfileRepository>().driverEarningsStats();
     context.read<NotificationsRepository>().unreadCount().then((n) {
       if (mounted) setState(() => _unread = n);
     }).catchError((Object _) {});
@@ -144,14 +145,15 @@ class _SettingsTabState extends State<SettingsTab> {
           setState(_refresh);
           await Future.wait([
             session.refreshDriver(),
-            if (_counts != null) _counts!.catchError((Object _) => const OrderCounts()),
+            if (_earnings != null)
+              _earnings!.catchError((Object _) => const DriverEarnings()),
           ]);
         },
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 4, 16, 32),
           children: [
-            FutureBuilder<OrderCounts>(
-              future: _counts,
+            FutureBuilder<DriverEarnings>(
+              future: _earnings,
               builder: (context, snap) => ProfileHeader(
                 avatar: UserAvatar(
                   url: profile.avatarUrl,
@@ -173,15 +175,22 @@ class _SettingsTabState extends State<SettingsTab> {
                 editLabel: l.editProfile,
                 stats: [
                   ProfileStat(
-                    label: l.statDeliveries,
-                    value: '${snap.data?.delivered ?? '–'}',
-                  ),
-                  ProfileStat(
                     label: l.rating,
                     icon: Icons.star_rounded,
                     value: driver.ratingCount == 0 ? '–' : driver.ratingAvg.toStringAsFixed(1),
                   ),
-                  ProfileStat(label: l.statOnBoard, value: '${driver.cylindersOnBoard}'),
+                  ProfileStat(
+                    label: l.earnedThisMonth,
+                    value: snap.hasData
+                        ? Fmt.money(context, snap.data!.monthEarned)
+                        : '–',
+                  ),
+                  ProfileStat(
+                    label: l.earnedThisYear,
+                    value: snap.hasData
+                        ? Fmt.money(context, snap.data!.yearEarned)
+                        : '–',
+                  ),
                 ],
               ),
             ),
@@ -199,6 +208,12 @@ class _SettingsTabState extends State<SettingsTab> {
                   title: l.documentsTitle,
                   subtitle: l.documentsSubtitle,
                   onTap: () => _open(const DocumentsScreen()),
+                ),
+                SettingsTile(
+                  icon: Icons.account_balance_wallet_outlined,
+                  title: l.walletsTitle,
+                  subtitle: l.walletsSubtitle,
+                  onTap: () => _open(const WalletsScreen()),
                 ),
                 SettingsTile(
                   icon: Icons.lock_outline_rounded,

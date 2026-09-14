@@ -63,42 +63,15 @@ class AuthGate extends StatelessWidget {
   }
 }
 
+/// Continues the launch animation while the session loads.
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const BrandLogo(size: 110),
-            const SizedBox(height: 20),
-            Text(
-              context.l10n.appName,
-              style: context.text.headlineMedium?.copyWith(
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              context.l10n.tagline,
-              style: context.text.bodyLarge?.copyWith(
-                color: context.colors.onSurfaceVariant,
-              ),
-            ),
-            const SizedBox(height: 32),
-            const SizedBox(
-              width: 26,
-              height: 26,
-              child: CircularProgressIndicator(strokeWidth: 3),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => ConnectingSplash(
+        title: context.l10n.appName,
+        subtitle: context.l10n.tagline,
+      );
 }
 
 class MessageScreen extends StatelessWidget {

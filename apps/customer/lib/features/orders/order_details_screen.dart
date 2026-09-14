@@ -81,12 +81,6 @@ class OrderDetailsScreen extends StatelessWidget {
                         size: 20,
                       ),
                     ),
-                  )
-                else if (order.status == OrderStatus.delivered)
-                  FilledButton.icon(
-                    onPressed: () => showRatingSheet(context, order),
-                    icon: const Icon(Icons.star_rounded),
-                    label: Text(l.rateOrder),
                   ),
                 if (order.status == OrderStatus.expired) ...[
                   Card(

@@ -201,7 +201,7 @@ class AdminRepository {
   // ---------------------------------------------------------- prices & fees
 
   Future<List<AdminService>> services() => guard('admin.services', () async {
-        final rows = await _client.from('services').select().order('sort_order');
+        final rows = await _client.from('services').select().order('sort_order', ascending: true);
         return rows.map(AdminService.fromMap).toList();
       });
 
@@ -299,7 +299,7 @@ class AdminRepository {
       }, context: {'keys': changes.keys.join(',')});
 
   Future<List<AdminCity>> cities() => guard('admin.cities', () async {
-        final rows = await _client.from('cities').select().order('sort_order');
+        final rows = await _client.from('cities').select().order('sort_order', ascending: true);
         return rows.map(AdminCity.fromMap).toList();
       });
 
@@ -311,7 +311,7 @@ class AdminRepository {
       }, context: {'city_id': cityId});
 
   Future<List<FeatureFlag>> flags() => guard('admin.flags', () async {
-        final rows = await _client.from('feature_flags').select().order('key');
+        final rows = await _client.from('feature_flags').select().order('key', ascending: true);
         return rows.map(FeatureFlag.fromMap).toList();
       });
 
@@ -325,7 +325,7 @@ class AdminRepository {
         final rows = await _client
             .from('staff_members')
             .select('user_id, role, created_at, profiles(full_name, email, phone)')
-            .order('created_at');
+            .order('created_at', ascending: true);
         return rows.map(StaffMember.fromRow).toList();
       });
 
@@ -339,6 +339,67 @@ class AdminRepository {
       }, context: {'user_id': userId});
 
   // ---------------------------------------------------------- audit
+
+  // ---------------------------------------------------------- wallet payments
+
+  /// Disputed and claimed first. [orderId] narrows to one order.
+  Future<List<AdminWalletPayment>> walletPayments({PaymentStatus? status, String? orderId}) =>
+      guard('admin.wallet_payments', () async {
+        final rows = await _client.rpc('admin_wallet_payments', params: {
+          'p_status': status?.name,
+          'p_order_id': orderId,
+        });
+        return _rows(rows).map(AdminWalletPayment.fromMap).toList();
+      });
+
+  Future<void> resolveWalletPayment(String orderId, PaymentStatus status, String reason) =>
+      guard('admin.resolve_wallet_payment', () async {
+        await _client.rpc('admin_resolve_wallet_payment', params: {
+          'p_order_id': orderId,
+          'p_status': status.name,
+          'p_reason': reason,
+        });
+        Log.i('wallet_payment_resolved', {'order_id': orderId, 'status': status.name});
+      }, context: {'order_id': orderId, 'status': status.name});
+
+  Future<List<DriverWallet>> driverWallets(String driverId) =>
+      guard('admin.driver_wallets', () async {
+        final rows = await _client
+            .from('driver_wallets')
+            .select()
+            .eq('driver_id', driverId)
+            .order('created_at', ascending: true);
+        return rows.map(DriverWallet.fromMap).toList();
+      }, context: {'driver_id': driverId});
+
+  Future<void> setWalletActive(int walletId, bool active, String reason) =>
+      guard('admin.wallet_active', () async {
+        await _client.rpc('admin_set_wallet_active', params: {
+          'p_wallet_id': walletId,
+          'p_active': active,
+          'p_reason': reason,
+        });
+      }, context: {'wallet_id': walletId, 'active': active});
+
+  Future<List<WalletProvider>> walletProviders() => guard('admin.wallet_providers', () async {
+        final rows = await _client.from('wallet_providers').select().order('sort_order', ascending: true);
+        return rows.map(WalletProvider.fromMap).toList();
+      });
+
+  Future<void> saveWalletProvider(
+    String code, {
+    String? androidPackage,
+    String? storeUrl,
+    required bool isActive,
+  }) =>
+      guard('admin.save_wallet_provider', () async {
+        await _client.rpc('admin_save_wallet_provider', params: {
+          'p_code': code,
+          'p_android_package': androidPackage,
+          'p_store_url': storeUrl,
+          'p_is_active': isActive,
+        });
+      }, context: {'code': code});
 
   Future<List<AdminAction>> audit({
     String? targetType,

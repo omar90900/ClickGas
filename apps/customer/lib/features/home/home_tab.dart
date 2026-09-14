@@ -57,6 +57,7 @@ class _HomeTabState extends State<HomeTab> {
   int? _serviceId;
   int _quantity = 1;
   bool _placing = false;
+  PaymentMethod _payment = PaymentMethod.cash;
   Coverage? _coverage;
   int _coverageRequest = 0;
 
@@ -145,6 +146,10 @@ class _HomeTabState extends State<HomeTab> {
     if (!mounted || context.read<MyOrdersController>().openOrder != null) return;
     final request = ++_coverageRequest;
     final target = _target;
+    // The previous answer describes the spot the customer just left, so drop it
+    // before asking again: keeping it shows "no distributor nearby" over a pin
+    // that was never checked.
+    setState(() => _coverage = null);
     try {
       final coverage = await context
           .read<OrderRepository>()
@@ -187,6 +192,7 @@ class _HomeTabState extends State<HomeTab> {
         quantity: _quantity,
         config: config,
         address: _address,
+        paymentMethod: _payment,
       ),
     );
     if (notes == null || !mounted) return;
@@ -199,7 +205,7 @@ class _HomeTabState extends State<HomeTab> {
             customerId: customer.id,
             serviceId: service.id,
             quantity: _quantity,
-            paymentMethod: PaymentMethod.cash,
+            paymentMethod: _payment,
             lat: _target.latitude,
             lng: _target.longitude,
             address: _address,
@@ -434,22 +440,32 @@ class _HomeTabState extends State<HomeTab> {
                   child: _PaymentOption(
                     icon: Icons.payments_rounded,
                     label: l.cash,
-                    selected: true,
+                    selected: _payment == PaymentMethod.cash,
+                    onTap: () => setState(() => _payment = PaymentMethod.cash),
                   ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: _PaymentOption(
-                    icon: Icons.credit_card_rounded,
-                    label: l.card,
-                    selected: false,
-                    badge: l.comingSoon,
+                    icon: Icons.account_balance_wallet_rounded,
+                    label: l.wallet,
+                    selected: _payment == PaymentMethod.wallet,
+                    onTap: () => setState(() => _payment = PaymentMethod.wallet),
                   ),
                 ),
               ],
             ),
+            if (_payment == PaymentMethod.wallet) ...[
+              const SizedBox(height: 8),
+              Text(
+                l.walletOrderNote,
+                style: context.text.bodySmall?.copyWith(
+                  color: context.colors.onSurfaceVariant,
+                ),
+              ),
+            ],
             const SizedBox(height: 12),
-            if (_coverage != null) ...[
+            if ((_coverage?.nearby ?? 0) > 2) ...[
               _CoverageNote(coverage: _coverage!),
               const SizedBox(height: 10),
             ],
@@ -468,57 +484,24 @@ class _HomeTabState extends State<HomeTab> {
   }
 }
 
-/// "No distributor online near this spot" (you can still order: the search
-/// widens, then the order expires) or "N distributors nearby".
+/// "N distributors nearby", shown only when more than two are online near
+/// the pin.
 class _CoverageNote extends StatelessWidget {
   const _CoverageNote({required this.coverage});
   final Coverage coverage;
 
   @override
   Widget build(BuildContext context) {
-    final l = context.l10n;
-    if (!coverage.none) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.local_shipping_rounded, size: 18, color: context.accent),
-          const SizedBox(width: 6),
-          Text(
-            l.coverageSome(coverage.nearby),
-            style: context.text.bodySmall?.copyWith(color: context.accent, fontWeight: FontWeight.w700),
-          ),
-        ],
-      );
-    }
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: AppColors.warning.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Icon(Icons.info_outline_rounded, color: AppColors.warning),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(l.coverageNone, style: context.text.titleSmall?.copyWith(fontWeight: FontWeight.w800)),
-                const SizedBox(height: 2),
-                Text(
-                  l.coverageNoneBody(
-                    coverage.expiryMinutes,
-                    coverage.maxRadiusKm.toStringAsFixed(0),
-                  ),
-                  style: context.text.bodySmall,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(Icons.local_shipping_rounded, size: 18, color: context.accent),
+        const SizedBox(width: 6),
+        Text(
+          context.l10n.coverageSome(coverage.nearby),
+          style: context.text.bodySmall?.copyWith(color: context.accent, fontWeight: FontWeight.w700),
+        ),
+      ],
     );
   }
 }
@@ -693,12 +676,14 @@ class _LocationIssueBar extends StatelessWidget {
   }
 }
 
+/// "N distributors nearby" on the map, only when there are more than two.
 class _DistributorsChip extends StatelessWidget {
   const _DistributorsChip({required this.count});
   final int count;
 
   @override
   Widget build(BuildContext context) {
+    if (count <= 2) return const SizedBox.shrink();
     return Material(
       elevation: 2,
       color: context.colors.surfaceContainerLowest,
@@ -846,19 +831,18 @@ class _PaymentOption extends StatelessWidget {
     required this.icon,
     required this.label,
     required this.selected,
-    this.badge,
+    required this.onTap,
   });
 
   final IconData icon;
   final String label;
   final bool selected;
-  final String? badge;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final enabled = badge == null;
-    return Opacity(
-      opacity: enabled ? 1 : 0.55,
+    return GestureDetector(
+      onTap: onTap,
       child: Container(
         height: 48,
         decoration: BoxDecoration(
@@ -882,13 +866,6 @@ class _PaymentOption extends StatelessWidget {
                 fontWeight: FontWeight.w700,
               ),
             ),
-            if (badge != null) ...[
-              const SizedBox(width: 6),
-              Text(
-                '($badge)',
-                style: context.text.labelSmall,
-              ),
-            ],
           ],
         ),
       ),
@@ -959,12 +936,14 @@ class _ConfirmOrderSheet extends StatefulWidget {
     required this.quantity,
     required this.config,
     required this.address,
+    required this.paymentMethod,
   });
 
   final GasService service;
   final int quantity;
   final AppConfig config;
   final String? address;
+  final PaymentMethod paymentMethod;
 
   @override
   State<_ConfirmOrderSheet> createState() => _ConfirmOrderSheetState();
@@ -1016,7 +995,7 @@ class _ConfirmOrderSheetState extends State<_ConfirmOrderSheet> {
               label: l.serviceFee,
               value: Fmt.money(context, serviceFee),
             ),
-          InfoRow(label: l.paymentMethod, value: l.cash),
+          InfoRow(label: l.paymentMethod, value: paymentMethodLabel(l, widget.paymentMethod)),
           if (widget.address != null && widget.address!.isNotEmpty)
             InfoRow(label: l.deliverTo, value: widget.address!),
           const Divider(height: 20),

@@ -258,6 +258,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cylindersUpdated => 'Cylinder count updated';
 
   @override
+  String get cylindersRange => 'Enter a number between 0 and 500';
+
+  @override
+  String get earnedThisMonth => 'This month';
+
+  @override
+  String get earnedThisYear => 'This year';
+
+  @override
   String activeOrdersCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -753,4 +762,141 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get statOnBoard => 'Cylinders on board';
+
+  @override
+  String get wallet => 'Wallet';
+
+  @override
+  String get walletsTitle => 'Wallet payments';
+
+  @override
+  String get walletsSubtitle =>
+      'Your Orange Money, Zain Cash, Umniah or CliQ details';
+
+  @override
+  String get walletsHelp =>
+      'Customers who choose wallet pay you when you arrive. Confirm in the app only after you see the money in your wallet.';
+
+  @override
+  String get walletDisclaimerTitle => 'Important';
+
+  @override
+  String get walletDisclaimer =>
+      'ClickGas is not responsible for any mistake in your wallet details or for money sent to wrong details. Check every number before saving.';
+
+  @override
+  String get walletAcceptTerms =>
+      'I have checked my details and accept that ClickGas is not responsible for errors in them.';
+
+  @override
+  String get walletTermsRequired => 'Tick the box to accept before saving.';
+
+  @override
+  String get addWallet => 'Add wallet';
+
+  @override
+  String get editWallet => 'Edit wallet';
+
+  @override
+  String get walletProvider => 'Wallet';
+
+  @override
+  String get walletAccountName => 'Name on the account';
+
+  @override
+  String get walletNumber => 'Wallet number';
+
+  @override
+  String get cliqAlias => 'CliQ alias (optional)';
+
+  @override
+  String get walletNumberOrAlias => 'Enter the wallet number or a CliQ alias';
+
+  @override
+  String get walletSaved => 'Wallet saved';
+
+  @override
+  String get walletRemoved => 'Wallet removed';
+
+  @override
+  String get removeWallet => 'Remove wallet';
+
+  @override
+  String get removeWalletConfirm =>
+      'Remove this wallet? Customers won\'t be able to pay you with it.';
+
+  @override
+  String get noWallets => 'No wallet yet';
+
+  @override
+  String get noWalletsBody => 'Add one to take orders that are paid by wallet.';
+
+  @override
+  String get walletPaused => 'Paused';
+
+  @override
+  String get invalidWallet =>
+      'Check the wallet details: something is not valid.';
+
+  @override
+  String get noWalletAccount =>
+      'This order is paid by wallet. Add your wallet in Settings › Wallet payments to take it.';
+
+  @override
+  String get paymentNotConfirmedError =>
+      'Confirm the wallet payment first, then mark the order delivered.';
+
+  @override
+  String payOnArrivalHint(String amount) {
+    return 'The customer pays $amount by wallet when you arrive. Check your wallet before handing over the cylinder.';
+  }
+
+  @override
+  String get paymentClaimedHint =>
+      'The customer says they paid. Check your wallet.';
+
+  @override
+  String paymentReferenceValue(String ref) {
+    return 'Transaction $ref';
+  }
+
+  @override
+  String get paymentReceived => 'Received';
+
+  @override
+  String get paymentNotReceived => 'Not received';
+
+  @override
+  String get paidInCashInstead => 'Paid in cash';
+
+  @override
+  String confirmPaymentConfirm(String amount) {
+    return 'Did $amount arrive in your wallet?';
+  }
+
+  @override
+  String get cashInsteadConfirm => 'Did the customer pay you in cash instead?';
+
+  @override
+  String get disputeTitle => 'Payment not received';
+
+  @override
+  String get disputeHint =>
+      'What do you see? For example: nothing has arrived yet';
+
+  @override
+  String get walletNoteRequired => 'Write at least 3 characters.';
+
+  @override
+  String get paymentConfirmedDone => 'Payment received';
+
+  @override
+  String get paymentCashDone => 'Paid in cash';
+
+  @override
+  String get paymentDisputedWait =>
+      'You said it hasn\'t arrived. Waiting for the customer.';
+
+  @override
+  String get paymentConfirmedSnack => 'Payment confirmed';
 }

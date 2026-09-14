@@ -33,9 +33,16 @@ String failureText(BuildContext context, Object error) {
     FailureCode.sessionExpired => l.sessionExpired,
     FailureCode.permissionDenied => l.permissionDenied,
     FailureCode.network => l.networkError,
+    FailureCode.paymentNotOpen => l.orderChanged,
     _ => l.errorWithCode(f.code.value),
   };
 }
+
+String paymentMethodLabel(AppLocalizations l, PaymentMethod m) => switch (m) {
+      PaymentMethod.cash => l.cash,
+      PaymentMethod.card => l.card,
+      PaymentMethod.wallet => l.wallet,
+    };
 
 String orderStatusLabel(AppLocalizations l, OrderStatus status) =>
     switch (status) {

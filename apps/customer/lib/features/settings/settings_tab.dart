@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart' show DateFormat;
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/settings/app_settings.dart';
+import '../../core/utils/formatters.dart';
 import '../../data/models/models.dart';
 import '../../data/repositories/catalog_repository.dart';
 import '../../state/session_controller.dart';
@@ -29,7 +29,7 @@ class SettingsTab extends StatefulWidget {
 
 class _SettingsTabState extends State<SettingsTab> {
   List<City> _cities = const [];
-  Future<OrderCounts>? _counts;
+  Future<CustomerOrderStats>? _stats;
   int _unread = 0;
 
   @override
@@ -44,7 +44,7 @@ class _SettingsTabState extends State<SettingsTab> {
   void _refresh() {
     final id = context.read<SessionController>().profile?.id;
     if (id == null) return;
-    _counts = context.read<ProfileRepository>().orderCounts(id);
+    _stats = context.read<ProfileRepository>().myOrderStats();
     context.read<NotificationsRepository>().unreadCount().then((n) {
       if (mounted) setState(() => _unread = n);
     }).catchError((Object _) {});
@@ -120,9 +120,6 @@ class _SettingsTabState extends State<SettingsTab> {
     if (profile == null) return const LoadingView();
 
     final city = _cities.where((c) => c.id == profile.cityId).firstOrNull;
-    final since = profile.createdAt == null
-        ? '–'
-        : DateFormat.yMMM(context.lang).format(profile.createdAt!.toLocal());
 
     return Scaffold(
       appBar: AppBar(
@@ -144,13 +141,13 @@ class _SettingsTabState extends State<SettingsTab> {
       body: RefreshIndicator(
         onRefresh: () async {
           setState(_refresh);
-          await _counts?.catchError((Object _) => const OrderCounts());
+          await _stats?.catchError((Object _) => const CustomerOrderStats());
         },
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 4, 16, 32),
           children: [
-            FutureBuilder<OrderCounts>(
-              future: _counts,
+            FutureBuilder<CustomerOrderStats>(
+              future: _stats,
               builder: (context, snap) => ProfileHeader(
                 avatar: UserAvatar(
                   url: profile.avatarUrl,
@@ -167,9 +164,20 @@ class _SettingsTabState extends State<SettingsTab> {
                 onEdit: () => _open(EditProfileScreen(profile: profile)),
                 editLabel: l.editProfile,
                 stats: [
-                  ProfileStat(label: l.statOrders, value: '${snap.data?.total ?? '–'}'),
-                  ProfileStat(label: l.statDelivered, value: '${snap.data?.delivered ?? '–'}'),
-                  ProfileStat(label: l.statMemberSince, value: since),
+                  ProfileStat(
+                    label: l.statOrders,
+                    value: '${snap.data?.totalOrders ?? '–'}',
+                  ),
+                  ProfileStat(
+                    label: l.statCylinders,
+                    value: '${snap.data?.totalCylinders ?? '–'}',
+                  ),
+                  ProfileStat(
+                    label: l.statSpent,
+                    value: snap.hasData
+                        ? Fmt.money(context, snap.data!.totalPaid)
+                        : '–',
+                  ),
                 ],
               ),
             ),

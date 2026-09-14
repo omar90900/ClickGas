@@ -26,7 +26,7 @@ class DriverDocumentsRepository {
             .from('driver_documents')
             .select()
             .eq('driver_id', driverId)
-            .order('kind');
+            .order('kind', ascending: true);
         return rows.map(DriverDocument.fromMap).toList();
       });
 

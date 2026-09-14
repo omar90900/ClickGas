@@ -20,7 +20,7 @@ class CatalogRepository {
           .from('cities')
           .select()
           .eq('is_active', true)
-          .order('sort_order');
+          .order('sort_order', ascending: true);
       return _cities = rows.map(City.fromMap).toList();
     });
   }
@@ -32,7 +32,7 @@ class CatalogRepository {
           .from('services')
           .select()
           .eq('is_active', true)
-          .order('sort_order');
+          .order('sort_order', ascending: true);
       return _services = rows.map(GasService.fromMap).toList();
     });
   }

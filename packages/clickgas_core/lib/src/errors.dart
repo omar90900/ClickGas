@@ -35,6 +35,12 @@ enum FailureCode {
   orderTooFar('ORDER_TOO_FAR'),
   // ---- distributor documents
   documentExpired('DOCUMENT_EXPIRED'),
+  // ---- wallet payments
+  noWalletAccount('NO_WALLET_ACCOUNT'),
+  paymentNotConfirmed('PAYMENT_NOT_CONFIRMED'),
+  paymentNotOpen('PAYMENT_NOT_OPEN'),
+  termsNotAccepted('TERMS_NOT_ACCEPTED'),
+  invalidWallet('INVALID_WALLET'),
   // ---- staff (admin dashboard)
   reasonRequired('REASON_REQUIRED'),
   invalidAmount('INVALID_AMOUNT'),

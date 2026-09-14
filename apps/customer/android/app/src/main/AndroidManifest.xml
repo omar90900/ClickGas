@@ -70,5 +70,11 @@
             <action android:name="android.intent.action.VIEW"/>
             <data android:scheme="google.navigation"/>
         </intent>
+        <!-- Wallet payments: find the customer's wallet app (Orange Money,
+             Zain Cash...) to open it. Package names live in wallet_providers. -->
+        <intent>
+            <action android:name="android.intent.action.MAIN"/>
+            <category android:name="android.intent.category.LAUNCHER"/>
+        </intent>
     </queries>
 </manifest>

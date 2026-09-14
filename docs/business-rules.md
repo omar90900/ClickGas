@@ -109,6 +109,31 @@ Anything else is rejected with `INVALID_TRANSITION`. *(table `order_transitions`
   report per agency is the basis.
 - Money has 3 decimals (fils). *(ADR 0007)*
 
+## Wallet payments
+
+ADR 0015. The customer pays the distributor directly from an e-wallet;
+ClickGas never holds the money.
+
+- The customer chooses **Cash** or **Wallet** when ordering, and is told to
+  pay **when the distributor arrives**.
+- A distributor saves one account per wallet (Orange Money, Zain Cash,
+  Umniah, CliQ alias). Saving requires accepting that **ClickGas is not
+  responsible for mistakes in wallet details or money sent to wrong
+  details**; they get a notification saying so.
+- Only a distributor with an active wallet can take a wallet order. Their
+  accounts are copied onto the order when they take it.
+- Payment states: awaiting → claimed ("I've paid", optional transaction
+  number) → confirmed by the distributor. The distributor can also mark it
+  **not received** (with a note; the customer can pay again) or **paid in
+  cash**.
+- A wallet order can't be marked delivered until its payment is confirmed or
+  paid in cash. The distributor checks their own wallet before handing over
+  the cylinder.
+- Staff (operations) can set any state with a reason and pause a
+  distributor's wallet; the owner sets how the customer app opens each wallet.
+  All of it is in the audit trail.
+- Refunds after a cancellation are between the customer and the distributor.
+
 ## Charges
 
 - Staff can raise a **charge** against a distributor: a fine, a fee for a

@@ -1342,3 +1342,76 @@ double distanceKm(double lat1, double lng1, double lat2, double lng2) {
       math.cos(rad(lat1)) * math.cos(rad(lat2)) * math.pow(math.sin(dLng / 2), 2);
   return 2 * r * math.asin(math.sqrt(a));
 }
+
+// ---------------------------------------------------------------- wallet payments
+
+/// One wallet payment with its order and people (`admin_wallet_payments`).
+class AdminWalletPayment {
+  final String orderId;
+  final int orderNumber;
+  final OrderStatus orderStatus;
+  final String customerId;
+  final String customerName;
+  final String? customerPhone;
+  final String driverId;
+  final String driverName;
+  final String? driverPhone;
+  final double amount;
+  final List<WalletPayee> payees;
+  final PaymentStatus status;
+  final String? paidWith;
+  final String? reference;
+  final String? note;
+  final DateTime? claimedAt;
+  final DateTime? confirmedAt;
+  final DateTime? disputedAt;
+  final DateTime? createdAt;
+
+  const AdminWalletPayment({
+    required this.orderId,
+    required this.orderNumber,
+    required this.orderStatus,
+    required this.customerId,
+    required this.customerName,
+    required this.driverId,
+    required this.driverName,
+    required this.amount,
+    required this.payees,
+    required this.status,
+    this.customerPhone,
+    this.driverPhone,
+    this.paidWith,
+    this.reference,
+    this.note,
+    this.claimedAt,
+    this.confirmedAt,
+    this.disputedAt,
+    this.createdAt,
+  });
+
+  /// Needs a staff decision.
+  bool get needsAttention =>
+      status == PaymentStatus.disputed || status == PaymentStatus.claimed;
+
+  factory AdminWalletPayment.fromMap(Map<String, dynamic> m) => AdminWalletPayment(
+        orderId: m['order_id'] as String,
+        orderNumber: _i(m['order_number']),
+        orderStatus: OrderStatus.parse(m['order_status']),
+        customerId: m['customer_id'] as String? ?? '',
+        customerName: m['customer_name'] as String? ?? '',
+        customerPhone: m['customer_phone'] as String?,
+        driverId: m['driver_id'] as String? ?? '',
+        driverName: m['driver_name'] as String? ?? '',
+        driverPhone: m['driver_phone'] as String?,
+        amount: _d(m['amount']),
+        payees: [for (final p in _list(m['payees'])) WalletPayee.fromMap(p)],
+        status: PaymentStatus.parse(m['status']),
+        paidWith: m['paid_with'] as String?,
+        reference: m['reference'] as String?,
+        note: m['note'] as String?,
+        claimedAt: _date(m['claimed_at']),
+        confirmedAt: _date(m['confirmed_at']),
+        disputedAt: _date(m['disputed_at']),
+        createdAt: _date(m['created_at']),
+      );
+}

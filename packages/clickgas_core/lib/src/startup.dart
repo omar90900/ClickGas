@@ -5,11 +5,13 @@ import 'package:flutter/services.dart';
 
 import 'app_theme.dart';
 import 'logger.dart';
+import 'ui/connecting_splash.dart';
 
-/// Starts an app safely: [start] loads plugins, settings and Supabase and
-/// returns the root widget. If it throws or takes longer than [timeout], the
-/// app shows [StartupErrorApp] instead of staying on the launch image forever
-/// (docs/runbooks/app-stuck-on-launch.md).
+/// Starts an app safely. The launch animation is drawn at once, so Android's
+/// launch image goes away immediately; meanwhile [start] loads plugins,
+/// settings and Supabase and returns the root widget, which fades in. If it
+/// throws or takes longer than [timeout], the app shows [StartupErrorApp]
+/// instead of waiting forever (docs/runbooks/app-stuck-on-launch.md).
 Future<void> runGuardedApp({
   required String app,
   required Future<Widget> Function() start,
@@ -17,14 +19,57 @@ Future<void> runGuardedApp({
 }) async {
   WidgetsFlutterBinding.ensureInitialized();
   Log.install(app: app);
-  Widget root;
-  try {
-    root = await start().timeout(timeout);
-  } catch (error, stack) {
-    Log.e('startup_failed', {'error': error.toString()}, error, stack);
-    root = StartupErrorApp(error: error);
+  runApp(_Boot(start: start, timeout: timeout));
+}
+
+class _Boot extends StatefulWidget {
+  const _Boot({required this.start, required this.timeout});
+
+  final Future<Widget> Function() start;
+  final Duration timeout;
+
+  @override
+  State<_Boot> createState() => _BootState();
+}
+
+class _BootState extends State<_Boot> {
+  Widget? _root;
+
+  @override
+  void initState() {
+    super.initState();
+    _run();
   }
-  runApp(root);
+
+  Future<void> _run() async {
+    Widget root;
+    try {
+      root = await widget.start().timeout(widget.timeout);
+    } catch (error, stack) {
+      Log.e('startup_failed', {'error': error.toString()}, error, stack);
+      root = StartupErrorApp(error: error);
+    }
+    if (mounted) setState(() => _root = root);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 350),
+        child: _root == null
+            ? MaterialApp(
+                key: const ValueKey('boot'),
+                debugShowCheckedModeBanner: false,
+                theme: AppTheme.light(),
+                darkTheme: AppTheme.dark(),
+                home: const ConnectingSplash(),
+              )
+            : KeyedSubtree(key: const ValueKey('app'), child: _root!),
+      ),
+    );
+  }
 }
 
 /// Shown when the app could not start (a native plugin failed to load, the

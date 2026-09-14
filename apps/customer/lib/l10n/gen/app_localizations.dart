@@ -1261,6 +1261,210 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delivered'**
   String get statDelivered;
+
+  /// No description provided for @statCylinders.
+  ///
+  /// In en, this message translates to:
+  /// **'Cylinders'**
+  String get statCylinders;
+
+  /// No description provided for @statSpent.
+  ///
+  /// In en, this message translates to:
+  /// **'Spent'**
+  String get statSpent;
+
+  /// No description provided for @statsThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get statsThisMonth;
+
+  /// No description provided for @statsThisYear.
+  ///
+  /// In en, this message translates to:
+  /// **'This year'**
+  String get statsThisYear;
+
+  /// No description provided for @statsCylindersCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 cylinder} other{{count} cylinders}}'**
+  String statsCylindersCount(num count);
+
+  /// No description provided for @wallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet'**
+  String get wallet;
+
+  /// No description provided for @walletOrderNote.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ll pay the distributor from your e-wallet (Orange Money, Zain Cash, Umniah or CliQ) when they arrive.'**
+  String get walletOrderNote;
+
+  /// No description provided for @walletPayTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay by wallet'**
+  String get walletPayTitle;
+
+  /// No description provided for @walletPayOnArrival.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay when the distributor arrives, then wait until they confirm they received the money.'**
+  String get walletPayOnArrival;
+
+  /// No description provided for @walletAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount to send'**
+  String get walletAmount;
+
+  /// No description provided for @walletPayTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Send it to'**
+  String get walletPayTo;
+
+  /// No description provided for @walletNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet number'**
+  String get walletNumber;
+
+  /// No description provided for @cliqAlias.
+  ///
+  /// In en, this message translates to:
+  /// **'CliQ alias'**
+  String get cliqAlias;
+
+  /// No description provided for @copy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get copy;
+
+  /// No description provided for @copied.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied'**
+  String get copied;
+
+  /// No description provided for @openWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Open {wallet}'**
+  String openWallet(String wallet);
+
+  /// No description provided for @walletOpenManually.
+  ///
+  /// In en, this message translates to:
+  /// **'Open your wallet app and send the amount to the details above.'**
+  String get walletOpenManually;
+
+  /// No description provided for @cliqHowTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Send it with CliQ from any bank or wallet app.'**
+  String get cliqHowTo;
+
+  /// No description provided for @iPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'I\'ve paid'**
+  String get iPaid;
+
+  /// No description provided for @iPaidTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell the distributor you paid'**
+  String get iPaidTitle;
+
+  /// No description provided for @paidWith.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid from'**
+  String get paidWith;
+
+  /// No description provided for @paymentReference.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction number (optional)'**
+  String get paymentReference;
+
+  /// No description provided for @paymentReferenceValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction {ref}'**
+  String paymentReferenceValue(String ref);
+
+  /// No description provided for @paymentClaimedWait.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for the distributor to confirm they received it.'**
+  String get paymentClaimedWait;
+
+  /// No description provided for @paymentConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'The distributor confirmed they received your payment.'**
+  String get paymentConfirmed;
+
+  /// No description provided for @paymentCashDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid in cash.'**
+  String get paymentCashDone;
+
+  /// No description provided for @paymentDisputed.
+  ///
+  /// In en, this message translates to:
+  /// **'The distributor hasn\'t received it: {note}'**
+  String paymentDisputed(String note);
+
+  /// No description provided for @paymentDisputedHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your wallet and pay again, or pay in cash.'**
+  String get paymentDisputedHelp;
+
+  /// No description provided for @paymentStatusAwaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Not paid'**
+  String get paymentStatusAwaiting;
+
+  /// No description provided for @paymentStatusClaimed.
+  ///
+  /// In en, this message translates to:
+  /// **'Awaiting confirmation'**
+  String get paymentStatusClaimed;
+
+  /// No description provided for @paymentStatusConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed'**
+  String get paymentStatusConfirmed;
+
+  /// No description provided for @paymentStatusDisputed.
+  ///
+  /// In en, this message translates to:
+  /// **'Not received'**
+  String get paymentStatusDisputed;
+
+  /// No description provided for @paymentStatusCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash'**
+  String get paymentStatusCash;
+
+  /// No description provided for @walletDetailsPending.
+  ///
+  /// In en, this message translates to:
+  /// **'The distributor\'s wallet details will appear here.'**
+  String get walletDetailsPending;
 }
 
 class _AppLocalizationsDelegate

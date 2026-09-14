@@ -161,7 +161,7 @@ class OrderSummaryCard extends StatelessWidget {
               ),
             InfoRow(
               label: l.paymentMethod,
-              value: order.paymentMethod == PaymentMethod.cash ? l.cash : l.card,
+              value: paymentMethodLabel(l, order.paymentMethod),
             ),
             if (order.deliveryAddress != null &&
                 order.deliveryAddress!.isNotEmpty)

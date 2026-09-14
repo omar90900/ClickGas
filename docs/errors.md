@@ -47,6 +47,16 @@ When a user reports "code XYZ", find it here, then open
 |---|---|---|---|
 | `DOCUMENT_EXPIRED` | `submit_driver_document` | The expiry date given is in the past | Ask for a valid document |
 
+## Wallet payments
+
+| Code | Raised by | Meaning | What to check |
+|---|---|---|---|
+| `NO_WALLET_ACCOUNT` | `accept_order`, staff reassign (trigger `orders_wallet_payment`) | The order is paid by wallet and the distributor has no active wallet | `driver_wallets` for the distributor |
+| `PAYMENT_NOT_CONFIRMED` | `complete_order` (trigger `orders_wallet_paid`) | Wallet order not confirmed or paid in cash yet | `order_payments.status` |
+| `PAYMENT_NOT_OPEN` | `claim_wallet_payment`, `confirm_wallet_payment`, `dispute_wallet_payment` | Not this user's order, the order is no longer being delivered, or the payment is already settled | `order_payments.status`, order status |
+| `TERMS_NOT_ACCEPTED` | `save_my_wallet` | The disclaimer box wasn't ticked | App bug if it happens from the app |
+| `INVALID_WALLET` | `save_my_wallet` | Unknown or switched-off wallet, or a value fails a check (number format, name length) | `wallet_providers.is_active`, the values sent |
+
 ## Staff (admin dashboard)
 
 | Code | Raised by | Meaning | What to check |

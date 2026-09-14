@@ -1438,4 +1438,129 @@ class AppLocalizationsAr extends AppLocalizations {
   String searchRadiusNow(String km) {
     return 'معروض ضمن $km كم';
   }
+
+  @override
+  String get navPayments => 'مدفوعات المحافظ';
+
+  @override
+  String get paymentCard => 'بطاقة';
+
+  @override
+  String get paymentWallet => 'محفظة (تُدفع للموزع)';
+
+  @override
+  String get walletPaymentsNote =>
+      'يدفع العملاء للموزعين مباشرة من محافظهم عند الباب، ولا تمر الأموال عبر كليك غاز. تظهر المدفوعات المتنازع عليها أو التي تنتظر الموزع أولًا.';
+
+  @override
+  String get paymentFilterAll => 'الكل';
+
+  @override
+  String get payStatusAwaiting => 'لم يُدفع بعد';
+
+  @override
+  String get payStatusClaimed => 'العميل يقول إنه دفع';
+
+  @override
+  String get payStatusConfirmed => 'مؤكد';
+
+  @override
+  String get payStatusDisputed => 'لم يصل';
+
+  @override
+  String get payStatusCash => 'دُفع نقدًا';
+
+  @override
+  String get noWalletPayments => 'لا توجد مدفوعات بالمحفظة';
+
+  @override
+  String get walletPaymentSection => 'الدفع بالمحفظة';
+
+  @override
+  String get walletNotAssigned => 'تظهر البيانات عندما يقبل موزع الطلب.';
+
+  @override
+  String get walletAmountLabel => 'المبلغ';
+
+  @override
+  String get payTo => 'الدفع إلى';
+
+  @override
+  String get paidWith => 'دُفع من';
+
+  @override
+  String get reference => 'رقم العملية';
+
+  @override
+  String get disputeNote => 'ملاحظة الموزع';
+
+  @override
+  String get resolveTitle => 'تغيير حالة الدفع';
+
+  @override
+  String get paymentResolved => 'تم تحديث الدفع';
+
+  @override
+  String get walletsSection => 'المحافظ';
+
+  @override
+  String get noDriverWallets => 'لم تُضف محفظة';
+
+  @override
+  String get walletPause => 'إيقاف';
+
+  @override
+  String get walletResume => 'تفعيل';
+
+  @override
+  String get walletPausedTag => 'متوقفة';
+
+  @override
+  String get walletActiveTitle => 'إيقاف أو تفعيل هذه المحفظة';
+
+  @override
+  String termsAccepted(String date) {
+    return 'وافق على إخلاء المسؤولية $date';
+  }
+
+  @override
+  String get walletApps => 'تطبيقات المحافظ';
+
+  @override
+  String get walletAppsNote =>
+      'كيف يفتح تطبيق العميل كل محفظة. حزمة أندرويد هي الجزء id=... من رابط المحفظة على Play Store.';
+
+  @override
+  String get androidPackage => 'حزمة أندرويد';
+
+  @override
+  String get storeLink => 'رابط المتجر';
+
+  @override
+  String get walletAppActive => 'متاحة للموزعين';
+
+  @override
+  String get walletAppEdit => 'تعديل';
+
+  @override
+  String get walletAppSaved => 'تم حفظ تطبيق المحفظة';
+
+  @override
+  String get actPaymentResolve => 'غيّر حالة دفعة بالمحفظة';
+
+  @override
+  String get actWalletActive => 'أوقف أو فعّل محفظة';
+
+  @override
+  String get actWalletProvider => 'عدّل تطبيق محفظة';
+
+  @override
+  String get noWalletAccount =>
+      'هذا الموزع ليس لديه محفظة مفعّلة، والطلب مدفوع بالمحفظة.';
+
+  @override
+  String get paymentNotOpen => 'لا يمكن تغيير هذه الدفعة الآن.';
+
+  @override
+  String get paymentNotConfirmed => 'لم يتم تأكيد الدفع بالمحفظة بعد.';
 }

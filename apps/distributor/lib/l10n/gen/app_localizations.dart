@@ -560,6 +560,24 @@ abstract class AppLocalizations {
   /// **'Cylinder count updated'**
   String get cylindersUpdated;
 
+  /// No description provided for @cylindersRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a number between 0 and 500'**
+  String get cylindersRange;
+
+  /// No description provided for @earnedThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get earnedThisMonth;
+
+  /// No description provided for @earnedThisYear.
+  ///
+  /// In en, this message translates to:
+  /// **'This year'**
+  String get earnedThisYear;
+
   /// No description provided for @activeOrdersCount.
   ///
   /// In en, this message translates to:
@@ -1417,6 +1435,246 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cylinders on board'**
   String get statOnBoard;
+
+  /// No description provided for @wallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet'**
+  String get wallet;
+
+  /// No description provided for @walletsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet payments'**
+  String get walletsTitle;
+
+  /// No description provided for @walletsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Orange Money, Zain Cash, Umniah or CliQ details'**
+  String get walletsSubtitle;
+
+  /// No description provided for @walletsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Customers who choose wallet pay you when you arrive. Confirm in the app only after you see the money in your wallet.'**
+  String get walletsHelp;
+
+  /// No description provided for @walletDisclaimerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Important'**
+  String get walletDisclaimerTitle;
+
+  /// No description provided for @walletDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'ClickGas is not responsible for any mistake in your wallet details or for money sent to wrong details. Check every number before saving.'**
+  String get walletDisclaimer;
+
+  /// No description provided for @walletAcceptTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'I have checked my details and accept that ClickGas is not responsible for errors in them.'**
+  String get walletAcceptTerms;
+
+  /// No description provided for @walletTermsRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Tick the box to accept before saving.'**
+  String get walletTermsRequired;
+
+  /// No description provided for @addWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Add wallet'**
+  String get addWallet;
+
+  /// No description provided for @editWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit wallet'**
+  String get editWallet;
+
+  /// No description provided for @walletProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet'**
+  String get walletProvider;
+
+  /// No description provided for @walletAccountName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name on the account'**
+  String get walletAccountName;
+
+  /// No description provided for @walletNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet number'**
+  String get walletNumber;
+
+  /// No description provided for @cliqAlias.
+  ///
+  /// In en, this message translates to:
+  /// **'CliQ alias (optional)'**
+  String get cliqAlias;
+
+  /// No description provided for @walletNumberOrAlias.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the wallet number or a CliQ alias'**
+  String get walletNumberOrAlias;
+
+  /// No description provided for @walletSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet saved'**
+  String get walletSaved;
+
+  /// No description provided for @walletRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet removed'**
+  String get walletRemoved;
+
+  /// No description provided for @removeWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove wallet'**
+  String get removeWallet;
+
+  /// No description provided for @removeWalletConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove this wallet? Customers won\'t be able to pay you with it.'**
+  String get removeWalletConfirm;
+
+  /// No description provided for @noWallets.
+  ///
+  /// In en, this message translates to:
+  /// **'No wallet yet'**
+  String get noWallets;
+
+  /// No description provided for @noWalletsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Add one to take orders that are paid by wallet.'**
+  String get noWalletsBody;
+
+  /// No description provided for @walletPaused.
+  ///
+  /// In en, this message translates to:
+  /// **'Paused'**
+  String get walletPaused;
+
+  /// No description provided for @invalidWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the wallet details: something is not valid.'**
+  String get invalidWallet;
+
+  /// No description provided for @noWalletAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'This order is paid by wallet. Add your wallet in Settings › Wallet payments to take it.'**
+  String get noWalletAccount;
+
+  /// No description provided for @paymentNotConfirmedError.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm the wallet payment first, then mark the order delivered.'**
+  String get paymentNotConfirmedError;
+
+  /// No description provided for @payOnArrivalHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The customer pays {amount} by wallet when you arrive. Check your wallet before handing over the cylinder.'**
+  String payOnArrivalHint(String amount);
+
+  /// No description provided for @paymentClaimedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The customer says they paid. Check your wallet.'**
+  String get paymentClaimedHint;
+
+  /// No description provided for @paymentReferenceValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction {ref}'**
+  String paymentReferenceValue(String ref);
+
+  /// No description provided for @paymentReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'Received'**
+  String get paymentReceived;
+
+  /// No description provided for @paymentNotReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'Not received'**
+  String get paymentNotReceived;
+
+  /// No description provided for @paidInCashInstead.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid in cash'**
+  String get paidInCashInstead;
+
+  /// No description provided for @confirmPaymentConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Did {amount} arrive in your wallet?'**
+  String confirmPaymentConfirm(String amount);
+
+  /// No description provided for @cashInsteadConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Did the customer pay you in cash instead?'**
+  String get cashInsteadConfirm;
+
+  /// No description provided for @disputeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment not received'**
+  String get disputeTitle;
+
+  /// No description provided for @disputeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'What do you see? For example: nothing has arrived yet'**
+  String get disputeHint;
+
+  /// No description provided for @walletNoteRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Write at least 3 characters.'**
+  String get walletNoteRequired;
+
+  /// No description provided for @paymentConfirmedDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment received'**
+  String get paymentConfirmedDone;
+
+  /// No description provided for @paymentCashDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid in cash'**
+  String get paymentCashDone;
+
+  /// No description provided for @paymentDisputedWait.
+  ///
+  /// In en, this message translates to:
+  /// **'You said it hasn\'t arrived. Waiting for the customer.'**
+  String get paymentDisputedWait;
+
+  /// No description provided for @paymentConfirmedSnack.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment confirmed'**
+  String get paymentConfirmedSnack;
 }
 
 class _AppLocalizationsDelegate

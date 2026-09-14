@@ -1444,4 +1444,130 @@ class AppLocalizationsEn extends AppLocalizations {
   String searchRadiusNow(String km) {
     return 'offered within $km km';
   }
+
+  @override
+  String get navPayments => 'Wallet payments';
+
+  @override
+  String get paymentCard => 'Card';
+
+  @override
+  String get paymentWallet => 'Wallet (paid to the distributor)';
+
+  @override
+  String get walletPaymentsNote =>
+      'Customers pay distributors straight from their wallet at the door; ClickGas never holds the money. Payments in dispute or waiting for the distributor come first.';
+
+  @override
+  String get paymentFilterAll => 'All';
+
+  @override
+  String get payStatusAwaiting => 'Not paid yet';
+
+  @override
+  String get payStatusClaimed => 'Customer says paid';
+
+  @override
+  String get payStatusConfirmed => 'Confirmed';
+
+  @override
+  String get payStatusDisputed => 'Not received';
+
+  @override
+  String get payStatusCash => 'Paid in cash';
+
+  @override
+  String get noWalletPayments => 'No wallet payments';
+
+  @override
+  String get walletPaymentSection => 'Wallet payment';
+
+  @override
+  String get walletNotAssigned =>
+      'Details appear once a distributor takes the order.';
+
+  @override
+  String get walletAmountLabel => 'Amount';
+
+  @override
+  String get payTo => 'Pay to';
+
+  @override
+  String get paidWith => 'Paid from';
+
+  @override
+  String get reference => 'Transaction';
+
+  @override
+  String get disputeNote => 'Distributor\'s note';
+
+  @override
+  String get resolveTitle => 'Change the payment status';
+
+  @override
+  String get paymentResolved => 'Payment updated';
+
+  @override
+  String get walletsSection => 'Wallets';
+
+  @override
+  String get noDriverWallets => 'No wallet added';
+
+  @override
+  String get walletPause => 'Pause';
+
+  @override
+  String get walletResume => 'Resume';
+
+  @override
+  String get walletPausedTag => 'Paused';
+
+  @override
+  String get walletActiveTitle => 'Pause or resume this wallet';
+
+  @override
+  String termsAccepted(String date) {
+    return 'Accepted the disclaimer $date';
+  }
+
+  @override
+  String get walletApps => 'Wallet apps';
+
+  @override
+  String get walletAppsNote =>
+      'How the customer app opens each wallet. The Android package is the id=... part of the wallet\'s Play Store link.';
+
+  @override
+  String get androidPackage => 'Android package';
+
+  @override
+  String get storeLink => 'Store link';
+
+  @override
+  String get walletAppActive => 'Offered to distributors';
+
+  @override
+  String get walletAppEdit => 'Edit';
+
+  @override
+  String get walletAppSaved => 'Wallet app saved';
+
+  @override
+  String get actPaymentResolve => 'Changed a wallet payment';
+
+  @override
+  String get actWalletActive => 'Paused or resumed a wallet';
+
+  @override
+  String get actWalletProvider => 'Edited a wallet app';
+
+  @override
+  String get noWalletAccount =>
+      'That distributor has no active wallet, and this order is paid by wallet.';
+
+  @override
+  String get paymentNotOpen => 'This payment can\'t be changed now.';
+
+  @override
+  String get paymentNotConfirmed => 'The wallet payment isn\'t confirmed yet.';
 }

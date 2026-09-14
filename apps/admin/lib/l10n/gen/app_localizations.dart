@@ -2719,6 +2719,246 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'offered within {km} km'**
   String searchRadiusNow(String km);
+
+  /// No description provided for @navPayments.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet payments'**
+  String get navPayments;
+
+  /// No description provided for @paymentCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Card'**
+  String get paymentCard;
+
+  /// No description provided for @paymentWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet (paid to the distributor)'**
+  String get paymentWallet;
+
+  /// No description provided for @walletPaymentsNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Customers pay distributors straight from their wallet at the door; ClickGas never holds the money. Payments in dispute or waiting for the distributor come first.'**
+  String get walletPaymentsNote;
+
+  /// No description provided for @paymentFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get paymentFilterAll;
+
+  /// No description provided for @payStatusAwaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Not paid yet'**
+  String get payStatusAwaiting;
+
+  /// No description provided for @payStatusClaimed.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer says paid'**
+  String get payStatusClaimed;
+
+  /// No description provided for @payStatusConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed'**
+  String get payStatusConfirmed;
+
+  /// No description provided for @payStatusDisputed.
+  ///
+  /// In en, this message translates to:
+  /// **'Not received'**
+  String get payStatusDisputed;
+
+  /// No description provided for @payStatusCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid in cash'**
+  String get payStatusCash;
+
+  /// No description provided for @noWalletPayments.
+  ///
+  /// In en, this message translates to:
+  /// **'No wallet payments'**
+  String get noWalletPayments;
+
+  /// No description provided for @walletPaymentSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet payment'**
+  String get walletPaymentSection;
+
+  /// No description provided for @walletNotAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'Details appear once a distributor takes the order.'**
+  String get walletNotAssigned;
+
+  /// No description provided for @walletAmountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get walletAmountLabel;
+
+  /// No description provided for @payTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay to'**
+  String get payTo;
+
+  /// No description provided for @paidWith.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid from'**
+  String get paidWith;
+
+  /// No description provided for @reference.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction'**
+  String get reference;
+
+  /// No description provided for @disputeNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Distributor\'s note'**
+  String get disputeNote;
+
+  /// No description provided for @resolveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Change the payment status'**
+  String get resolveTitle;
+
+  /// No description provided for @paymentResolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment updated'**
+  String get paymentResolved;
+
+  /// No description provided for @walletsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallets'**
+  String get walletsSection;
+
+  /// No description provided for @noDriverWallets.
+  ///
+  /// In en, this message translates to:
+  /// **'No wallet added'**
+  String get noDriverWallets;
+
+  /// No description provided for @walletPause.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get walletPause;
+
+  /// No description provided for @walletResume.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume'**
+  String get walletResume;
+
+  /// No description provided for @walletPausedTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Paused'**
+  String get walletPausedTag;
+
+  /// No description provided for @walletActiveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause or resume this wallet'**
+  String get walletActiveTitle;
+
+  /// No description provided for @termsAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted the disclaimer {date}'**
+  String termsAccepted(String date);
+
+  /// No description provided for @walletApps.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet apps'**
+  String get walletApps;
+
+  /// No description provided for @walletAppsNote.
+  ///
+  /// In en, this message translates to:
+  /// **'How the customer app opens each wallet. The Android package is the id=... part of the wallet\'s Play Store link.'**
+  String get walletAppsNote;
+
+  /// No description provided for @androidPackage.
+  ///
+  /// In en, this message translates to:
+  /// **'Android package'**
+  String get androidPackage;
+
+  /// No description provided for @storeLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Store link'**
+  String get storeLink;
+
+  /// No description provided for @walletAppActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Offered to distributors'**
+  String get walletAppActive;
+
+  /// No description provided for @walletAppEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get walletAppEdit;
+
+  /// No description provided for @walletAppSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet app saved'**
+  String get walletAppSaved;
+
+  /// No description provided for @actPaymentResolve.
+  ///
+  /// In en, this message translates to:
+  /// **'Changed a wallet payment'**
+  String get actPaymentResolve;
+
+  /// No description provided for @actWalletActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Paused or resumed a wallet'**
+  String get actWalletActive;
+
+  /// No description provided for @actWalletProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'Edited a wallet app'**
+  String get actWalletProvider;
+
+  /// No description provided for @noWalletAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'That distributor has no active wallet, and this order is paid by wallet.'**
+  String get noWalletAccount;
+
+  /// No description provided for @paymentNotOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'This payment can\'t be changed now.'**
+  String get paymentNotOpen;
+
+  /// No description provided for @paymentNotConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'The wallet payment isn\'t confirmed yet.'**
+  String get paymentNotConfirmed;
 }
 
 class _AppLocalizationsDelegate

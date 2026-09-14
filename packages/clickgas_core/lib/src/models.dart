@@ -58,7 +58,11 @@ enum OrderStatus {
 
 enum PaymentMethod {
   cash,
-  card;
+  card,
+
+  /// Paid from the customer's e-wallet to the distributor at the door
+  /// (see wallet.dart).
+  wallet;
 
   static PaymentMethod parse(Object? v) =>
       values.firstWhere((m) => m.name == v, orElse: () => cash);
@@ -642,6 +646,7 @@ class NearbyOrder {
   final int orderNumber;
   final String customerName;
   final String? customerAvatar;
+  final String serviceCode;
   final String serviceNameAr;
   final String serviceNameEn;
   final int quantity;
@@ -658,6 +663,7 @@ class NearbyOrder {
     required this.id,
     required this.orderNumber,
     required this.customerName,
+    this.serviceCode = '',
     required this.serviceNameAr,
     required this.serviceNameEn,
     required this.quantity,
@@ -680,6 +686,7 @@ class NearbyOrder {
         orderNumber: _i(m['order_number']),
         customerName: m['customer_name'] as String? ?? '',
         customerAvatar: m['customer_avatar'] as String?,
+        serviceCode: m['service_code'] as String? ?? '',
         serviceNameAr: m['service_name_ar'] as String? ?? '',
         serviceNameEn: m['service_name_en'] as String? ?? '',
         quantity: _i(m['quantity']),
@@ -702,6 +709,7 @@ class DriverOrder {
   final String customerName;
   final String customerPhone;
   final String? customerAvatar;
+  final String serviceCode;
   final String serviceNameAr;
   final String serviceNameEn;
   final int quantity;
@@ -720,6 +728,7 @@ class DriverOrder {
     required this.status,
     required this.customerName,
     required this.customerPhone,
+    this.serviceCode = '',
     required this.serviceNameAr,
     required this.serviceNameEn,
     required this.quantity,
@@ -747,6 +756,7 @@ class DriverOrder {
         customerName: m['customer_name'] as String? ?? '',
         customerPhone: m['customer_phone'] as String? ?? '',
         customerAvatar: m['customer_avatar'] as String?,
+        serviceCode: m['service_code'] as String? ?? '',
         serviceNameAr: m['service_name_ar'] as String? ?? '',
         serviceNameEn: m['service_name_en'] as String? ?? '',
         quantity: _i(m['quantity']),

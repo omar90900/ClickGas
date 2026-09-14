@@ -36,6 +36,12 @@ class Fmt {
 
 /// Translated message for any error. Codes come from docs/errors.md; an
 /// unmapped code is shown so support can look it up.
+String paymentMethodLabel(AppLocalizations l, PaymentMethod m) => switch (m) {
+      PaymentMethod.cash => l.cash,
+      PaymentMethod.card => l.card,
+      PaymentMethod.wallet => l.wallet,
+    };
+
 String failureText(BuildContext context, Object error, {int maxOrders = 3}) {
   final l = context.l10n;
   final f = AppFailure.from(error);
@@ -58,6 +64,12 @@ String failureText(BuildContext context, Object error, {int maxOrders = 3}) {
     FailureCode.sessionExpired => l.sessionExpired,
     FailureCode.permissionDenied => l.permissionDenied,
     FailureCode.network => l.networkError,
+    FailureCode.noWalletAccount => l.noWalletAccount,
+    FailureCode.paymentNotConfirmed => l.paymentNotConfirmedError,
+    FailureCode.paymentNotOpen => l.orderChanged,
+    FailureCode.termsNotAccepted => l.walletTermsRequired,
+    FailureCode.invalidWallet => l.invalidWallet,
+    FailureCode.reasonRequired => l.walletNoteRequired,
     _ => l.errorWithCode(f.code.value),
   };
 }
@@ -450,6 +462,106 @@ class InfoRow extends StatelessWidget {
           const SizedBox(width: 16),
           Expanded(
             child: Text(value, style: style, textAlign: TextAlign.end),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Tells an exchange apart from a new-cylinder sale at a glance: the
+/// distributor needs to know whether to expect an empty cylinder back.
+class ServiceBadge extends StatelessWidget {
+  const ServiceBadge({super.key, required this.serviceCode, this.size = 44});
+  final String serviceCode;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    final isNew = serviceCode == 'new_cylinder';
+    final color = isNew ? AppColors.warning : context.accent;
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.14),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Icon(
+        isNew ? Icons.local_shipping_rounded : Icons.autorenew_rounded,
+        color: color,
+        size: size * 0.55,
+      ),
+    );
+  }
+}
+
+/// One labelled line of an order card (price, address...).
+class OrderFactRow extends StatelessWidget {
+  const OrderFactRow({
+    super.key,
+    required this.icon,
+    required this.text,
+    this.emphasize = false,
+  });
+
+  final IconData icon;
+  final String text;
+  final bool emphasize;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 3),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 16, color: context.colors.onSurfaceVariant),
+          const SizedBox(width: 6),
+          Expanded(
+            child: Text(
+              text,
+              style: emphasize
+                  ? context.text.bodyMedium?.copyWith(fontWeight: FontWeight.w800)
+                  : context.text.bodySmall?.copyWith(
+                      color: context.colors.onSurfaceVariant,
+                    ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// What the customer typed with the order. Set apart from the address so it is
+/// not skimmed past: it often says which floor or which gate to use.
+class CustomerNote extends StatelessWidget {
+  const CustomerNote({super.key, required this.note});
+  final String note;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(top: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        color: AppColors.warning.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(Icons.sticky_note_2_rounded,
+              size: 16, color: AppColors.warning),
+          const SizedBox(width: 6),
+          Expanded(
+            child: Text(
+              note,
+              style: context.text.bodySmall?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
         ],
       ),

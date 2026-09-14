@@ -662,4 +662,133 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get statDelivered => 'تم توصيلها';
+
+  @override
+  String get statCylinders => 'الجرات';
+
+  @override
+  String get statSpent => 'المدفوع';
+
+  @override
+  String get statsThisMonth => 'هذا الشهر';
+
+  @override
+  String get statsThisYear => 'هذه السنة';
+
+  @override
+  String statsCylindersCount(num count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(
+      locale: localeName,
+    );
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString جرة',
+      many: '$countString جرة',
+      few: '$countString جرات',
+      two: 'جرتان',
+      one: 'جرة واحدة',
+      zero: 'لا جرات',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get wallet => 'محفظة';
+
+  @override
+  String get walletOrderNote =>
+      'ستدفع للموزع من محفظتك الإلكترونية (أورنج موني أو زين كاش أو أمنية أو CliQ) عند وصوله.';
+
+  @override
+  String get walletPayTitle => 'الدفع بالمحفظة';
+
+  @override
+  String get walletPayOnArrival =>
+      'ادفع عندما يصل الموزع، ثم انتظر حتى يؤكد استلام المبلغ.';
+
+  @override
+  String get walletAmount => 'المبلغ المطلوب';
+
+  @override
+  String get walletPayTo => 'أرسله إلى';
+
+  @override
+  String get walletNumber => 'رقم المحفظة';
+
+  @override
+  String get cliqAlias => 'اسم CliQ المستعار';
+
+  @override
+  String get copy => 'نسخ';
+
+  @override
+  String get copied => 'تم النسخ';
+
+  @override
+  String openWallet(String wallet) {
+    return 'افتح $wallet';
+  }
+
+  @override
+  String get walletOpenManually =>
+      'افتح تطبيق محفظتك وأرسل المبلغ إلى البيانات أعلاه.';
+
+  @override
+  String get cliqHowTo => 'أرسله عبر CliQ من أي تطبيق بنك أو محفظة.';
+
+  @override
+  String get iPaid => 'لقد دفعت';
+
+  @override
+  String get iPaidTitle => 'أبلغ الموزع أنك دفعت';
+
+  @override
+  String get paidWith => 'دفعت من';
+
+  @override
+  String get paymentReference => 'رقم العملية (اختياري)';
+
+  @override
+  String paymentReferenceValue(String ref) {
+    return 'رقم العملية $ref';
+  }
+
+  @override
+  String get paymentClaimedWait => 'بانتظار أن يؤكد الموزع استلام المبلغ.';
+
+  @override
+  String get paymentConfirmed => 'أكّد الموزع أنه استلم المبلغ.';
+
+  @override
+  String get paymentCashDone => 'تم الدفع نقدًا.';
+
+  @override
+  String paymentDisputed(String note) {
+    return 'لم يصل المبلغ للموزع: $note';
+  }
+
+  @override
+  String get paymentDisputedHelp =>
+      'تحقق من محفظتك وادفع مرة أخرى، أو ادفع نقدًا.';
+
+  @override
+  String get paymentStatusAwaiting => 'لم يُدفع';
+
+  @override
+  String get paymentStatusClaimed => 'بانتظار التأكيد';
+
+  @override
+  String get paymentStatusConfirmed => 'مؤكد';
+
+  @override
+  String get paymentStatusDisputed => 'لم يصل';
+
+  @override
+  String get paymentStatusCash => 'نقدًا';
+
+  @override
+  String get walletDetailsPending => 'ستظهر بيانات محفظة الموزع هنا.';
 }

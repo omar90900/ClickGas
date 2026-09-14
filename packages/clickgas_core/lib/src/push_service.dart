@@ -45,8 +45,13 @@ class PushService {
     'order_confirmed',
   };
 
-  /// Once at start-up, after Supabase. [app] is customer / distributor.
-  Future<void> init({required String app}) async {
+  Future<void>? _starting;
+
+  /// Once at start-up, after Supabase. [app] is customer / distributor. The
+  /// apps don't wait for it; [register] does.
+  Future<void> init({required String app}) => _starting ??= _init(app);
+
+  Future<void> _init(String app) async {
     if (kIsWeb || _available) return;
     _app = app;
     try {
@@ -67,6 +72,7 @@ class PushService {
 
   /// After sign-in: ask permission, then register this device's token.
   Future<void> register() async {
+    await _starting;
     if (!_available) return;
     try {
       final messaging = FirebaseMessaging.instance;

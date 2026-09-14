@@ -8,6 +8,7 @@ import '../../state/staff_session.dart';
 import '../../widgets/common.dart';
 import '../drivers/driver_detail.dart';
 import '../finance/charges.dart';
+import '../payments/payments_page.dart';
 
 /// Opens the order inspector; [onChanged] runs after a staff action so the
 /// page underneath can refresh.
@@ -183,10 +184,14 @@ class _InspectorBody extends StatelessWidget {
                 const Divider(),
                 InfoRow(label: l.total, value: Fmt.money(context, o.totalPrice), emphasize: true),
                 InfoRow(label: l.distributorFee, value: Fmt.money(context, o.driverFee)),
-                InfoRow(label: l.payment, value: l.paymentCash),
+                InfoRow(label: l.payment, value: paymentMethodLabel(l, o.paymentMethod)),
               ],
             ),
           ),
+          if (o.paymentMethod == PaymentMethod.wallet) ...[
+            const SizedBox(height: 12),
+            WalletPaymentSection(orderId: o.id, canOperate: role.canOperate, onChanged: onChanged),
+          ],
           const SizedBox(height: 12),
           SectionCard(
             title: l.address,

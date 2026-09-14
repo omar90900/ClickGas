@@ -7,6 +7,7 @@ import '../../data/admin_repository.dart';
 import '../../state/staff_session.dart';
 import '../../widgets/common.dart';
 import '../finance/charges.dart';
+import '../payments/payments_page.dart';
 import '../orders/orders_page.dart';
 
 Future<void> showDriverDetail(BuildContext context, String driverId, {VoidCallback? onChanged}) =>
@@ -229,6 +230,8 @@ class _Body extends StatelessWidget {
               ],
             ),
           ),
+          const SizedBox(height: 12),
+          DriverWalletsSection(driverId: d.id, canOperate: ops),
           const SizedBox(height: 12),
           ChargesSection(driverId: d.id, driverName: d.fullName, onChanged: onChanged),
           const SizedBox(height: 12),

@@ -14,6 +14,7 @@ import '../../widgets/common.dart';
 import '../../widgets/map_icons.dart';
 import '../orders/order_widgets.dart';
 import '../shell/main_shell.dart';
+import 'wallet_payment_card.dart';
 
 /// Live status of the customer's open order (Supabase Realtime), or a clear
 /// empty state when there is none.
@@ -34,34 +35,14 @@ class TrackingTab extends StatelessWidget {
     } else if (open == null && orders.awaitingConfirmation != null) {
       body = ConfirmReceiptView(order: orders.awaitingConfirmation!);
     } else if (open == null) {
-      final recent = orders.orders.firstOrNull;
-      final rateable = recent != null &&
-          recent.status == OrderStatus.delivered &&
-          recent.rating == null &&
-          recent.deliveredAt != null &&
-          DateTime.now().difference(recent.deliveredAt!).inHours < 24;
       body = EmptyState(
-        icon: rateable ? Icons.task_alt_rounded : Icons.map_outlined,
-        title: rateable ? l.statusDelivered : l.noActiveOrderTitle,
-        message: rateable
-            ? '${l.orderNumber(recent.orderNumber)} · ${Fmt.time(context, recent.deliveredAt)}'
-            : l.noActiveOrderBody,
-        action: Column(
-          children: [
-            if (rateable) ...[
-              FilledButton.icon(
-                onPressed: () => showRatingSheet(context, recent),
-                icon: const Icon(Icons.star_rounded),
-                label: Text(l.rateOrder),
-              ),
-              const SizedBox(height: 10),
-            ],
-            (rateable ? OutlinedButton.icon : FilledButton.icon)(
-              onPressed: () => context.read<ShellTabs>().go(ShellTabs.home),
-              icon: const Icon(Icons.propane_tank_rounded),
-              label: Text(l.orderGasCta),
-            ),
-          ],
+        icon: Icons.map_outlined,
+        title: l.noActiveOrderTitle,
+        message: l.noActiveOrderBody,
+        action: FilledButton.icon(
+          onPressed: () => context.read<ShellTabs>().go(ShellTabs.home),
+          icon: const Icon(Icons.propane_tank_rounded),
+          label: Text(l.orderGasCta),
         ),
       );
     } else {
@@ -295,6 +276,10 @@ class _OpenOrderViewState extends State<_OpenOrderView> {
                         ? const SizedBox.shrink()
                         : _DriverCard(driver: s.data!),
                   ),
+                  if (order.paymentMethod == PaymentMethod.wallet) ...[
+                    const SizedBox(height: 12),
+                    WalletPaymentCard(order: order),
+                  ],
                   const SizedBox(height: 12),
                   OrderSummaryCard(order: order),
                 ],

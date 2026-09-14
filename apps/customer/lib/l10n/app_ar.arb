@@ -205,5 +205,47 @@
   "notificationsEmptyBody": "ستظهر هنا تحديثات طلباتك.",
   "notifOrderUpdatesBody": "القبول، التوجه إليك، التوصيل",
   "statOrders": "الطلبات",
-  "statDelivered": "تم توصيلها"
+  "statDelivered": "تم توصيلها",
+  "statCylinders": "الجرات",
+  "statSpent": "المدفوع",
+  "statsThisMonth": "هذا الشهر",
+  "statsThisYear": "هذه السنة",
+  "statsCylindersCount": "{count, plural, =0{لا جرات} =1{جرة واحدة} =2{جرتان} few{{count} جرات} many{{count} جرة} other{{count} جرة}}",
+  "@statsCylindersCount": {
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "format": "compact"
+      }
+    }
+  },
+  "wallet": "محفظة",
+  "walletOrderNote": "ستدفع للموزع من محفظتك الإلكترونية (أورنج موني أو زين كاش أو أمنية أو CliQ) عند وصوله.",
+  "walletPayTitle": "الدفع بالمحفظة",
+  "walletPayOnArrival": "ادفع عندما يصل الموزع، ثم انتظر حتى يؤكد استلام المبلغ.",
+  "walletAmount": "المبلغ المطلوب",
+  "walletPayTo": "أرسله إلى",
+  "walletNumber": "رقم المحفظة",
+  "cliqAlias": "اسم CliQ المستعار",
+  "copy": "نسخ",
+  "copied": "تم النسخ",
+  "openWallet": "افتح {wallet}",
+  "walletOpenManually": "افتح تطبيق محفظتك وأرسل المبلغ إلى البيانات أعلاه.",
+  "cliqHowTo": "أرسله عبر CliQ من أي تطبيق بنك أو محفظة.",
+  "iPaid": "لقد دفعت",
+  "iPaidTitle": "أبلغ الموزع أنك دفعت",
+  "paidWith": "دفعت من",
+  "paymentReference": "رقم العملية (اختياري)",
+  "paymentReferenceValue": "رقم العملية {ref}",
+  "paymentClaimedWait": "بانتظار أن يؤكد الموزع استلام المبلغ.",
+  "paymentConfirmed": "أكّد الموزع أنه استلم المبلغ.",
+  "paymentCashDone": "تم الدفع نقدًا.",
+  "paymentDisputed": "لم يصل المبلغ للموزع: {note}",
+  "paymentDisputedHelp": "تحقق من محفظتك وادفع مرة أخرى، أو ادفع نقدًا.",
+  "paymentStatusAwaiting": "لم يُدفع",
+  "paymentStatusClaimed": "بانتظار التأكيد",
+  "paymentStatusConfirmed": "مؤكد",
+  "paymentStatusDisputed": "لم يصل",
+  "paymentStatusCash": "نقدًا",
+  "walletDetailsPending": "ستظهر بيانات محفظة الموزع هنا."
 }

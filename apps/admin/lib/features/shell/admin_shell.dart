@@ -13,6 +13,7 @@ import '../finance/finance_page.dart';
 import '../live/live_map_page.dart';
 import '../orders/orders_page.dart';
 import '../overview/overview_page.dart';
+import '../payments/payments_page.dart';
 import '../settings/settings_page.dart';
 import '../staff/staff_page.dart';
 
@@ -26,6 +27,7 @@ enum AdminPage {
   drivers(Icons.local_shipping_rounded),
   customers(Icons.people_alt_rounded),
   finance(Icons.insights_rounded),
+  payments(Icons.account_balance_wallet_rounded),
   settings(Icons.tune_rounded, ownerOnly: true),
   staff(Icons.badge_rounded, ownerOnly: true),
   audit(Icons.history_rounded);
@@ -42,6 +44,7 @@ enum AdminPage {
         drivers => l.navDrivers,
         customers => l.navCustomers,
         finance => l.navFinance,
+        payments => l.navPayments,
         settings => l.navSettings,
         staff => l.navStaff,
         audit => l.navAudit,
@@ -89,6 +92,7 @@ class _AdminShellState extends State<AdminShell> {
         AdminPage.drivers => DriversPage(key: ValueKey(_driverFilter), initialStatus: _driverFilter),
         AdminPage.customers => const CustomersPage(),
         AdminPage.finance => const FinancePage(),
+        AdminPage.payments => const PaymentsPage(),
         AdminPage.settings => const SettingsPage(),
         AdminPage.staff => const StaffPage(),
         AdminPage.audit => const AuditPage(),

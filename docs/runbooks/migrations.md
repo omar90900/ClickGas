@@ -31,7 +31,9 @@ npx supabase db push
 ## Checking what's applied
 
 ```sql
-select 'notifications' as marker, to_regclass('public.notifications') is not null as applied -- push_notifications
+select 'order_payments' as marker, to_regclass('public.order_payments') is not null as applied -- wallet_payments
+union all select 'my_order_stats', to_regprocedure('public.my_order_stats()') is not null   -- stats_and_plain_notifications
+union all select 'notifications', to_regclass('public.notifications') is not null           -- push_notifications
 union all select 'coverage_gaps', to_regclass('public.coverage_gaps') is not null           -- coverage_and_demo
 union all select 'driver_charges', to_regclass('public.driver_charges') is not null             -- revenue_and_charges
 union all select 'staff_members', to_regclass('public.staff_members') is not null             -- admin_core
@@ -52,7 +54,9 @@ union all select 'order_releases', to_regclass('public.order_releases') is not n
 | `20260912200000_revenue_and_charges.sql` | 2026-09-12 (verified by `admin_cycle.mjs` and `order_cycle.mjs`, all checks) |
 | `20260913090000_coverage_and_demo.sql` | 2026-09-12 (pg_cron job running: a `job_runs` row every minute) |
 | `20260913120000_auto_offline.sql` | 2026-09-12 |
-| `20260913150000_push_notifications.sql` | pending (then set up delivery: [push-notifications.md](push-notifications.md)) |
+| `20260913150000_push_notifications.sql` | applied (confirmed live 2026-09-13: `notifications` table present) |
+| `20260913180000_stats_and_plain_notifications.sql` | pending |
+| `20260913200000_wallet_payments.sql` | pending (after the one above) |
 
 If a run fails with "already exists", the file was applied before; check with
 the query above instead of running it again.

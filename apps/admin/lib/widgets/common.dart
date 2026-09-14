@@ -170,6 +170,9 @@ String actionLabel(AppLocalizations l, String action) => switch (action) {
       'flag.set' => l.actFlagSet,
       'staff.save' => l.actStaffSave,
       'staff.remove' => l.actStaffRemove,
+      'payment.resolve' => l.actPaymentResolve,
+      'wallet.set_active' => l.actWalletActive,
+      'wallet_provider.save' => l.actWalletProvider,
       _ => action,
     };
 
@@ -212,6 +215,9 @@ String failureText(BuildContext context, Object error) {
     FailureCode.notEnoughCylinders => l.notEnoughCylinders,
     FailureCode.invalidTransition => l.orderChanged,
     FailureCode.orderNotCancellable => l.orderNotCancellable,
+    FailureCode.noWalletAccount => l.noWalletAccount,
+    FailureCode.paymentNotOpen => l.paymentNotOpen,
+    FailureCode.paymentNotConfirmed => l.paymentNotConfirmed,
     _ => l.errorWithCode(f.code.value),
   };
 }

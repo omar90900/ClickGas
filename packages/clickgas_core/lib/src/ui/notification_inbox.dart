@@ -95,6 +95,10 @@ class _NotificationInboxState extends State<NotificationInbox> {
       'charge_paid' || 'charge_waived' => (Icons.receipt_long_outlined, null),
       'document_approved' => (Icons.task_outlined, null),
       'document_rejected' => (Icons.description_outlined, AppColors.danger),
+      'order_pay_on_arrival' || 'wallet_saved' => (Icons.account_balance_wallet_outlined, AppColors.info),
+      'order_payment_claimed' => (Icons.account_balance_wallet_outlined, AppColors.warning),
+      'order_payment_confirmed' => (Icons.verified_outlined, null),
+      'order_payment_disputed' => (Icons.report_gmailerrorred_outlined, AppColors.danger),
       _ => (Icons.notifications_none_rounded, null),
     };
 

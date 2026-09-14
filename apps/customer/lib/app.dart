@@ -35,6 +35,7 @@ class ClickGasApp extends StatelessWidget {
         Provider(create: (_) => AvatarRepository(client)),
         Provider(create: (_) => DiagnosticsRepository(client)),
         Provider(create: (_) => NotificationsRepository(client)),
+        Provider(create: (_) => WalletRepository(client)),
         Provider(create: (_) => LocationService()),
         FutureProvider<AppConfig>(
           create: (c) => c.read<CatalogRepository>().config(),

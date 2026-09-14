@@ -100,8 +100,20 @@ class _HomeTabState extends State<HomeTab> {
     });
   }
 
-  void _changeStock(DriverProfile driver, int delta) {
-    final next = ((_stock ?? driver.cylindersOnBoard) + delta).clamp(0, 500);
+  void _changeStock(DriverProfile driver, int delta) =>
+      _saveStock(driver, (_stock ?? driver.cylindersOnBoard) + delta);
+
+  /// Type the load in instead of tapping +/- thirty times.
+  Future<void> _editStock(DriverProfile driver) async {
+    final typed = await showDialog<int>(
+      context: context,
+      builder: (_) => _StockDialog(value: _stock ?? driver.cylindersOnBoard),
+    );
+    if (typed != null && mounted) _saveStock(driver, typed);
+  }
+
+  void _saveStock(DriverProfile driver, int value) {
+    final next = value.clamp(0, 500);
     setState(() => _stock = next);
     _stockSave?.cancel();
     _stockSave = Timer(const Duration(milliseconds: 700), () async {
@@ -216,6 +228,7 @@ class _HomeTabState extends State<HomeTab> {
           toggling: _toggling,
           stock: _stock ?? driver.cylindersOnBoard,
           onStock: (d) => _changeStock(driver, d),
+          onEditStock: () => _editStock(driver),
           onOnline: _setOnline,
           onRefresh: session.refreshDriver,
         ),
@@ -232,6 +245,7 @@ class _DriverPanel extends StatelessWidget {
     required this.toggling,
     required this.stock,
     required this.onStock,
+    required this.onEditStock,
     required this.onOnline,
     required this.onRefresh,
   });
@@ -242,6 +256,7 @@ class _DriverPanel extends StatelessWidget {
   final bool toggling;
   final int stock;
   final ValueChanged<int> onStock;
+  final VoidCallback onEditStock;
   final ValueChanged<bool> onOnline;
   final VoidCallback onRefresh;
 
@@ -338,13 +353,22 @@ class _DriverPanel extends StatelessWidget {
                     onPressed: stock > 0 ? () => onStock(-1) : null,
                     icon: const Icon(Icons.remove_rounded),
                   ),
-                  SizedBox(
-                    width: 44,
-                    child: Text(
-                      '$stock',
-                      textAlign: TextAlign.center,
-                      style: context.text.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w900,
+                  InkWell(
+                    onTap: onEditStock,
+                    borderRadius: BorderRadius.circular(10),
+                    child: SizedBox(
+                      width: 48,
+                      height: 40,
+                      child: Center(
+                        child: Text(
+                          '$stock',
+                          style: context.text.titleLarge?.copyWith(
+                            fontWeight: FontWeight.w900,
+                            decoration: TextDecoration.underline,
+                            decorationStyle: TextDecorationStyle.dotted,
+                            decorationColor: context.colors.outline,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -415,6 +439,64 @@ class _DriverPanel extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Types in how many cylinders are on the truck, for when the load changes by
+/// more than a step or two.
+class _StockDialog extends StatefulWidget {
+  const _StockDialog({required this.value});
+  final int value;
+
+  @override
+  State<_StockDialog> createState() => _StockDialogState();
+}
+
+class _StockDialogState extends State<_StockDialog> {
+  late final TextEditingController _field =
+      TextEditingController(text: '${widget.value}');
+  final _form = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    _field.dispose();
+    super.dispose();
+  }
+
+  void _submit() {
+    if (_form.currentState?.validate() ?? false) {
+      Navigator.pop(context, int.parse(_field.text.trim()));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    return AlertDialog(
+      title: Text(l.cylindersOnBoard),
+      content: Form(
+        key: _form,
+        child: TextFormField(
+          controller: _field,
+          autofocus: true,
+          keyboardType: TextInputType.number,
+          textInputAction: TextInputAction.done,
+          onFieldSubmitted: (_) => _submit(),
+          decoration: InputDecoration(labelText: l.cylindersOnBoard),
+          validator: (v) {
+            final n = int.tryParse((v ?? '').trim());
+            return n == null || n < 0 || n > 500 ? l.cylindersRange : null;
+          },
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(l.cancel),
+        ),
+        FilledButton(onPressed: _submit, child: Text(l.save)),
+      ],
     );
   }
 }

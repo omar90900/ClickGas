@@ -95,3 +95,5 @@ Also added in migration 7: `profiles.is_demo`, `orders.is_demo`,
 | `20260913090000_coverage_and_demo.sql` | widening search, order expiry (pg_cron), coverage checks and gaps, demo flags and seed mode, `admin_coverage` |
 | `20260913120000_auto_offline.sql` | the every-minute job also switches off distributors silent for 15 minutes |
 | `20260913150000_push_notifications.sql` | notification preferences, `device_tokens`, `notifications`, message triggers, delivery through pg_net + Edge Function, pg_cron `clickgas-push-flush` |
+| `20260913180000_stats_and_plain_notifications.sql` | `my_order_stats`, `driver_earnings_stats`, `service_code` in `nearby_orders` / `driver_active_orders`, order messages without the order number |
+| `20260913200000_wallet_payments.sql` | payment method `wallet`, `wallet_providers`, `driver_wallets`, `order_payments` (claim / confirm / dispute / cash), wallet rules on accept and delivery, staff functions, payment notifications (ADR 0015) |

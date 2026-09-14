@@ -46,16 +46,58 @@ coverage gap when `nearby = 0`. Errors: `PERMISSION_DENIED`, `INVALID_SETTING`.
 `id, full_name, phone, avatar_url, vehicle_plate, vehicle_model, rating_avg, lat, lng, heading`
 for the caller's own order.
 
+### `my_order_stats() → table`
+One row for the caller's delivered orders:
+`month_cylinders, month_paid, year_cylinders, year_paid, total_orders, total_cylinders, total_paid`.
+Money excludes the delivery fee (`total_price - delivery_fee`). Feeds the My
+Orders header and the Profile stats.
+
 ## Distributor
 
 ### `nearby_orders(p_lat float8, p_lng float8) → table`
 Pending orders within their current search radius (`order_radius_km`: 2 km,
 widening to 6 km while they wait), nearest first:
-`id, order_number, customer_name, customer_avatar, service_name_ar, service_name_en, quantity, total_price, payment_method, delivery_lat, delivery_lng, delivery_address, notes, created_at, distance_m`.
+`id, order_number, customer_name, customer_avatar, service_code, service_name_ar, service_name_en, quantity, total_price, payment_method, delivery_lat, delivery_lng, delivery_address, notes, created_at, distance_m`.
+`service_code` (`exchange` / `new_cylinder`) drives the icon on the order card.
 Errors: `NOT_A_VERIFIED_DRIVER`.
 
 ### `driver_active_orders() → table`
-The caller's accepted and on-the-way orders with `customer_name`, `customer_phone`, `customer_avatar` and delivery details.
+The caller's accepted and on-the-way orders with `customer_name`, `customer_phone`, `customer_avatar`, `service_code` and delivery details.
+
+### `driver_earnings_stats() → table`
+One row for the caller's delivered orders:
+`month_deliveries, month_cylinders, month_earned, year_deliveries, year_cylinders, year_earned`.
+`earned` is the order total collected. Shown on the distributor's profile header.
+
+## Wallet payments (ADR 0015)
+
+The customer pays the distributor straight from a wallet at the door. Reads
+use Row Level Security: `wallet_providers` (everyone signed in),
+`driver_wallets` (own + staff), `order_payments` (the order's customer and
+distributor + staff; also on Realtime).
+
+### Distributor
+- `save_my_wallet(p_provider, p_account_name, p_wallet_number, p_cliq_alias, p_accept_terms) → driver_wallets`:
+  one account per wallet; needs `p_accept_terms` (ClickGas is not liable for
+  wrong details). Errors: `PERMISSION_DENIED`, `TERMS_NOT_ACCEPTED`, `INVALID_WALLET`.
+- `set_my_wallet_active(p_provider, p_active)`, `remove_my_wallet(p_provider)`.
+- `confirm_wallet_payment(p_order_id, p_in_cash = false)`: the money arrived
+  (or the customer paid cash). Error: `PAYMENT_NOT_OPEN`.
+- `dispute_wallet_payment(p_order_id, p_note)`: the claimed payment did not
+  arrive. Errors: `PAYMENT_NOT_OPEN`, `REASON_REQUIRED`.
+- `accept_order` also fails with `NO_WALLET_ACCOUNT`, and `complete_order`
+  with `PAYMENT_NOT_CONFIRMED`, for wallet orders.
+
+### Customer
+- Insert an order with `payment_method = 'wallet'`.
+- `claim_wallet_payment(p_order_id, p_provider = null, p_reference = null)`:
+  "I've paid". Error: `PAYMENT_NOT_OPEN`.
+
+### Staff
+- `admin_wallet_payments(p_status = null, p_order_id = null, p_limit = 200) → table` (any staff).
+- `admin_resolve_wallet_payment(p_order_id, p_status, p_reason)` (operations; audited `payment.resolve`).
+- `admin_set_wallet_active(p_wallet_id, p_active, p_reason)` (operations; audited `wallet.set_active`).
+- `admin_save_wallet_provider(p_code, p_android_package, p_store_url, p_is_active)` (owner; audited `wallet_provider.save`).
 
 ### `accept_order(p_order_id uuid) → orders`
 Errors: `NOT_A_VERIFIED_DRIVER`, `DRIVER_OFFLINE`, `MAX_ACTIVE_ORDERS`,
