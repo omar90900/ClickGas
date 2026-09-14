@@ -45,22 +45,43 @@ Not needed: `build/`, `.dart_tool/`, `.gradle/`, `node_modules/`,
 
 1. Install:
    - Git, VS Code with the Flutter and Dart extensions
-   - JDK 17 (`C:\Program Files\Java\jdk-17`)
-   - Android Studio, then in its SDK Manager: Android SDK Platform 36, SDK
-     Platform-Tools, Build-Tools, and NDK 28.2.13676358
-   - Flutter **3.47.3**, unzipped to `C:\Dev\flutter`, with
-     `C:\Dev\flutter\bin` added to PATH
+   - JDK 17. Either the Android Studio bundled one, an Oracle/Temurin
+     installer, or winget (`winget install EclipseAdoptium.Temurin.17.JDK`) -
+     whatever lands at a stable path works, just point `flutter config
+     --jdk-dir` at it (see step 2).
+   - Android SDK: Android Studio's SDK Manager is the easy way, but a
+     lighter option that skips the IDE is the standalone [command-line
+     tools](https://developer.android.com/studio#command-tools) - unzip so
+     `sdkmanager.bat` ends up at `<sdk-root>\cmdline-tools\latest\bin\`, then:
+     ```sh
+     sdkmanager --sdk_root="<sdk-root>" --licenses
+     sdkmanager --sdk_root="<sdk-root>" platform-tools "platforms;android-36" "build-tools;36.0.0" "ndk;28.2.13676358"
+     ```
+     (2026-09-13: used `C:\Android\sdk` this way instead of Android Studio,
+     since testing is on a physical phone via USB, not an emulator.)
+   - Flutter **3.47.3** if you can get it - CI is pinned to it because a
+     newer stable broke `flutter analyze` at commit 7533d88. If 3.47.3 is
+     slow/unavailable and you grab a newer stable instead (used 3.47.4 on
+     2026-09-13), re-run `flutter analyze` in each app once restored and
+     confirm it's still clean before relying on it - it was, that time.
+     Unzip to `C:\Dev\flutter`, add `C:\Dev\flutter\bin` to PATH.
    - Node.js 24 LTS
+   - **Windows-only**: Developer Mode must be on (Settings > For developers)
+     before `flutter pub get` will work - it needs symlink support for
+     plugins. `flutter pub get` fails with "Please enable Developer Mode"
+     if it's off; toggling it on and re-running fixes it, no restart needed.
 2. Point Flutter at the tools:
    ```sh
-   flutter config --jdk-dir "C:\Program Files\Java\jdk-17"
+   flutter config --jdk-dir "<path to the JDK 17 you installed>"
+   flutter config --android-sdk "<sdk-root, e.g. C:\Android\sdk>"
    flutter doctor --android-licenses
    flutter doctor
    ```
-3. Clone to **the same place** (`C:\Users\omara\Downloads\ClickGas`), so the
-   keystore path in `key.properties` still matches:
+3. Clone to **the same place** (`C:\Users\omara\Desktop\ClickGas` as of
+   2026-09-13, moved from `Downloads`), so the keystore path in
+   `key.properties` still matches:
    ```sh
-   cd C:\Users\omara\Downloads
+   cd C:\Users\omara\Desktop
    git clone https://github.com/omar90900/ClickGas.git
    cd ClickGas
    git config user.name "omaralsalm2004"
@@ -68,7 +89,8 @@ Not needed: `build/`, `.dart_tool/`, `.gradle/`, `node_modules/`,
    ```
 4. Copy everything from `ClickGas-backup` into `ClickGas`, merging folders
    (same relative paths). Put `claude-memory/*` in
-   `C:\Users\omara\.claude\projects\c--Users-omara-Downloads-ClickGas\memory\`.
+   `C:\Users\omara\.claude\projects\c--Users-omara-Desktop-ClickGas\memory\`
+   (the folder name encodes the clone path, so it changes if the path does).
 5. Different folder or user name? Fix `storeFile=` in both
    `apps/*/android/key.properties`, and `sdk.dir=` / `flutter.sdk=` in both
    `local.properties` (keep the `MAPS_API_KEY` line).
